@@ -1,22 +1,26 @@
 const express = require('express');
 const router  = express.Router();
 const multer  = require('multer');
-const path    = require('path');
-const fs      = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const db      = require('../database');
 const { adminMiddleware } = require('../middleware/auth');
 
-// ── IMAGE UPLOAD SETUP ────────────────────────────────────
-const uploadsDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename:    (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, 'product-' + unique + path.extname(file.originalname));
-  }
+// ── CLOUDINARY SETUP ──────────────────────────────────────
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'mustech-products',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+  },
+});
+
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
@@ -33,8 +37,8 @@ function parseProduct(row) {
     variants:       JSON.parse(row.variants || '["Standard"]'),
     variantPrices:  JSON.parse(row.variant_prices || '[0]'),
     oldPrice:       row.old_price,
-    img:            row.img ? `/uploads/${row.img}` : null,
-    images:         row.images ? JSON.parse(row.images).map(i => `/uploads/${i}`) : (row.img ? [`/uploads/${row.img}`] : []),
+    img:            row.img || null,
+    images:         row.images ? JSON.parse(row.images) : (row.img ? [row.img] : []),
   };
 }
 
@@ -74,7 +78,7 @@ router.post('/', adminMiddleware, upload.array('images', 5), (req, res) => {
   const variantsArr = variants ? JSON.parse(variants) : ['Standard'];
   const pricesArr   = variant_prices ? JSON.parse(variant_prices) : [parseInt(price)];
 
-  const uploadedFiles = req.files ? req.files.map(f => f.filename) : [];
+  const uploadedFiles = req.files ? req.files.map(f => f.path) : [];
   const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : null;
 
   const result = db.prepare(`
@@ -108,21 +112,10 @@ router.put('/:id', adminMiddleware, upload.array('images', 5), (req, res) => {
   const pricesArr   = variant_prices ? JSON.parse(variant_prices) : JSON.parse(existing.variant_prices);
 
   const useNewImages = req.files && req.files.length > 0;
-  const uploadedFiles = useNewImages ? req.files.map(f => f.filename) : JSON.parse(existing.images || '[]');
+  const uploadedFiles = useNewImages ? req.files.map(f => f.path) : JSON.parse(existing.images || '[]');
   const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : existing.img;
 
-  // Delete old images if new ones are uploaded
-  if (useNewImages) {
-    const oldImages = JSON.parse(existing.images || '[]');
-    oldImages.forEach(oldFile => {
-      const oldPath = path.join(uploadsDir, oldFile);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-    });
-    if (existing.img && !oldImages.includes(existing.img)) {
-      const oldPath = path.join(uploadsDir, existing.img);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-    }
-  }
+  // (Cloudinary files persist — no local deletion needed)
 
   db.prepare(`
     UPDATE products SET
@@ -154,16 +147,7 @@ router.delete('/:id', adminMiddleware, (req, res) => {
   const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
   if (!existing) return res.status(404).json({ error: 'Produit non trouvé' });
 
-  // Delete image files
-  const oldImages = JSON.parse(existing.images || '[]');
-  oldImages.forEach(oldFile => {
-    const oldPath = path.join(uploadsDir, oldFile);
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-  });
-  if (existing.img && !oldImages.includes(existing.img)) {
-    const oldPath = path.join(uploadsDir, existing.img);
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-  }
+  // (Cloudinary files persist — no local deletion needed)
 
   // Soft delete
   db.prepare('UPDATE products SET active = 0 WHERE id = ?').run(req.params.id);
