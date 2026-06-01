@@ -757,7 +757,7 @@ footer {
       </div>
       <!-- PRODUCTS TAB -->
       <div id="admin-products" class="admin-tab" style="display:none">
-        <div class="admin-header"><h1>Produits</h1><button class="btn btn-primary" onclick="openModal('add-product-modal')">+ Ajouter un Produit</button></div>
+        <div class="admin-header"><h1>Produits</h1></div>
         <div class="admin-table-card">
           <div style="overflow-x:auto">
 <table>
@@ -1233,8 +1233,8 @@ function statusLabel(s) {
 async function populateAdminTables() {
   try {
     const stats = await StatsAPI.get();
-    const ordersRes = await OrdersAPI.getAll(1, 100);
-    ORDERS = ordersRes.orders || [];
+    const ordersRes = await OrdersAPI.getAll();
+    ORDERS = Array.isArray(ordersRes) ? ordersRes : (ordersRes.orders || []);
     PRODUCTS = await ProductsAPI.getAll();
 
     // Dashboard stats
@@ -1373,6 +1373,7 @@ async function saveEditProduct() {
   if(stock>=0) fd.append('stock', stock);
   fd.append('variants', JSON.stringify(variants));
   fd.append('variant_prices', JSON.stringify(variantPrices));
+  if(desc) fd.append('description', desc);
 
   try {
     await ProductsAPI.update(id, fd);
