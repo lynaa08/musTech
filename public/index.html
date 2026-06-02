@@ -4224,7 +4224,9 @@
       // WILAYAS
       function populateWilayas() {
         const sel = document.getElementById("wilaya-select");
-        if (sel && sel.options.length <= 1) {
+        if (sel) {
+          // Always rebuild with latest WILAYAS data
+          while (sel.options.length > 1) sel.remove(1);
           WILAYAS.forEach((w) => {
             const o = document.createElement("option");
             const price = w.shipping_price ?? w.price ?? 0;
