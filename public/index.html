@@ -3774,6 +3774,7 @@
           currentWrap.style.display = "none";
         }
 
+        initEditImageListeners();
         openModal("edit-product-modal");
       }
 
@@ -3843,8 +3844,13 @@
         if (newWrap)   newWrap.style.display = "none";
       }
 
-      // Wire up file input → live preview (runs once DOM is ready)
-      document.addEventListener("DOMContentLoaded", () => {
+      // Wire up file input → live preview
+      // Called directly from openEditProduct (avoids DOMContentLoaded timing issue)
+      let _imgListenersAttached = false;
+      function initEditImageListeners() {
+        if (_imgListenersAttached) return;
+        _imgListenersAttached = true;
+
         const fileInput = document.getElementById("ep-image");
         const dropZone  = document.getElementById("ep-drop-zone");
         const newWrap   = document.getElementById("ep-new-img-wrap");
@@ -3856,8 +3862,8 @@
           if (!file) return;
           const reader = new FileReader();
           reader.onload = (e) => {
-            if (newImg)  { newImg.src = e.target.result; }
-            if (newWrap) { newWrap.style.display = "block"; }
+            if (newImg)  newImg.src = e.target.result;
+            if (newWrap) newWrap.style.display = "block";
           };
           reader.readAsDataURL(file);
         });
@@ -3884,7 +3890,7 @@
             fileInput.dispatchEvent(new Event("change"));
           });
         }
-      });
+      }
 
       async function deleteProduct(id) {
         if (!confirm(`Supprimer ce produit ?`)) return;
