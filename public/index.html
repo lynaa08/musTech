@@ -4818,13 +4818,11 @@
         guepex: ["Alger - Bachdjarrah","Alger - Bab Ezzouar","Alger - Hussein Dey","Alger - El Harrach","Oran - Oran Centre","Oran - Bir El Djir","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre","Guelma - Guelma Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Sidi Bel Abbès - SBA Centre","Mascara - Mascara Centre","Relizane - Relizane Centre","Aïn Defla - Aïn Defla Centre","Aïn Témouchent - Aïn Témouchent Centre"]
       };
 
-      function updateBureauOffices() {
-        const company = document.getElementById("bureau-company").value;
-        const wilaya = document.getElementById("bureau-wilaya-select")?.value || "";
-        const officeSelect = document.getElementById("bureau-office");
-        officeSelect.innerHTML = '<option value="">-- Choisir le bureau --</option>';
         if (company && BUREAU_OFFICES[company]) {
-          BUREAU_OFFICES[company].forEach(office => {
+    const offices = wilaya
+      ? BUREAU_OFFICES[company].filter(o => o.toLowerCase().startsWith(wilaya.toLowerCase()))
+      : BUREAU_OFFICES[company];
+    offices.forEach(office => {
             const opt = document.createElement("option");
             opt.value = office;
             opt.textContent = office;
@@ -4834,7 +4832,7 @@
         } else {
           officeSelect.style.display = "none";
         }
-      }
+      
 
       function setDeliveryType(type) {
         document.getElementById("delivery-type").value = type;
