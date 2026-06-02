@@ -2939,15 +2939,29 @@
             ">
             Informations de livraison
           </div>
-          <div class="form-group">
-            <label>Numéro de Téléphone *</label>
-            <input type="tel" id="checkout-phone" placeholder="0558210430" required />
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nom Complet <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
+              <input type="text" id="checkout-name" placeholder="Ahmed Benali" />
+            </div>
+            <div class="form-group">
+              <label>Numéro de Téléphone *</label>
+              <input type="tel" id="checkout-phone" placeholder="0558210430" />
+            </div>
           </div>
           <div class="form-group">
             <label>Wilaya *</label>
-            <select id="wilaya-select" onchange="updateShipping(this)" required>
+            <select id="wilaya-select" onchange="updateShipping(this)">
               <option value="">-- Sélectionnez votre Wilaya --</option>
             </select>
+          </div>
+          <div class="form-group">
+            <label>Adresse <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
+            <input type="text" id="checkout-address" placeholder="Rue, quartier, commune..." />
+          </div>
+          <div class="form-group">
+            <label>Remarques <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
+            <textarea id="checkout-notes" rows="2" placeholder="Instructions spéciales..."></textarea>
           </div>
 
           <!-- TOTALS -->
@@ -4773,12 +4787,16 @@
 
         const wilayaName = wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
         const phone = phoneEl?.value.trim();
+        const customer = document.getElementById("checkout-name")?.value.trim() || phone;
+        const address = document.getElementById("checkout-address")?.value.trim() || "—";
+        const notes = document.getElementById("checkout-notes")?.value.trim() || "";
 
         const orderData = {
-          customer: phone,
+          customer,
           phone,
           wilaya: wilayaName,
-          address: "—",
+          address,
+          notes,
           items: checkoutCart.map((item) => ({
             id: item.id,
             variant: item.variant,
@@ -4976,20 +4994,20 @@
         openModal("product-modal");
       }
 
-      // Multi-variant selection
-      let pmSelectedVariants = [0];
+      // Multi-variant selection — declared at top level
+      var pmSelectedVariants = [0];
 
       function pmToggleVariant(index) {
-        const chips = document.querySelectorAll(".pm-variant-chip");
+        const chip = document.querySelector(`.pm-variant-chip[data-index="${index}"]`);
         if (pmSelectedVariants.includes(index)) {
           // Deselect only if more than one selected
           if (pmSelectedVariants.length > 1) {
             pmSelectedVariants = pmSelectedVariants.filter(i => i !== index);
-            chips[index]?.classList.remove("active");
+            chip?.classList.remove("active");
           }
         } else {
           pmSelectedVariants.push(index);
-          chips[index]?.classList.add("active");
+          chip?.classList.add("active");
         }
         updatePmPrice();
       }
