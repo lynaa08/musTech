@@ -35,7 +35,6 @@
         color: var(--gray-900);
         min-height: 100vh;
       }
-
       nav {
         position: sticky;
         top: 0;
@@ -82,7 +81,6 @@
       .back-btn:hover {
         background: var(--gray-100);
       }
-
       .page {
         max-width: 900px;
         margin: 3rem auto;
@@ -104,7 +102,6 @@
           padding: 1.5rem;
         }
       }
-
       .img-wrap {
         background: linear-gradient(135deg, var(--gray-50), var(--green-light));
         border-radius: 16px;
@@ -156,7 +153,6 @@
       .thumb.active {
         border-color: var(--green);
       }
-
       .info {
         display: flex;
         flex-direction: column;
@@ -323,8 +319,6 @@
       .sbtn:hover {
         background: var(--gray-100);
       }
-
-      /* CHECKOUT MODAL */
       .overlay {
         position: fixed;
         inset: 0;
@@ -423,7 +417,6 @@
         padding: 1.25rem 1.5rem;
         border-top: 1px solid var(--gray-100);
       }
-
       .loading {
         text-align: center;
         padding: 5rem 2rem;
@@ -471,7 +464,6 @@
       >
       <a href="/" class="back-btn">← Retour à la boutique</a>
     </nav>
-
     <div class="page" id="page">
       <div class="loading">
         <div class="spinner"></div>
@@ -574,7 +566,7 @@
       function copyLink() {
         navigator.clipboard
           .writeText(window.location.href)
-          .then(() => showToast("Lien copié !"))
+          .then(() => showToast("Lien copié!"))
           .catch(() => prompt("Copiez ce lien:", window.location.href));
       }
 
@@ -584,7 +576,6 @@
         else copyLink();
       }
 
-      // ── CHECKOUT ────────────────────────────────────────────
       async function openCheckout() {
         if (!product) return;
         const price =
@@ -593,10 +584,9 @@
         const total = price * currentQty;
 
         document.getElementById("order-summary").innerHTML = `
-          <div class="order-row"><span>${product.name} (${variant}) x${currentQty}</span><span>${total.toLocaleString()} DA</span></div>
-          <div class="order-row"><span>Livraison</span><span id="shipping-display">Choisir wilaya</span></div>
-          <div class="order-row total"><span>Total</span><span id="total-display">${total.toLocaleString()} DA</span></div>
-        `;
+        <div class="order-row"><span>${product.name} (${variant}) x${currentQty}</span><span>${total.toLocaleString()} DA</span></div>
+        <div class="order-row"><span>Livraison</span><span id="shipping-display">Choisir wilaya</span></div>
+        <div class="order-row total"><span>Total</span><span id="total-display">${total.toLocaleString()} DA</span></div>`;
 
         // Populate wilayas
         const sel = document.getElementById("co-wilaya");
@@ -619,6 +609,16 @@
           document.getElementById("total-display").textContent =
             (total + shipping).toLocaleString() + " DA";
         };
+
+        // Pre-fill from localStorage if logged in
+        try {
+          const user = JSON.parse(localStorage.getItem("mt_user"));
+          if (user) {
+            if (user.name) document.getElementById("co-name").value = user.name;
+            if (user.phone)
+              document.getElementById("co-phone").value = user.phone;
+          }
+        } catch (e) {}
 
         document.getElementById("checkout-overlay").classList.add("open");
       }
@@ -647,41 +647,31 @@
         const variant = product.variants[currentVariant] || "Standard";
 
         const orderData = {
-          customer_name: name,
-          customer_phone: phone,
+          customer: name,
+          phone,
           wilaya,
           address,
           note,
-          shipping_price: shipping,
-          total: price * currentQty + shipping,
-          items: [
-            {
-              product_id: product.id,
-              product_name: product.name,
-              variant,
-              quantity: currentQty,
-              unit_price: price,
-            },
-          ],
+          items: [{ id: product.id, variant: currentVariant, qty: currentQty }],
         };
 
         try {
-          await OrdersAPI.place(orderData);
+          const res = await OrdersAPI.place(orderData);
           closeCheckout();
-          showToast("Commande confirmée !");
+          showToast("Commande confirmée!");
           document.getElementById("page").innerHTML += `
-            <div style="text-align:center;padding:3rem;background:var(--green-light);border-radius:16px;margin-top:2rem;">
-              <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
-              <h2 style="color:var(--green-dark);">Commande confirmée !</h2>
-              <p style="color:var(--gray-700);margin-top:0.5rem;">Merci ${name}, nous vous contacterons au ${phone}.</p>
-              <a href="/" style="display:inline-block;margin-top:1.5rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">Retour à la boutique</a>
-            </div>`;
+          <div style="text-align:center;padding:3rem;background:var(--green-light);border-radius:16px;margin-top:2rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
+            <h2 style="color:var(--green-dark);">Commande confirmée !</h2>
+            <p style="color:var(--gray-700);margin-top:0.5rem;">Merci ${name}, nous vous contacterons au ${phone}.</p>
+            <p style="color:var(--green-dark);font-weight:700;margin-top:0.5rem;">N° ${res.order_ref || "#MT-" + res.id}</p>
+            <a href="/" style="display:inline-block;margin-top:1.5rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">Retour à la boutique</a>
+          </div>`;
         } catch (e) {
           showToast("Erreur: " + e.message);
         }
       }
 
-      // ── RENDER ──────────────────────────────────────────────
       function renderProduct(p) {
         const images =
           p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
@@ -689,7 +679,7 @@
 
         const mainImgHTML =
           images.length > 0
-            ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1.5rem;" />`
+            ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1.5rem;"/>`
             : `<span>${p.icon || "🎮"}</span>`;
 
         const thumbsHTML =
@@ -697,7 +687,7 @@
             ? images
                 .map(
                   (src, i) =>
-                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${src}" onclick="switchImage(this,'${src}')" />`,
+                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${src}" onclick="switchImage(this,'${src}')"/>`,
                 )
                 .join("")
             : "";
@@ -721,49 +711,55 @@
               ? `Stock limité (${p.stock})`
               : "Rupture de stock";
 
+        // Update page title and URL slug
+        const slug = p.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
         document.title = p.name + " — Mus Tech";
+        const newUrl = `/product.html?id=${p.id}&slug=${slug}`;
+        window.history.replaceState({}, "", newUrl);
+
         document.getElementById("page").innerHTML = `
-          <div class="card">
-            <div>
-              <div class="img-wrap">${badgeHTML}${mainImgHTML}</div>
-              <div class="thumbs">${thumbsHTML}</div>
+        <div class="card">
+          <div>
+            <div class="img-wrap">${badgeHTML}${mainImgHTML}</div>
+            <div class="thumbs">${thumbsHTML}</div>
+          </div>
+          <div class="info">
+            <div class="cat">${p.cat}</div>
+            <div class="pname">${p.name}</div>
+            ${p.description ? `<div class="desc">${p.description}</div>` : ""}
+            ${variantsHTML}
+            <div class="price-row">
+              <span class="pmain" id="price-main">${p.variantPrices[0].toLocaleString()} DA</span>
+              ${oldPriceHTML}
+              <span class="pstock">${stockText}</span>
             </div>
-            <div class="info">
-              <div class="cat">${p.cat}</div>
-              <div class="pname">${p.name}</div>
-              ${p.description ? `<div class="desc">${p.description}</div>` : ""}
-              ${variantsHTML}
-              <div class="price-row">
-                <span class="pmain" id="price-main">${p.variantPrices[0].toLocaleString()} DA</span>
-                ${oldPriceHTML}
-                <span class="pstock">${stockText}</span>
+            <div class="qty-row">
+              <span class="qlabel">Qté</span>
+              <div class="qctrl">
+                <button class="qbtn" onclick="changeQty(-1)">−</button>
+                <span class="qval" id="qval">1</span>
+                <button class="qbtn" onclick="changeQty(1)">+</button>
               </div>
-              <div class="qty-row">
-                <span class="qlabel">Qté</span>
-                <div class="qctrl">
-                  <button class="qbtn" onclick="changeQty(-1)">−</button>
-                  <span class="qval" id="qval">1</span>
-                  <button class="qbtn" onclick="changeQty(1)">+</button>
-                </div>
-                <span class="qtotal" id="qtotal">${p.variantPrices[0].toLocaleString()} DA</span>
-              </div>
-              <div class="actions">
-                <button class="btn btn-primary" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>⚡ Acheter Maintenant</button>
-                <button class="btn btn-ghost" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>🛒 Ajouter au Panier</button>
-                <div class="share-row">
-                  <button class="sbtn" onclick="copyLink()">🔗 Copier le lien</button>
-                  <button class="sbtn" onclick="shareProduct()">📤 Partager</button>
-                </div>
+              <span class="qtotal" id="qtotal">${p.variantPrices[0].toLocaleString()} DA</span>
+            </div>
+            <div class="actions">
+              <button class="btn btn-primary" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>⚡ Acheter Maintenant</button>
+              <button class="btn btn-ghost" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>🛒 Ajouter au Panier</button>
+              <div class="share-row">
+                <button class="sbtn" onclick="copyLink()">🔗 Copier le lien</button>
+                <button class="sbtn" onclick="shareProduct()">📤 Partager</button>
               </div>
             </div>
-          </div>`;
+          </div>
+        </div>`;
       }
 
-      // ── LOAD ────────────────────────────────────────────────
       async function init() {
-        const id = parseInt(
-          new URLSearchParams(window.location.search).get("id"),
-        );
+        const params = new URLSearchParams(window.location.search);
+        const id = parseInt(params.get("id"));
         if (!id) {
           document.getElementById("page").innerHTML =
             '<div class="loading">Produit introuvable. <a href="/">Retour</a></div>';
@@ -792,7 +788,6 @@
             '<div class="loading">Impossible de charger ce produit. <a href="/">Retour</a></div>';
         }
       }
-
       init();
     </script>
   </body>
