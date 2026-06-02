@@ -5,7 +5,7 @@
 // ============================================================
 
 // Change to your server IP/
-const API_URL = "https://www.mustech.shop/api";
+const API_URL = 'https://mustech-production.up.railway.app/api';
 
 // ── TOKEN STORAGE ─────────────────────────────────────────
 const Auth = {
