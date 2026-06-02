@@ -2295,7 +2295,12 @@
               >
             </li>
             <li>
-              <a href="javascript:void(0)" onclick="logout()" style="color:#ff6b6b;margin-top:0.5rem;">🚪 Se Déconnecter</a>
+              <a
+                href="javascript:void(0)"
+                onclick="logout()"
+                style="color: #ff6b6b; margin-top: 0.5rem"
+                >🚪 Se Déconnecter</a
+              >
             </li>
           </ul>
         </aside>
@@ -3436,27 +3441,144 @@
           </div>
           <div class="form-group">
             <label>Image du Produit</label>
-            <div id="ep-image-section" style="display:flex;flex-direction:column;gap:0.6rem;">
+            <div
+              id="ep-image-section"
+              style="display: flex; flex-direction: column; gap: 0.6rem">
               <!-- Current image preview -->
-              <div id="ep-current-img-wrap" style="display:none;position:relative;width:100%;border-radius:10px;overflow:hidden;background:var(--gray-50,#f9f9f9);border:1.5px solid var(--gray-100,#e5e5e5);">
-                <img id="ep-current-img" src="" alt="Image actuelle" style="width:100%;max-height:180px;object-fit:contain;display:block;padding:0.5rem;" />
-                <div style="position:absolute;top:6px;right:6px;">
-                  <span style="background:rgba(0,0,0,0.55);color:#fff;font-size:0.7rem;padding:2px 8px;border-radius:99px;">Image actuelle</span>
+              <div
+                id="ep-current-img-wrap"
+                style="
+                  display: none;
+                  position: relative;
+                  width: 100%;
+                  border-radius: 10px;
+                  overflow: hidden;
+                  background: var(--gray-50, #f9f9f9);
+                  border: 1.5px solid var(--gray-100, #e5e5e5);
+                ">
+                <img
+                  id="ep-current-img"
+                  src=""
+                  alt="Image actuelle"
+                  style="
+                    width: 100%;
+                    max-height: 180px;
+                    object-fit: contain;
+                    display: block;
+                    padding: 0.5rem;
+                  " />
+                <div style="position: absolute; top: 6px; right: 6px">
+                  <span
+                    style="
+                      background: rgba(0, 0, 0, 0.55);
+                      color: #fff;
+                      font-size: 0.7rem;
+                      padding: 2px 8px;
+                      border-radius: 99px;
+                    "
+                    >Image actuelle</span
+                  >
                 </div>
               </div>
               <!-- New image drop zone -->
-              <label for="ep-image" id="ep-drop-zone" style="cursor:pointer;border:2px dashed var(--gray-200,#d1d5db);border-radius:10px;padding:1rem;text-align:center;transition:border-color 0.2s,background 0.2s;background:transparent;">
-                <div id="ep-drop-icon" style="font-size:1.6rem;margin-bottom:0.3rem;">🖼️</div>
-                <div id="ep-drop-label" style="font-size:0.82rem;color:var(--gray-500,#888);">Cliquer ou glisser une nouvelle image ici</div>
-                <div style="font-size:0.73rem;color:var(--gray-400,#aaa);margin-top:0.2rem;">JPG, PNG, WEBP — max 5 Mo</div>
-                <input type="file" id="ep-image" accept="image/*" style="display:none;" />
+              <label
+                for="ep-image"
+                id="ep-drop-zone"
+                style="
+                  cursor: pointer;
+                  border: 2px dashed var(--gray-200, #d1d5db);
+                  border-radius: 10px;
+                  padding: 1rem;
+                  text-align: center;
+                  transition:
+                    border-color 0.2s,
+                    background 0.2s;
+                  background: transparent;
+                ">
+                <div
+                  id="ep-drop-icon"
+                  style="font-size: 1.6rem; margin-bottom: 0.3rem">
+                  🖼️
+                </div>
+                <div
+                  id="ep-drop-label"
+                  style="font-size: 0.82rem; color: var(--gray-500, #888)">
+                  Cliquer ou glisser une nouvelle image ici
+                </div>
+                <div
+                  style="
+                    font-size: 0.73rem;
+                    color: var(--gray-400, #aaa);
+                    margin-top: 0.2rem;
+                  ">
+                  JPG, PNG, WEBP — max 5 Mo
+                </div>
+                <input
+                  type="file"
+                  id="ep-image"
+                  accept="image/*"
+                  style="display: none" />
               </label>
               <!-- New image preview (shown after selection) -->
-              <div id="ep-new-img-wrap" style="display:none;position:relative;border-radius:10px;overflow:hidden;background:var(--gray-50,#f9f9f9);border:1.5px solid var(--green-dark,#2d6a4f);">
-                <img id="ep-new-img" src="" alt="Nouvelle image" style="width:100%;max-height:180px;object-fit:contain;display:block;padding:0.5rem;" />
-                <div style="position:absolute;top:6px;right:6px;display:flex;gap:6px;align-items:center;">
-                  <span style="background:var(--green-dark,#2d6a4f);color:#fff;font-size:0.7rem;padding:2px 8px;border-radius:99px;">Nouvelle image</span>
-                  <button type="button" onclick="cancelNewImage()" style="background:rgba(0,0,0,0.55);border:none;color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:0.9rem;line-height:1;display:flex;align-items:center;justify-content:center;">✕</button>
+              <div
+                id="ep-new-img-wrap"
+                style="
+                  display: none;
+                  position: relative;
+                  border-radius: 10px;
+                  overflow: hidden;
+                  background: var(--gray-50, #f9f9f9);
+                  border: 1.5px solid var(--green-dark, #2d6a4f);
+                ">
+                <img
+                  id="ep-new-img"
+                  src=""
+                  alt="Nouvelle image"
+                  style="
+                    width: 100%;
+                    max-height: 180px;
+                    object-fit: contain;
+                    display: block;
+                    padding: 0.5rem;
+                  " />
+                <div
+                  style="
+                    position: absolute;
+                    top: 6px;
+                    right: 6px;
+                    display: flex;
+                    gap: 6px;
+                    align-items: center;
+                  ">
+                  <span
+                    style="
+                      background: var(--green-dark, #2d6a4f);
+                      color: #fff;
+                      font-size: 0.7rem;
+                      padding: 2px 8px;
+                      border-radius: 99px;
+                    "
+                    >Nouvelle image</span
+                  >
+                  <button
+                    type="button"
+                    onclick="cancelNewImage()"
+                    style="
+                      background: rgba(0, 0, 0, 0.55);
+                      border: none;
+                      color: #fff;
+                      border-radius: 50%;
+                      width: 22px;
+                      height: 22px;
+                      cursor: pointer;
+                      font-size: 0.9rem;
+                      line-height: 1;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    ">
+                    ✕
+                  </button>
                 </div>
               </div>
             </div>
@@ -3762,14 +3884,14 @@
 
         // Image preview
         const currentWrap = document.getElementById("ep-current-img-wrap");
-        const currentImg  = document.getElementById("ep-current-img");
-        const newWrap     = document.getElementById("ep-new-img-wrap");
-        const newImg      = document.getElementById("ep-new-img");
-        const fileInput   = document.getElementById("ep-image");
+        const currentImg = document.getElementById("ep-current-img");
+        const newWrap = document.getElementById("ep-new-img-wrap");
+        const newImg = document.getElementById("ep-new-img");
+        const fileInput = document.getElementById("ep-image");
         if (fileInput) fileInput.value = "";
         if (newWrap) newWrap.style.display = "none";
-        if (newImg)  newImg.src = "";
-        const imgSrc = (p.images && p.images.length > 0) ? p.images[0] : p.img;
+        if (newImg) newImg.src = "";
+        const imgSrc = p.images && p.images.length > 0 ? p.images[0] : p.img;
         if (imgSrc && currentImg && currentWrap) {
           currentImg.src = imgSrc;
           currentWrap.style.display = "block";
@@ -3840,11 +3962,11 @@
       // ── EDIT PRODUCT IMAGE PREVIEW ───────────────────────────
       function cancelNewImage() {
         const fileInput = document.getElementById("ep-image");
-        const newWrap   = document.getElementById("ep-new-img-wrap");
-        const newImg    = document.getElementById("ep-new-img");
+        const newWrap = document.getElementById("ep-new-img-wrap");
+        const newImg = document.getElementById("ep-new-img");
         if (fileInput) fileInput.value = "";
-        if (newImg)    newImg.src = "";
-        if (newWrap)   newWrap.style.display = "none";
+        if (newImg) newImg.src = "";
+        if (newWrap) newWrap.style.display = "none";
       }
 
       // Wire up file input → live preview
@@ -3855,9 +3977,9 @@
         _imgListenersAttached = true;
 
         const fileInput = document.getElementById("ep-image");
-        const dropZone  = document.getElementById("ep-drop-zone");
-        const newWrap   = document.getElementById("ep-new-img-wrap");
-        const newImg    = document.getElementById("ep-new-img");
+        const dropZone = document.getElementById("ep-drop-zone");
+        const newWrap = document.getElementById("ep-new-img-wrap");
+        const newImg = document.getElementById("ep-new-img");
         if (!fileInput) return;
 
         fileInput.addEventListener("change", () => {
@@ -3865,7 +3987,7 @@
           if (!file) return;
           const reader = new FileReader();
           reader.onload = (e) => {
-            if (newImg)  newImg.src = e.target.result;
+            if (newImg) newImg.src = e.target.result;
             if (newWrap) newWrap.style.display = "block";
           };
           reader.readAsDataURL(file);
@@ -3875,16 +3997,16 @@
           dropZone.addEventListener("dragover", (e) => {
             e.preventDefault();
             dropZone.style.borderColor = "var(--green-dark,#2d6a4f)";
-            dropZone.style.background  = "rgba(45,106,79,0.05)";
+            dropZone.style.background = "rgba(45,106,79,0.05)";
           });
           dropZone.addEventListener("dragleave", () => {
             dropZone.style.borderColor = "";
-            dropZone.style.background  = "";
+            dropZone.style.background = "";
           });
           dropZone.addEventListener("drop", (e) => {
             e.preventDefault();
             dropZone.style.borderColor = "";
-            dropZone.style.background  = "";
+            dropZone.style.background = "";
             const file = e.dataTransfer.files[0];
             if (!file || !file.type.startsWith("image/")) return;
             const dt = new DataTransfer();
@@ -3915,7 +4037,12 @@
         if (!o) return;
         _viewingOrderId = id;
         const itemsDisplay = Array.isArray(o.items)
-          ? o.items.map((i) => `${i.name} ×${i.qty} (${(i.price || 0).toLocaleString()} DA)`).join("<br>")
+          ? o.items
+              .map(
+                (i) =>
+                  `${i.name} ×${i.qty} (${(i.price || 0).toLocaleString()} DA)`,
+              )
+              .join("<br>")
           : o.items || "—";
         document.getElementById("view-order-body").innerHTML = `
     <div class="order-summary">
