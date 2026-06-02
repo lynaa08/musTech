@@ -2588,7 +2588,7 @@
           </div>
         </div>
         <div class="footer-bottom">
-          <span>© 2026 Mus Tech. Tous droits réservés.</span>
+          <span>© 2025 Mus Tech. Tous droits réservés.</span>
           <span>Politique de Confidentialité · Conditions d'utilisation</span>
         </div>
       </div>
@@ -4839,6 +4839,14 @@
         } else {
           links.style.cssText =
             "display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:white;padding:1.5rem 2rem;gap:1rem;z-index:99;box-shadow:var(--shadow-lg);border-bottom:1px solid var(--gray-100)";
+          // Inject "Mes commandes" link if not already there
+          if (!links.querySelector(".mobile-orders-link")) {
+            const ordersLi = document.createElement("li");
+            ordersLi.className = "mobile-orders-link";
+            ordersLi.style.cssText = "border-top:1px solid var(--gray-100);padding-top:0.75rem;margin-top:0.25rem;";
+            ordersLi.innerHTML = `<a href="#" onclick="links.style.display='';openMyOrders();return false;" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--green-dark);font-size:0.95rem;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Mes commandes</a>`;
+            links.appendChild(ordersLi);
+          }
         }
       }
 
