@@ -2925,27 +2925,27 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Nom Complet *</label
-              ><input type="text" placeholder="Ahmed Benali" />
+              <label>Nom Complet</label
+              ><input type="text" id="checkout-name" placeholder="Ahmed Benali" />
             </div>
             <div class="form-group">
               <label>Numéro de Téléphone *</label
-              ><input type="tel" placeholder="0558210430" />
+              ><input type="tel" id="checkout-phone" placeholder="0558210430" required />
             </div>
           </div>
           <div class="form-group">
             <label>Wilaya *</label>
-            <select id="wilaya-select" onchange="updateShipping(this)">
+            <select id="wilaya-select" onchange="updateShipping(this)" required>
               <option value="">-- Sélectionnez votre Wilaya --</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Adresse Complète *</label
-            ><input type="text" placeholder="Rue, quartier, commune..." />
+            <label>Adresse <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label
+            ><input type="text" id="checkout-address" placeholder="Rue, quartier, commune..." />
           </div>
           <div class="form-group">
-            <label>Remarques (facultatif)</label
-            ><textarea
+            <label>Remarques <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label
+            ><textarea id="checkout-notes"
               rows="2"
               placeholder="Instructions spéciales..."></textarea>
           </div>
@@ -4755,25 +4755,25 @@
       // ── ORDER ─────────────────────────────────────────────────
       async function placeOrder() {
         const wilEl = document.getElementById("wilaya-select");
-        const nameEl = document.querySelector(
-          '#checkout-modal input[type="text"]',
-        );
-        const phoneEl = document.querySelector(
-          '#checkout-modal input[type="tel"]',
-        );
-        const addrEl = document.querySelectorAll(
-          '#checkout-modal input[type="text"]',
-        )[1];
+        const phoneEl = document.getElementById("checkout-phone");
+        const nameEl = document.getElementById("checkout-name");
+        const addrEl = document.getElementById("checkout-address");
+        const notesEl = document.getElementById("checkout-notes");
 
+        // Only phone + wilaya are required
+        if (!phoneEl?.value.trim()) {
+          showToast("⚠️ Veuillez entrer votre numéro de téléphone !");
+          phoneEl?.focus();
+          return;
+        }
         if (!wilEl.value) {
-          showToast("Veuillez sélectionner votre Wilaya.");
+          showToast("⚠️ Veuillez sélectionner votre Wilaya !");
           return;
         }
 
-        const wilayaName =
-          wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
+        const wilayaName = wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
         const customer = nameEl?.value.trim() || "Client";
-        const phone = phoneEl?.value.trim() || "—";
+        const phone = phoneEl?.value.trim();
         const address = addrEl?.value.trim() || "—";
 
         const orderData = {
@@ -4858,18 +4858,30 @@
         const links = document.querySelector(".nav-links");
         if (links.style.display === "flex") {
           links.style.display = "";
-        } else {
-          links.style.cssText =
-            "display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:white;padding:1.5rem 2rem;gap:1rem;z-index:99;box-shadow:var(--shadow-lg);border-bottom:1px solid var(--gray-100)";
-          // Inject "Mes commandes" link if not already there
-          if (!links.querySelector(".mobile-orders-link")) {
-            const ordersLi = document.createElement("li");
-            ordersLi.className = "mobile-orders-link";
-            ordersLi.style.cssText = "border-top:1px solid var(--gray-100);padding-top:0.75rem;margin-top:0.25rem;";
-            ordersLi.innerHTML = `<a href="#" onclick="links.style.display='';openMyOrders();return false;" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--green-dark);font-size:0.95rem;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Mes commandes</a>`;
-            links.appendChild(ordersLi);
-          }
+          return;
         }
+        links.style.cssText =
+          "display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:white;padding:1.5rem 2rem;gap:1rem;z-index:99;box-shadow:var(--shadow-lg);border-bottom:1px solid var(--gray-100)";
+
+        // Remove old injected items so they rebuild fresh
+        links.querySelectorAll(".mobile-injected").forEach(el => el.remove());
+
+        // Separator
+        const sep = document.createElement("li");
+        sep.className = "mobile-injected";
+        sep.style.cssText = "border-top:1px solid var(--gray-100);margin-top:0.25rem;padding-top:0.75rem;display:flex;flex-direction:column;gap:0.75rem;";
+
+        // Mes commandes button
+        sep.innerHTML += `<a href="javascript:void(0)" onclick="document.querySelector('.nav-links').style.display='';openMyOrders();" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--green-dark);font-size:0.95rem;">📦 Mes commandes</a>`;
+
+        // Connexion or logout based on state
+        if (currentUser) {
+          sep.innerHTML += `<a href="javascript:void(0)" onclick="document.querySelector('.nav-links').style.display='';logout();" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#ff6b6b;font-size:0.95rem;">🚪 Se déconnecter</a>`;
+        } else {
+          sep.innerHTML += `<a href="javascript:void(0)" onclick="document.querySelector('.nav-links').style.display='';openModal('login-modal');" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--gray-900);font-size:0.95rem;">👤 Connexion</a>`;
+        }
+
+        links.appendChild(sep);
       }
 
       // PRODUCT DETAIL MODAL
@@ -4954,13 +4966,34 @@
         variantsEl.innerHTML = p.variants
           .map(
             (v, i) => `
-    <button class="pm-variant-chip ${i === 0 ? "active" : ""}" onclick="pmSelectVariant(${i})">${v}</button>
+    <button class="pm-variant-chip" onclick="pmToggleVariant(${i})" data-index="${i}">${v}</button>
   `,
           )
           .join("");
+        // Select first variant by default
+        pmSelectedVariants = [0];
+        variantsEl.querySelector('[data-index="0"]')?.classList.add("active");
 
         updatePmPrice();
         openModal("product-modal");
+      }
+
+      // Multi-variant selection
+      let pmSelectedVariants = [0];
+
+      function pmToggleVariant(index) {
+        const chips = document.querySelectorAll(".pm-variant-chip");
+        if (pmSelectedVariants.includes(index)) {
+          // Deselect only if more than one selected
+          if (pmSelectedVariants.length > 1) {
+            pmSelectedVariants = pmSelectedVariants.filter(i => i !== index);
+            chips[index]?.classList.remove("active");
+          }
+        } else {
+          pmSelectedVariants.push(index);
+          chips[index]?.classList.add("active");
+        }
+        updatePmPrice();
       }
 
       function pmSelectVariant(index) {
@@ -4996,33 +5029,34 @@
 
       function pmBuyNow() {
         if (!pmCurrentProduct) return;
-        // Pre-fill checkout cart with just this product at selected variant/qty
-        checkoutCart = [
-          {
-            id: pmCurrentProduct.id,
-            qty: pmCurrentQty,
-            variant: pmCurrentVariant,
-          },
-        ];
+        // Add one cart item per selected variant
+        checkoutCart = pmSelectedVariants.map(variantIndex => ({
+          id: pmCurrentProduct.id,
+          qty: pmCurrentQty,
+          variant: variantIndex,
+        }));
         closeModal("product-modal");
         openModal("checkout-modal");
       }
 
       function pmAddToCart() {
         if (!pmCurrentProduct) return;
-        const existing = checkoutCart.find(
-          (x) => x.id === pmCurrentProduct.id && x.variant === pmCurrentVariant,
-        );
-        if (existing) existing.qty += pmCurrentQty;
-        else
-          checkoutCart.push({
+        // Add one cart item per selected variant
+        pmSelectedVariants.forEach(variantIndex => {
+          const existing = checkoutCart.find(
+            (x) => x.id === pmCurrentProduct.id && x.variant === variantIndex,
+          );
+          if (existing) existing.qty += pmCurrentQty;
+          else checkoutCart.push({
             id: pmCurrentProduct.id,
             qty: pmCurrentQty,
-            variant: pmCurrentVariant,
+            variant: variantIndex,
           });
+        });
         updateCartBadge();
         closeModal("product-modal");
-        showToast(`${pmCurrentProduct.name} ajouté au panier.`);
+        const names = pmSelectedVariants.map(i => pmCurrentProduct.variants[i]).join(", ");
+        showToast(`✅ ${pmCurrentProduct.name} (${names}) ajouté au panier !`);
       }
 
       // AUTH
