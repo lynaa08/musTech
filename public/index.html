@@ -2939,31 +2939,15 @@
             ">
             Informations de livraison
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nom Complet</label
-              ><input type="text" id="checkout-name" placeholder="Ahmed Benali" />
-            </div>
-            <div class="form-group">
-              <label>Numéro de Téléphone *</label
-              ><input type="tel" id="checkout-phone" placeholder="0558210430" required />
-            </div>
+          <div class="form-group">
+            <label>Numéro de Téléphone *</label>
+            <input type="tel" id="checkout-phone" placeholder="0558210430" required />
           </div>
           <div class="form-group">
             <label>Wilaya *</label>
             <select id="wilaya-select" onchange="updateShipping(this)" required>
               <option value="">-- Sélectionnez votre Wilaya --</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label>Adresse <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label
-            ><input type="text" id="checkout-address" placeholder="Rue, quartier, commune..." />
-          </div>
-          <div class="form-group">
-            <label>Remarques <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label
-            ><textarea id="checkout-notes"
-              rows="2"
-              placeholder="Instructions spéciales..."></textarea>
           </div>
 
           <!-- TOTALS -->
@@ -4788,15 +4772,13 @@
         }
 
         const wilayaName = wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
-        const customer = nameEl?.value.trim() || "Client";
         const phone = phoneEl?.value.trim();
-        const address = addrEl?.value.trim() || "—";
 
         const orderData = {
-          customer,
+          customer: phone,
           phone,
           wilaya: wilayaName,
-          address,
+          address: "—",
           items: checkoutCart.map((item) => ({
             id: item.id,
             variant: item.variant,
