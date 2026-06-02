@@ -2451,7 +2451,7 @@
           <div id="admin-shipping" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Livraison par Wilaya</h1>
-              <button class="btn btn-primary">
+              <button class="btn btn-primary" onclick="saveWilayas()">
                 Enregistrer les Modifications
               </button>
             </div>
@@ -4227,21 +4227,86 @@
         if (sel && sel.options.length <= 1) {
           WILAYAS.forEach((w) => {
             const o = document.createElement("option");
-            o.value = w.price;
-            o.textContent = `${w.name} — ${w.price} DA`;
+            const price = w.shipping_price ?? w.price ?? 0;
+            o.value = price;
+            o.textContent = `${w.name} — ${price} DA`;
             sel.appendChild(o);
           });
         }
         const mgr = document.getElementById("wilaya-manager");
         if (mgr) {
-          mgr.innerHTML = WILAYAS.map(
-            (w) => `
+          mgr.innerHTML = WILAYAS.map((w) => {
+            const price = w.shipping_price ?? w.price ?? 0;
+            const active = w.active !== 0;
+            return `
       <div class="wilaya-row">
         <span class="wilaya-name">${w.name}</span>
-        <input class="wilaya-price-input" type="number" value="${w.price}" min="0">
-        <span class="wilaya-toggle" title="Toggle">✅</span>
-      </div>`,
-          ).join("");
+        <input class="wilaya-price-input" type="number" value="${price}" min="0" data-id="${w.id}">
+        <span class="wilaya-toggle" title="Activer/Désactiver" data-id="${w.id}" data-active="${active ? 1 : 0}"
+          onclick="toggleWilaya(this)"
+          style="cursor:pointer;font-size:1.1rem;">${active ? "✅" : "❌"}</span>
+      </div>`;
+          }).join("");
+        }
+      }
+
+      function toggleWilaya(el) {
+        const newActive = el.dataset.active === "1" ? 0 : 1;
+        el.dataset.active = newActive;
+        el.textContent = newActive ? "✅" : "❌";
+      }
+
+      async function saveWilayas() {
+        const inputs = document.querySelectorAll(
+          ".wilaya-price-input[data-id]",
+        );
+        const toggles = document.querySelectorAll(".wilaya-toggle[data-id]");
+        if (!inputs.length) {
+          showToast("⚠️ Aucun prix à enregistrer.");
+          return;
+        }
+
+        const btn = document.querySelector("#admin-shipping .btn-primary");
+        if (btn) {
+          btn.textContent = "⏳ Enregistrement...";
+          btn.disabled = true;
+        }
+
+        try {
+          const promises = [];
+          inputs.forEach((input) => {
+            const id = input.dataset.id;
+            const shipping_price = parseInt(input.value) || 0;
+            const toggle = document.querySelector(
+              `.wilaya-toggle[data-id="${id}"]`,
+            );
+            const active = toggle ? parseInt(toggle.dataset.active) : 1;
+            promises.push(WilayasAPI.update(id, { shipping_price, active }));
+          });
+          await Promise.all(promises);
+
+          // Reload fresh wilaya data so checkout form gets updated prices
+          WILAYAS = await WilayasAPI.getAll();
+          // Reset checkout select so it rebuilds with new prices
+          const sel = document.getElementById("wilaya-select");
+          if (sel) {
+            while (sel.options.length > 1) sel.remove(1);
+            WILAYAS.forEach((w) => {
+              const o = document.createElement("option");
+              const price = w.shipping_price ?? w.price ?? 0;
+              o.value = price;
+              o.textContent = `${w.name} — ${price} DA`;
+              sel.appendChild(o);
+            });
+          }
+          showToast("✅ Prix de livraison enregistrés !");
+        } catch (e) {
+          showToast("⚠️ Erreur: " + e.message);
+        } finally {
+          if (btn) {
+            btn.textContent = "Enregistrer les Modifications";
+            btn.disabled = false;
+          }
         }
       }
 
