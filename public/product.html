@@ -153,16 +153,19 @@
         flex-wrap: wrap;
         margin-top: 0.85rem;
         justify-content: center;
+        align-items: center;
       }
       .thumb {
-        width: 58px;
-        height: 58px;
+        width: 64px;
+        height: 64px;
         object-fit: cover;
         border-radius: 10px;
         cursor: pointer;
         border: 2px solid transparent;
         transition: 0.2s;
         background: #fff;
+        flex-shrink: 0;
+        display: block;
       }
       .thumb.active {
         border-color: var(--green);
@@ -722,6 +725,27 @@
         btn.textContent = "⏳ En cours...";
         try {
           const res = await OrdersAPI.place(orderData);
+          // Save order ref locally so user can track without account
+          try {
+            const saved = JSON.parse(
+              localStorage.getItem("mt_guest_orders") || "[]",
+            );
+            saved.unshift({
+              order_ref: res.order_ref || "#MT-" + res.id,
+              id: res.id,
+              status: res.status || "pending",
+              created_at: res.created_at || new Date().toISOString(),
+              wilaya: orderData.wilaya,
+              total: res.total,
+              items: res.items || orderData.items,
+              customer: name,
+              phone,
+            });
+            localStorage.setItem(
+              "mt_guest_orders",
+              JSON.stringify(saved.slice(0, 50)),
+            );
+          } catch (e) {}
           document.getElementById("checkout-form").style.display = "none";
           document.getElementById("share-actions").style.display = "none";
           const box = document.getElementById("success-box");

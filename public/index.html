@@ -2050,9 +2050,9 @@
       <ul class="nav-links">
         <li><a href="#" onclick="showPage('home')">Accueil</a></li>
         <li><a href="#" onclick="showPage('shop')">Boutique</a></li>
-        <li><a href="#" onclick="showSection('pc-parts')">Pièces PC</a></li>
+        <li><a href="#" onclick="showSection('PC Parts')">Pièces PC</a></li>
         <li>
-          <a href="#" onclick="showSection('cosmétiques')">Cosmétiques PC</a>
+          <a href="#" onclick="showSection('Cosmétiques PC')">Cosmétiques PC</a>
         </li>
         <li id="admin-nav-link" style="display: none">
           <a href="#" onclick="showPage('admin')">Admin ⚙️</a>
@@ -2064,7 +2064,6 @@
           class="btn btn-ghost"
           id="my-orders-btn"
           onclick="openMyOrders()"
-          style="display: none"
           >📦 Mes commandes</a
         >
         <a
@@ -2141,21 +2140,25 @@
             ✨ Tous les Produits
           </div>
 
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">
+          <div class="cat-chip" onclick="filterCat(this, 'PC Parts')">
             💻 Pièces PC
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
+          <div class="cat-chip" onclick="filterCat(this, 'Cosmétiques PC')">
             🎨 Cosmétiques PC
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">🖥️ Écrans</div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">
+          <div class="cat-chip" onclick="filterCat(this, 'PC Parts')">
+            🖥️ Écrans
+          </div>
+          <div class="cat-chip" onclick="filterCat(this, 'PC Parts')">
             ⌨️ Claviers
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">🖱️ Souris</div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
+          <div class="cat-chip" onclick="filterCat(this, 'PC Parts')">
+            🖱️ Souris
+          </div>
+          <div class="cat-chip" onclick="filterCat(this, 'Cosmétiques PC')">
             🧪 Pâte Thermique
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
+          <div class="cat-chip" onclick="filterCat(this, 'Cosmétiques PC')">
             🖥️ Boîtiers
           </div>
         </div>
@@ -4498,9 +4501,9 @@
         document
           .querySelectorAll("#shop-grid .product-card")
           .forEach((card) => {
-            const c = card.dataset.cat;
+            const c = (card.dataset.cat || "").trim();
             card.style.display =
-              cat === "all" || c === cat.charAt(0).toUpperCase() + cat.slice(1)
+              cat === "all" || c.toLowerCase() === cat.toLowerCase()
                 ? ""
                 : "none";
           });
@@ -4603,8 +4606,8 @@
         cards.forEach((card) => {
           if (cat === "all") card.style.display = "";
           else {
-            const c = card.dataset.cat.toLowerCase();
-            card.style.display = c.includes(cat.toLowerCase()) ? "" : "none";
+            const c = (card.dataset.cat || "").toLowerCase().trim();
+            card.style.display = c === cat.toLowerCase().trim() ? "" : "none";
           }
         });
       }
@@ -5121,7 +5124,7 @@
         currentUser = null;
         document.getElementById("admin-nav-link").style.display = "none";
         const myOrdersBtn = document.getElementById("my-orders-btn");
-        if (myOrdersBtn) myOrdersBtn.style.display = "none";
+        if (myOrdersBtn) myOrdersBtn.style.display = ""; // always visible after logout
         const authBtn = document.getElementById("auth-btn");
         authBtn.textContent = "Connexion";
         authBtn.onclick = () => openModal("login-modal");
@@ -5131,29 +5134,26 @@
       }
 
       async function openMyOrders() {
-        if (!Auth.isLoggedIn()) {
-          openModal("login-modal");
-          return;
-        }
+        const body = document.getElementById("my-orders-body");
+        if (!body) return;
 
+        // Load guest orders from localStorage (orders placed without account)
+        let guestOrders = [];
         try {
-          const orders = await OrdersAPI.myOrders();
-          const body = document.getElementById("my-orders-body");
-          if (!body) return;
+          guestOrders = JSON.parse(
+            localStorage.getItem("mt_guest_orders") || "[]",
+          );
+        } catch (e) {}
 
-          if (orders.length === 0) {
-            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
-        <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
-        <p>Vous n'avez pas encore de commandes.</p>
-        <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats →</button>
-      </div>`;
-          } else {
-            body.innerHTML = orders
-              .map((o) => {
-                const itemNames = o.items
-                  ? o.items.map((i) => i.name + " ×" + i.qty).join(", ")
-                  : o.items + " article(s)";
-                return `
+        function renderOrderCard(o) {
+          const itemNames = o.items
+            ? Array.isArray(o.items)
+              ? o.items
+                  .map((i) => (i.name || i.id) + " ×" + (i.qty || 1))
+                  .join(", ")
+              : o.items
+            : "—";
+          return `
         <div style="border:1.5px solid var(--gray-100);border-radius:12px;padding:1rem;margin-bottom:0.75rem;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
             <span style="font-weight:800;color:var(--green-dark)">${o.order_ref || "#MT-" + o.id}</span>
@@ -5162,10 +5162,52 @@
           <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.4rem;">📅 ${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
           <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.4rem;">📍 ${o.wilaya}</div>
           <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;">${itemNames}</div>
-          <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">${o.total.toLocaleString()} DA</div>
+          <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">${(o.total || 0).toLocaleString()} DA</div>
         </div>`;
-              })
-              .join("");
+        }
+
+        if (!Auth.isLoggedIn()) {
+          // Show guest orders if available, otherwise prompt login
+          if (guestOrders.length > 0) {
+            body.innerHTML = `
+              <div style="background:var(--green-light);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.85rem;color:var(--green-dark);font-weight:600;">
+                💡 Ces commandes ont été passées sans compte. <a href="javascript:void(0)" onclick="closeModal('my-orders-modal');openModal('login-modal');" style="color:var(--green-dark);text-decoration:underline;">Connectez-vous</a> pour voir toutes vos commandes.
+              </div>
+              ${guestOrders.map(renderOrderCard).join("")}`;
+          } else {
+            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
+              <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+              <p style="margin-bottom:0.75rem;">Vous n'avez pas encore de commandes.</p>
+              <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1rem;">Si vous avez commandé sans compte, vos commandes apparaissent ici sur cet appareil.</p>
+              <button class="btn btn-primary" style="margin-top:0.5rem;" onclick="closeModal('my-orders-modal');openModal('login-modal');">🔐 Se connecter</button>
+            </div>`;
+          }
+          openModal("my-orders-modal");
+          return;
+        }
+
+        try {
+          const orders = await OrdersAPI.myOrders();
+
+          // Merge: account orders + guest orders not already in account
+          const accountRefs = new Set(
+            orders.map((o) => o.order_ref || "#MT-" + o.id),
+          );
+          const extraGuest = guestOrders.filter(
+            (o) => !accountRefs.has(o.order_ref),
+          );
+          const allOrders = [...orders, ...extraGuest].sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at),
+          );
+
+          if (allOrders.length === 0) {
+            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
+        <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+        <p>Vous n'avez pas encore de commandes.</p>
+        <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats →</button>
+      </div>`;
+          } else {
+            body.innerHTML = allOrders.map(renderOrderCard).join("");
           }
           openModal("my-orders-modal");
         } catch (e) {
