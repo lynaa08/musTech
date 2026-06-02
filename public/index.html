@@ -295,7 +295,7 @@
         margin-bottom: 1.5rem;
       }
       .hero-badge::before {
-        content: "✦";
+        content: "▸";
         font-size: 0.7rem;
       }
       .hero h1 {
@@ -1896,12 +1896,35 @@
         transition: all var(--transition);
         background: #fff;
         color: var(--gray-700);
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
       }
-      .pm-variant-chip:hover,
-      .pm-variant-chip.active {
+      .pm-variant-chip::before {
+        content: '';
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        transition: all 0.15s;
+      }
+      .pm-variant-chip:hover {
         border-color: var(--green);
         background: var(--green-light);
         color: var(--green-dark);
+      }
+      .pm-variant-chip.active {
+        border-color: var(--green-dark);
+        background: var(--green);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(62,207,110,0.35);
+      }
+      .pm-variant-chip.active::before {
+        content: '✓';
+        width: auto;
+        height: auto;
+        font-size: 0.75rem;
+        font-weight: 800;
       }
 
       /* Scroll to top */
@@ -2050,12 +2073,12 @@
       <ul class="nav-links">
         <li><a href="#" onclick="showPage('home')">Accueil</a></li>
         <li><a href="#" onclick="showPage('shop')">Boutique</a></li>
-        <li><a href="#" onclick="showSection('pc-parts')">Pièces PC</a></li>
+        <li><a href="#" onclick="showSection('PC Parts', ['PC Parts','Écrans','Claviers','Souris'])">Pièces PC</a></li>
         <li>
-          <a href="#" onclick="showSection('cosmétiques')">Cosmétiques PC</a>
+          <a href="#" onclick="showSection('Cosmétiques PC', ['Cosmétiques PC','Pâte Thermique','Boîtiers'])">Cosmétiques PC</a>
         </li>
         <li id="admin-nav-link" style="display: none">
-          <a href="#" onclick="showPage('admin')">Admin ⚙️</a>
+          <a href="#" onclick="showPage('admin')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Admin</a>
         </li>
       </ul>
       <div class="nav-actions">
@@ -2064,8 +2087,7 @@
           class="btn btn-ghost"
           id="my-orders-btn"
           onclick="openMyOrders()"
-          style="display: none"
-          >📦 Mes commandes</a
+          ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Mes commandes</a
         >
         <a
           href="javascript:void(0)"
@@ -2075,7 +2097,7 @@
           >Connexion</a
         >
         <button class="cart-btn" onclick="openModal('cart-modal')">
-          🛒 Panier
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Panier
           <span class="cart-badge" id="cart-count" style="display: none"
             >0</span
           >
@@ -2110,7 +2132,7 @@
                     .closest('.section')
                     .scrollIntoView({ behavior: 'smooth', block: 'start' })
                 ">
-                Voir la Boutique →
+                Voir la Boutique <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </button>
             </div>
           </div>
@@ -2138,32 +2160,30 @@
       <div class="categories-bar">
         <div class="categories-inner">
           <div class="cat-chip active" onclick="filterCat(this, 'all')">
-            ✨ Tous les Produits
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z"/><path d="M5 3L5.5 5L7 5.5L5.5 6L5 8L4.5 6L3 5.5L4.5 5L5 3Z"/><path d="M19 15L19.5 17L21 17.5L19.5 18L19 20L18.5 18L17 17.5L18.5 17L19 15Z"/></svg> Tous les Produits
           </div>
-          <button
-            class="btn btn-primary"
-            onclick="openModal('add-product-modal')">
-            + Ajouter un Produit
-          </button>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">
-            💻 Pièces PC
+          <div class="cat-chip" onclick="filterCat(this, 'PC Parts', ['PC Parts','Écrans','Claviers','Souris'])">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg> Pièces PC
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            🎨 Cosmétiques PC
+          <div class="cat-chip" onclick="filterCat(this, 'Cosmétiques PC', ['Cosmétiques PC','Pâte Thermique','Boîtiers'])">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg> Cosmétiques PC
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">🖥️ Écrans</div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">
-            ⌨️ Claviers
+          <div class="cat-chip" onclick="filterCat(this, 'Écrans')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Écrans
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">🖱️ Souris</div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            🧪 Pâte Thermique
+          <div class="cat-chip" onclick="filterCat(this, 'Claviers')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6.01" y2="10"/><line x1="10" y1="10" x2="10.01" y2="10"/><line x1="14" y1="10" x2="14.01" y2="10"/><line x1="18" y1="10" x2="18.01" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg> Claviers
           </div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            🖥️ Boîtiers
+          <div class="cat-chip" onclick="filterCat(this, 'Souris')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="7"/><line x1="12" y1="6" x2="12" y2="10"/></svg> Souris
+          </div>
+          <div class="cat-chip" onclick="filterCat(this, 'Pâte Thermique')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg> Pâte Thermique
+          </div>
+          <div class="cat-chip" onclick="filterCat(this, 'Boîtiers')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Boîtiers
           </div>
         </div>
-      </div>
 
       <!-- ALL PRODUCTS -->
       <section class="section">
@@ -2263,40 +2283,40 @@
                 href="javascript:void(0)"
                 class="active"
                 onclick="showAdminTab('dashboard', this)"
-                >📊 Tableau de Bord</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Tableau de Bord</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('orders', this)"
-                >📦 Commandes</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Commandes</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('products', this)"
-                >🛍️ Produits</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Produits</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('shipping', this)"
-                >🚚 Livraison</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Livraison</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('finance', this)"
-                >💰 Finances</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Finances</a
               >
             </li>
             <li>
               <a href="#" onclick="showPage('home')" style="margin-top: 2rem"
-                >← Retour à la Boutique</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Retour à la Boutique</a
               >
             </li>
             <li>
@@ -2304,7 +2324,7 @@
                 href="javascript:void(0)"
                 onclick="logout()"
                 style="color: #ff6b6b; margin-top: 0.5rem"
-                >🚪 Se Déconnecter</a
+                ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Se Déconnecter</a
               >
             </li>
           </ul>
@@ -2427,6 +2447,11 @@
           <div id="admin-products" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Produits</h1>
+              <button
+                class="btn btn-primary"
+                onclick="openModal('add-product-modal')">
+                + Ajouter un Produit
+              </button>
             </div>
             <div class="admin-table-card">
               <div style="overflow-x: auto">
@@ -2450,7 +2475,7 @@
           <div id="admin-shipping" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Livraison par Wilaya</h1>
-              <button class="btn btn-primary">
+              <button class="btn btn-primary" onclick="saveWilayas()">
                 Enregistrer les Modifications
               </button>
             </div>
@@ -2578,10 +2603,10 @@
           <div class="footer-col">
             <h4>Contact</h4>
             <ul>
-              <li><a href="#">📍 Alger, Algérie</a></li>
-              <li><a href="#">📞 0558210430</a></li>
-              <li><a href="#">✉️ mus.softwares@gmail.com</a></li>
-              <li><a href="#">🕐 9h – 20h Tous les jours</a></li>
+              <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Alger, Algérie</a></li>
+              <li><a href="tel:0558210430"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.81-.81a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.82 16z"/></svg> 0558210430</a></li>
+              <li><a href="mailto:mus.softwares@gmail.com"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> mus.softwares@gmail.com</a></li>
+              <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 9h – 20h Tous les jours</a></li>
             </ul>
           </div>
         </div>
@@ -2598,7 +2623,7 @@
         <div class="modal-header">
           <h3 id="pm-title">Produit</h3>
           <button class="modal-close" onclick="closeModal('product-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body" style="padding: 0">
@@ -2633,7 +2658,7 @@
                   position: relative;
                   min-height: 300px;
                 ">
-                <span id="pm-icon">🎮</span>
+                <span id="pm-icon"></span>
                 <span
                   id="pm-badge-img"
                   style="
@@ -2699,18 +2724,11 @@
 
                 <!-- VARIANTS -->
                 <div style="margin-bottom: 1.25rem">
-                  <div
-                    style="
-                      font-size: 0.8rem;
-                      font-weight: 700;
-                      color: var(--gray-700);
-                      margin-bottom: 0.5rem;
-                    ">
-                    Options
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom: 0.5rem;">
+                    <div style="font-size: 0.8rem;font-weight: 700;color: var(--gray-700);">Options</div>
+                    <div style="font-size:0.72rem;color:var(--gray-400);">Sélection multiple possible</div>
                   </div>
-                  <div
-                    id="pm-variants"
-                    style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
+                  <div id="pm-variants" style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
                 </div>
 
                 <!-- PRICE -->
@@ -2834,13 +2852,13 @@
                     padding: 0.8rem;
                   "
                   onclick="pmBuyNow()">
-                  ⚡ Acheter Maintenant
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Acheter Maintenant
                 </button>
                 <button
                   class="btn btn-ghost"
                   style="width: 100%; justify-content: center"
                   onclick="pmAddToCart()">
-                  🛒 Ajouter au Panier
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Ajouter au Panier
                 </button>
               </div>
             </div>
@@ -2853,9 +2871,9 @@
     <div class="modal-overlay" id="cart-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3 id="cart-modal-title">🛒 Votre Panier (0 article)</h3>
+          <h3 id="cart-modal-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Votre Panier (0 article)</h3>
           <button class="modal-close" onclick="closeModal('cart-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body">
@@ -2877,7 +2895,7 @@
               closeModal('cart-modal');
               openModal('checkout-modal');
             ">
-            Passer la Commande →
+            Passer la Commande <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
         </div>
       </div>
@@ -2887,9 +2905,9 @@
     <div class="modal-overlay" id="checkout-modal">
       <div class="modal" style="max-width: 660px">
         <div class="modal-header">
-          <h3>🧾 Commander</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Commander</h3>
           <button class="modal-close" onclick="closeModal('checkout-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body">
@@ -2923,12 +2941,12 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Nom Complet *</label
-              ><input type="text" placeholder="Ahmed Benali" />
+              <label>Nom Complet <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
+              <input type="text" id="checkout-name" placeholder="Ahmed Benali" />
             </div>
             <div class="form-group">
-              <label>Numéro de Téléphone *</label
-              ><input type="tel" placeholder="0558210430" />
+              <label>Numéro de Téléphone *</label>
+              <input type="tel" id="checkout-phone" placeholder="0558210430" />
             </div>
           </div>
           <div class="form-group">
@@ -2938,14 +2956,53 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Adresse Complète *</label
-            ><input type="text" placeholder="Rue, quartier, commune..." />
+            <label>Type de Livraison *</label>
+            <div style="display:flex;gap:0.75rem;margin-top:0.25rem;">
+              <label onclick="setDeliveryType('domicile')" id="delivery-domicile" style="flex:1;display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;border:2px solid var(--green);border-radius:10px;cursor:pointer;background:var(--green-light);transition:all 0.2s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:700;color:var(--green-dark);">À Domicile</div>
+                  <div style="font-size:0.72rem;color:var(--gray-500);">Livré chez vous</div>
+                </div>
+              </label>
+              <label onclick="setDeliveryType('bureau')" id="delivery-bureau" style="flex:1;display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;border:2px solid var(--gray-100);border-radius:10px;cursor:pointer;background:#fff;transition:all 0.2s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gray-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:700;color:var(--gray-700);">Au Bureau</div>
+                  <div style="font-size:0.72rem;color:var(--gray-500);">Point de retrait</div>
+                </div>
+              </label>
+            </div>
+            <input type="hidden" id="delivery-type" value="domicile" />
+            <!-- Bureau selector - hidden by default -->
+            <div id="bureau-selector" style="display:none;margin-top:0.75rem;">
+              <select id="bureau-company" onchange="updateBureauOffices()" style="width:100%;padding:0.65rem 0.9rem;border-radius:8px;border:1.5px solid var(--gray-100);font-family:inherit;font-size:0.9rem;margin-bottom:0.5rem;outline:none;">
+                <option value="">-- Choisir la société --</option>
+                <option value="yalidine">Yalidine Express</option>
+                <option value="zaki">Zaki Express</option>
+                <option value="procolis">Procolis</option>
+                <option value="noest">Noest Express</option>
+                <option value="eship">eShip</option>
+                <option value="maystro">Maystro Delivery</option>
+                <option value="dhlex">DHlex</option>
+                <option value="guepex">Guepex</option>
+              </select>
+              <select id="bureau-office" style="width:100%;padding:0.65rem 0.9rem;border-radius:8px;border:1.5px solid var(--gray-100);font-family:inherit;font-size:0.9rem;outline:none;display:none;">
+                <option value="">-- Choisir le bureau --</option>
+
+              </select>
+              <select id="bureau-wilaya-select" onchange="updateBureauOffices()" style="width:100%;padding:0.65rem 0.9rem;border-radius:8px;border:1.5px solid var(--gray-100);font-family:inherit;font-size:0.9rem;margin-bottom:0.5rem;outline:none;">
+  <option value="">-- Choisir la wilaya --</option>
+</select>
+            </div>
           </div>
           <div class="form-group">
-            <label>Remarques (facultatif)</label
-            ><textarea
-              rows="2"
-              placeholder="Instructions spéciales..."></textarea>
+            <label>Adresse <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
+            <input type="text" id="checkout-address" placeholder="Rue, quartier, commune..." />
+          </div>
+          <div class="form-group">
+            <label>Remarques <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
+            <textarea id="checkout-notes" rows="2" placeholder="Instructions spéciales..."></textarea>
           </div>
 
           <!-- TOTALS -->
@@ -2967,7 +3024,7 @@
             class="btn btn-primary"
             style="width: 100%"
             onclick="placeOrder()">
-            Confirmer la Commande ✓
+            Confirmer la Commande
           </button>
         </div>
       </div>
@@ -2977,9 +3034,9 @@
     <div class="modal-overlay" id="login-modal">
       <div class="modal" style="max-width: 420px">
         <div class="modal-header">
-          <h3 id="auth-modal-title">👤 Connexion</h3>
+          <h3 id="auth-modal-title"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Connexion</h3>
           <button class="modal-close" onclick="closeModal('login-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body">
@@ -3112,9 +3169,9 @@
     <div class="modal-overlay" id="my-orders-modal">
       <div class="modal" style="max-width: 580px">
         <div class="modal-header">
-          <h3>📦 Mes Commandes</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Mes Commandes</h3>
           <button class="modal-close" onclick="closeModal('my-orders-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body" id="my-orders-body" style="padding: 1rem"></div>
@@ -3125,9 +3182,9 @@
     <div class="modal-overlay" id="add-product-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>➕ Ajouter un Produit</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Ajouter un Produit</h3>
           <button class="modal-close" onclick="closeModal('add-product-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body">
@@ -3166,6 +3223,11 @@
               <select id="ap-cat">
                 <option value="PC Parts">Pièces PC</option>
                 <option value="Cosmétiques PC">Cosmétiques PC</option>
+                <option value="Écrans">Écrans</option>
+                <option value="Claviers">Claviers</option>
+                <option value="Souris">Souris</option>
+                <option value="Pâte Thermique">Pâte Thermique</option>
+                <option value="Boîtiers">Boîtiers</option>
               </select>
             </div>
             <div class="form-group">
@@ -3178,7 +3240,7 @@
             ><input
               type="text"
               id="ap-icon"
-              placeholder="ex. 🖥️"
+              placeholder="ex. RTX 4090"
               maxlength="4"
               style="font-size: 1.5rem; width: 80px" />
           </div>
@@ -3222,7 +3284,7 @@
             class="btn btn-primary"
             style="width: 100%"
             onclick="saveNewProduct()">
-            ✅ Enregistrer le Produit
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Enregistrer le Produit
           </button>
         </div>
       </div>
@@ -3232,13 +3294,13 @@
     <div class="modal-overlay" id="confirm-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>✅ Commande Confirmée !</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Commande Confirmée !</h3>
           <button class="modal-close" onclick="closeModal('confirm-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body" style="text-align: center; padding: 2rem">
-          <div style="font-size: 4rem; margin-bottom: 1rem">🎉</div>
+          <div style="margin-bottom:1rem"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
           <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem">
             Merci pour votre commande !
           </h2>
@@ -3271,7 +3333,7 @@
               closeModal('confirm-modal');
               openModal('rating-modal');
             ">
-            Terminer & Évaluer →
+            Terminer & Évaluer <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </button>
         </div>
       </div>
@@ -3281,9 +3343,9 @@
     <div class="modal-overlay" id="rating-modal">
       <div class="modal" style="max-width: 420px">
         <div class="modal-header">
-          <h3>⭐ Évaluez votre expérience</h3>
+          <h3>Évaluez votre expérience</h3>
           <button class="modal-close" onclick="closeModal('rating-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body" style="text-align: center; padding: 1.5rem">
@@ -3378,7 +3440,7 @@
             class="btn btn-primary"
             style="width: 100%"
             onclick="submitRating()">
-            Envoyer mon avis ✓
+            Envoyer mon avis
           </button>
         </div>
       </div>
@@ -3388,11 +3450,11 @@
     <div class="modal-overlay" id="edit-product-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>✏️ Modifier le Produit</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Modifier le Produit</h3>
           <button
             class="modal-close"
             onclick="closeModal('edit-product-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body">
@@ -3418,6 +3480,11 @@
               <select id="ep-cat">
                 <option value="PC Parts">Pièces PC</option>
                 <option value="Cosmétiques PC">Cosmétiques PC</option>
+                <option value="Écrans">Écrans</option>
+                <option value="Claviers">Claviers</option>
+                <option value="Souris">Souris</option>
+                <option value="Pâte Thermique">Pâte Thermique</option>
+                <option value="Boîtiers">Boîtiers</option>
               </select>
             </div>
             <div class="form-group">
@@ -3503,7 +3570,7 @@
                 <div
                   id="ep-drop-icon"
                   style="font-size: 1.6rem; margin-bottom: 0.3rem">
-                  🖼️
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 </div>
                 <div
                   id="ep-drop-label"
@@ -3582,7 +3649,7 @@
                       align-items: center;
                       justify-content: center;
                     ">
-                    ✕
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                   </button>
                 </div>
               </div>
@@ -3594,7 +3661,7 @@
             class="btn btn-primary"
             style="width: 100%"
             onclick="saveEditProduct()">
-            💾 Enregistrer les Modifications
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Enregistrer les Modifications
           </button>
         </div>
       </div>
@@ -3604,9 +3671,9 @@
     <div class="modal-overlay" id="view-order-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>📦 Détails de la Commande</h3>
+          <h3><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Détails de la Commande</h3>
           <button class="modal-close" onclick="closeModal('view-order-modal')">
-            ✕
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
         <div class="modal-body" id="view-order-body"></div>
@@ -3617,19 +3684,19 @@
             class="btn btn-primary"
             style="flex: 1"
             onclick="changeOrderStatus('shipped')">
-            🚚 Marquer Expédié
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Marquer Expédié
           </button>
           <button
             class="btn btn-ghost"
             style="flex: 1"
             onclick="changeOrderStatus('delivered')">
-            ✅ Marquer Livré
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Marquer Livré
           </button>
           <button
             class="btn"
             style="flex: 1; background: #fee2e2; color: #dc2626"
             onclick="changeOrderStatus('cancelled')">
-            ❌ Annuler
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Annuler
           </button>
         </div>
       </div>
@@ -3700,10 +3767,10 @@
           ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="${p.name}">`
           : `<span style="font-size:3.5rem">${p.icon}</span>`;
         return `
-  <div class="product-card" data-cat="${p.cat}" onclick="openProductModal(${p.id})" style="cursor:pointer;">
+  <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer;">
     <div class="product-img" id="card-img-${p.id}">
       ${badgeHTML}
-      <button class="product-wishlist" title="Wishlist" onclick="event.stopPropagation()">♡</button>
+      <button class="product-wishlist" title="Wishlist" onclick="event.stopPropagation()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
       ${imgContent}
     </div>
     <div class="product-body">
@@ -3715,7 +3782,7 @@
           <span class="price-main" id="price-${p.id}">${p.variantPrices[0].toLocaleString()} DA</span>
           ${oldPriceHTML}
         </div>
-        <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier">🛒</button>
+        <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
       </div>
     </div>
   </div>`;
@@ -3838,7 +3905,7 @@
               <div style="width:42px;height:42px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px dashed ${p.img ? "var(--green)" : "var(--gray-200)"};position:relative;" onclick="triggerImgUpload(${p.id})" title="Changer l'image">
                 ${p.img ? `<img src="${p.img.startsWith("http") ? p.img : "http://localhost:3001" + p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">` : p.icon}
                 <div style="position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:0.2s;" class="img-hover-overlay">
-                  <span style="color:#fff;font-size:0.7rem;font-weight:700;">📷</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 </div>
               </div>
               <span style="font-weight:600;">${p.name}</span>
@@ -3851,7 +3918,7 @@
           <td><span class="status-badge ${p.stock > 0 ? "status-delivered" : "status-cancelled"}">${p.stock > 0 ? "Actif" : "Rupture"}</span></td>
           <td><div class="action-btns">
             <button class="action-btn action-edit" onclick="openEditProduct(${p.id})">Modifier</button>
-            <button class="action-btn action-del" onclick="deleteOrder(${p.id})">Supprimer</button>
+            <button class="action-btn action-del" onclick="deleteProduct(${p.id})">Supprimer</button>
           </div></td>
         </tr>`,
             ).join("");
@@ -3958,9 +4025,9 @@
           closeModal("edit-product-modal");
           await populateAdminTables();
           populateProducts();
-          showToast(`✅ Produit modifié !`);
+          showToast(`Produit modifié avec succès.`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4028,9 +4095,9 @@
           await ProductsAPI.delete(id);
           await populateAdminTables();
           populateProducts();
-          showToast(`🗑️ Produit supprimé.`);
+          showToast(`Produit supprimé.`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4071,9 +4138,9 @@
         try {
           await OrdersAPI.updateStatus(id, status);
           await populateAdminTables();
-          showToast(`✅ Commande ${id} → ${statusLabel(status)}`);
+          showToast(`Commande ${id} → ${statusLabel(status)}`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4082,9 +4149,9 @@
         try {
           await OrdersAPI.delete(id);
           await populateAdminTables();
-          showToast(`🗑️ Commande ${id} supprimée.`);
+          showToast(`Commande ${id} supprimée.`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4116,14 +4183,14 @@
           parseInt(document.getElementById("ap-old-price").value) || null;
         const cat = document.getElementById("ap-cat").value;
         const stock = parseInt(document.getElementById("ap-stock").value);
-        const icon = document.getElementById("ap-icon").value.trim() || "📦";
+        const icon = document.getElementById("ap-icon").value.trim() || "";
         const desc = document.getElementById("ap-desc").value.trim();
         const errEl = document.getElementById("add-product-error");
 
         // Validate
         if (!name || !price || !stock) {
           errEl.textContent =
-            "⚠ Veuillez remplir les champs obligatoires (Nom, Prix, Stock).";
+            "Veuillez remplir les champs obligatoires (Nom, Prix, Stock).";
           errEl.style.display = "block";
           return;
         }
@@ -4193,9 +4260,9 @@
           document.getElementById("ap-imgs").value = "";
 
           closeModal("add-product-modal");
-          showToast(`✅ "${name}" ajouté avec succès !`);
+          showToast(`"${name}" ajouté avec succès.`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4215,7 +4282,7 @@
           // Refresh admin table and product grid
           populateAdminTables();
           populateProducts();
-          showToast(`✅ Image mise à jour pour ${p.name}`);
+          showToast(`Image mise à jour.`);
         };
         reader.readAsDataURL(file);
       }
@@ -4223,24 +4290,91 @@
       // WILAYAS
       function populateWilayas() {
         const sel = document.getElementById("wilaya-select");
-        if (sel && sel.options.length <= 1) {
+        if (sel) {
+          // Always rebuild with latest WILAYAS data
+          while (sel.options.length > 1) sel.remove(1);
           WILAYAS.forEach((w) => {
             const o = document.createElement("option");
-            o.value = w.price;
-            o.textContent = `${w.name} — ${w.price} DA`;
+            const price = w.shipping_price ?? w.price ?? 0;
+            o.value = price;
+            o.textContent = `${w.name} — ${price} DA`;
             sel.appendChild(o);
           });
         }
         const mgr = document.getElementById("wilaya-manager");
         if (mgr) {
-          mgr.innerHTML = WILAYAS.map(
-            (w) => `
+          mgr.innerHTML = WILAYAS.map((w) => {
+            const price = w.shipping_price ?? w.price ?? 0;
+            const active = w.active !== 0;
+            return `
       <div class="wilaya-row">
         <span class="wilaya-name">${w.name}</span>
-        <input class="wilaya-price-input" type="number" value="${w.price}" min="0">
-        <span class="wilaya-toggle" title="Toggle">✅</span>
-      </div>`,
-          ).join("");
+        <input class="wilaya-price-input" type="number" value="${price}" min="0" data-id="${w.id}">
+        <span class="wilaya-toggle" title="Activer/Désactiver" data-id="${w.id}" data-active="${active ? 1 : 0}"
+          onclick="toggleWilaya(this)"
+          style="cursor:pointer;font-size:1.1rem;">${active ? "Actif" : "Inactif"}</span>
+      </div>`;
+          }).join("");
+        }
+      }
+
+      function toggleWilaya(el) {
+        const newActive = el.dataset.active === "1" ? 0 : 1;
+        el.dataset.active = newActive;
+        el.textContent = newActive ? "Actif" : "Inactif";
+      }
+
+      async function saveWilayas() {
+        const inputs = document.querySelectorAll(
+          ".wilaya-price-input[data-id]",
+        );
+        const toggles = document.querySelectorAll(".wilaya-toggle[data-id]");
+        if (!inputs.length) {
+          showToast("Aucun prix à enregistrer.");
+          return;
+        }
+
+        const btn = document.querySelector("#admin-shipping .btn-primary");
+        if (btn) {
+          btn.textContent = "Enregistrement...";
+          btn.disabled = true;
+        }
+
+        try {
+          const promises = [];
+          inputs.forEach((input) => {
+            const id = input.dataset.id;
+            const shipping_price = parseInt(input.value) || 0;
+            const toggle = document.querySelector(
+              `.wilaya-toggle[data-id="${id}"]`,
+            );
+            const active = toggle ? parseInt(toggle.dataset.active) : 1;
+            promises.push(WilayasAPI.update(id, { shipping_price, active }));
+          });
+          await Promise.all(promises);
+
+          // Reload fresh wilaya data so checkout form gets updated prices
+          WILAYAS = await WilayasAPI.getAll();
+          // Reset checkout select so it rebuilds with new prices
+          const sel = document.getElementById("wilaya-select");
+          if (sel) {
+            while (sel.options.length > 1) sel.remove(1);
+            WILAYAS.forEach((w) => {
+              const o = document.createElement("option");
+              const price = w.shipping_price ?? w.price ?? 0;
+              o.value = price;
+              o.textContent = `${w.name} — ${price} DA`;
+              sel.appendChild(o);
+            });
+          }
+          showToast("Prix de livraison enregistrés.");
+        } catch (e) {
+          showToast("Erreur: " + e.message);
+        } finally {
+          if (btn) {
+            btn.textContent = "Enregistrer les Modifications";
+            btn.disabled = false;
+          }
         }
       }
 
@@ -4295,7 +4429,7 @@
         <div style="font-weight:800;font-size:0.95rem;color:var(--gray-900);" id="line-total-${p.id}">${lineTotal} DA</div>
         <div style="font-size:0.72rem;color:var(--gray-400);" id="unit-price-${p.id}">${activePrice.toLocaleString()} DA / u</div>
       </div>
-      <button onclick="removeCheckoutItem(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1rem;flex-shrink:0;padding:0;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='var(--gray-300)'">✕</button>
+      <button onclick="removeCheckoutItem(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1rem;flex-shrink:0;padding:0;line-height:1;transition:color 0.2s;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='var(--gray-300)'"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>`;
           })
           .join("");
@@ -4391,7 +4525,7 @@
           page === "admin" &&
           (!currentUser || currentUser.role !== "admin")
         ) {
-          showToast("🔒 Accès réservé à l'administrateur.");
+          showToast("Accès réservé à l'administrateur.");
           return;
         }
         document
@@ -4425,16 +4559,16 @@
         if (tab === "finance") renderFinanceChart();
       }
 
-      function showSection(cat) {
+      function showSection(cat, group) {
         showPage("shop");
+        const targets = group ? group.map(s => s.toLowerCase().trim()) : null;
         document
           .querySelectorAll("#shop-grid .product-card")
           .forEach((card) => {
-            const c = card.dataset.cat;
-            card.style.display =
-              cat === "all" || c === cat.charAt(0).toUpperCase() + cat.slice(1)
-                ? ""
-                : "none";
+            const c = (card.dataset.cat || "").toLowerCase().trim();
+            const match = cat === "all"
+              || (targets ? targets.includes(c) : c === cat.toLowerCase().trim());
+            card.style.display = match ? "" : "none";
           });
       }
 
@@ -4446,11 +4580,11 @@
 
         const count = checkoutCart.reduce((s, i) => s + i.qty, 0);
         if (titleEl)
-          titleEl.textContent = `🛒 Votre Panier (${count} article${count !== 1 ? "s" : ""})`;
+          titleEl.textContent = `Votre Panier (${count} article${count !== 1 ? "s" : ""})`;
 
         if (checkoutCart.length === 0) {
           container.innerHTML =
-            '<div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:0.9rem;">🛒 Votre panier est vide.</div>';
+            '<div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:0.9rem;">Votre panier est vide.</div>';
           if (summary) summary.style.display = "none";
           return;
         }
@@ -4469,7 +4603,7 @@
         <div style="font-size:0.75rem;color:var(--gray-500);">${p.variants[item.variant]} × ${item.qty}</div>
       </div>
       <div style="font-weight:700;color:var(--green-dark);font-size:0.9rem;">${price.toLocaleString()} DA</div>
-      <button onclick="removeFromCart(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1.1rem;padding:0 0.25rem;">✕</button>
+      <button onclick="removeFromCart(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1.1rem;padding:0 0.25rem;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>`;
           })
           .join("");
@@ -4510,7 +4644,7 @@
         }
         updateCartBadge();
         const p = PRODUCTS.find((x) => x.id === id);
-        showToast(`✅ ${p ? p.name : "Produit"} ajouté au panier !`);
+        showToast(`${p ? p.name : "Produit"} ajouté au panier.`);
       }
 
       function selectVariant(el, pid, variantIndex, prices) {
@@ -4526,17 +4660,22 @@
       }
 
       // FILTER CATEGORIES
-      function filterCat(el, cat) {
+      function filterCat(el, cat, group) {
         document
           .querySelectorAll(".cat-chip")
           .forEach((c) => c.classList.remove("active"));
         el.classList.add("active");
         const cards = document.querySelectorAll("#featured-grid .product-card");
+        const targets = group ? group.map(s => s.toLowerCase().trim()) : null;
         cards.forEach((card) => {
-          if (cat === "all") card.style.display = "";
-          else {
-            const c = card.dataset.cat.toLowerCase();
-            card.style.display = c.includes(cat.toLowerCase()) ? "" : "none";
+          if (cat === "all") {
+            card.style.display = "";
+          } else {
+            const c = (card.dataset.cat || "").toLowerCase().trim();
+            const match = targets
+              ? targets.includes(c)
+              : c === cat.toLowerCase().trim();
+            card.style.display = match ? "" : "none";
           }
         });
       }
@@ -4556,7 +4695,7 @@
         <div style="font-size:0.78rem;color:var(--gray-500)">${p.variants[0]}</div>
       </div>
       <div style="font-weight:700;color:var(--green-dark)">${p.price.toLocaleString()} DA</div>
-      <button onclick="this.closest('div').remove()" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1rem;">✕</button>
+      <button onclick="this.closest('div').remove()" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>`,
           )
           .join("");
@@ -4612,7 +4751,7 @@
             total: order.total,
             date: new Date().toLocaleString("fr-DZ"),
           })
-          .then(() => console.log("Email envoyé ✅"))
+          .then(() => console.log("Email envoyé"))
           .catch((e) => console.error("Email error:", e));
       }
 
@@ -4621,11 +4760,11 @@
       let _currentRating = 0;
       const RATING_LABELS = [
         "",
-        "Très mauvais 😞",
-        "Mauvais 😕",
-        "Correct 😐",
-        "Bien 😊",
-        "Excellent ! 🤩",
+        "Très mauvais",
+        "Mauvais",
+        "Correct",
+        "Bien",
+        "Excellent !",
       ];
 
       function setRating(n) {
@@ -4640,7 +4779,7 @@
 
       function submitRating() {
         if (!_currentRating) {
-          showToast("⚠️ Veuillez choisir une note !");
+          showToast("Veuillez choisir une note.");
           return;
         }
         const comment = document.getElementById("rating-comment").value.trim();
@@ -4668,35 +4807,102 @@
         populateAdminTables();
       }
 
+      const BUREAU_OFFICES = {
+        yalidine: ["Alger - Hussein Dey","Alger - Bab Ezzouar","Alger - Dar El Beida","Alger - Rouiba","Alger - Birtouta","Oran - Oran Centre","Oran - Es Senia","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Tipaza - Tipaza Centre","Médéa - Médéa Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Jijel - Jijel Centre","Guelma - Guelma Centre","Souk Ahras - Souk Ahras Centre","Ouargla - Ouargla Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Mascara - Mascara Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Sidi Bel Abbès - Sidi Bel Abbès Centre","Relizane - Relizane Centre","Aïn Defla - Aïn Defla Centre","Tissemsilt - Tissemsilt Centre","Aïn Témouchent - Aïn Témouchent Centre","Naâma - Naâma Centre","El Bayadh - El Bayadh Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Touggourt - Touggourt Centre","Laghouat - Laghouat Centre","Saïda - Saïda Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Khenchela - Khenchela Centre","Tébessa - Tébessa Centre","Oum El Bouaghi - OEB Centre","Béchar - Béchar Centre","Adrar - Adrar Centre","Tamanrasset - Tamanrasset Centre"],
+        zaki: ["Alger - Kouba","Alger - Bab El Oued","Alger - El Harrach","Alger - Hydra","Oran - Oran Centre","Oran - Bir El Djir","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Ouargla - Ouargla Centre","Ghardaïa - Ghardaïa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Chlef - Chlef Centre","Tiaret - Tiaret Centre","Mostaganem - Mostaganem Centre","Sidi Bel Abbès - SBA Centre","Mascara - Mascara Centre","El Oued - El Oued Centre","Touggourt - Touggourt Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre"],
+        procolis: ["Alger - Bachdjarrah","Alger - Bab Ezzouar","Alger - Dar El Beida","Alger - Birtouta","Alger - Rouiba","Oran - Oran Centre","Oran - Es Senia","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Tipaza - Tipaza Centre","Médéa - Médéa Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre","Oum El Bouaghi - OEB Centre","Guelma - Guelma Centre"],
+        noest: ["Alger - Hussein Dey","Alger - Bab Ezzouar","Alger - El Harrach","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Chlef - Chlef Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Tlemcen - Tlemcen Centre","Sidi Bel Abbès - SBA Centre"],
+        eship: ["Alger - Bab Ezzouar","Alger - Dar El Beida","Alger - Rouiba","Alger - Birtouta","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Ouargla - Ouargla Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre"],
+        maystro: ["Alger - Kouba","Alger - Bab El Oued","Alger - Hussein Dey","Alger - Bab Ezzouar","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre"],
+        dhlex: ["Alger - El Harrach","Alger - Bab Ezzouar","Alger - Dar El Beida","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre"],
+        guepex: ["Alger - Bachdjarrah","Alger - Bab Ezzouar","Alger - Hussein Dey","Alger - El Harrach","Oran - Oran Centre","Oran - Bir El Djir","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre","Guelma - Guelma Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Sidi Bel Abbès - SBA Centre","Mascara - Mascara Centre","Relizane - Relizane Centre","Aïn Defla - Aïn Defla Centre","Aïn Témouchent - Aïn Témouchent Centre"]
+      };
+
+      function updateBureauOffices() {
+        const company = document.getElementById("bureau-company").value;
+        const wilaya = document.getElementById("bureau-wilaya-select")?.value || "";
+        const officeSelect = document.getElementById("bureau-office");
+        officeSelect.innerHTML = '<option value="">-- Choisir le bureau --</option>';
+        if (company && BUREAU_OFFICES[company]) {
+          BUREAU_OFFICES[company].forEach(office => {
+            const opt = document.createElement("option");
+            opt.value = office;
+            opt.textContent = office;
+            officeSelect.appendChild(opt);
+          });
+          officeSelect.style.display = "block";
+        } else {
+          officeSelect.style.display = "none";
+        }
+      }
+
+      function setDeliveryType(type) {
+        document.getElementById("delivery-type").value = type;
+        const domEl = document.getElementById("delivery-domicile");
+        const burEl = document.getElementById("delivery-bureau");
+        const bureauSel = document.getElementById("bureau-selector");
+        if (type === "domicile") {
+          domEl.style.border = "2px solid var(--green)";
+          domEl.style.background = "var(--green-light)";
+          domEl.querySelector("svg").setAttribute("stroke", "var(--green-dark)");
+          domEl.querySelector("div div").style.color = "var(--green-dark)";
+          burEl.style.border = "2px solid var(--gray-100)";
+          burEl.style.background = "#fff";
+          burEl.querySelector("svg").setAttribute("stroke", "var(--gray-500)");
+          burEl.querySelector("div div").style.color = "var(--gray-700)";
+          bureauSel.style.display = "none";
+        } else {
+          burEl.style.border = "2px solid var(--green)";
+          burEl.style.background = "var(--green-light)";
+          burEl.querySelector("svg").setAttribute("stroke", "var(--green-dark)");
+          burEl.querySelector("div div").style.color = "var(--green-dark)";
+          domEl.style.border = "2px solid var(--gray-100)";
+          domEl.style.background = "#fff";
+          domEl.querySelector("svg").setAttribute("stroke", "var(--gray-500)");
+          domEl.querySelector("div div").style.color = "var(--gray-700)";
+          bureauSel.style.display = "block";
+        }
+      }
+
       // ── ORDER ─────────────────────────────────────────────────
       async function placeOrder() {
         const wilEl = document.getElementById("wilaya-select");
-        const nameEl = document.querySelector(
-          '#checkout-modal input[type="text"]',
-        );
-        const phoneEl = document.querySelector(
-          '#checkout-modal input[type="tel"]',
-        );
-        const addrEl = document.querySelectorAll(
-          '#checkout-modal input[type="text"]',
-        )[1];
+        const phoneEl = document.getElementById("checkout-phone");
+        const nameEl = document.getElementById("checkout-name");
+        const addrEl = document.getElementById("checkout-address");
+        const notesEl = document.getElementById("checkout-notes");
 
+        // Only phone + wilaya are required
+        if (!phoneEl?.value.trim()) {
+          showToast("Veuillez entrer votre numéro de téléphone !");
+          phoneEl?.focus();
+          return;
+        }
         if (!wilEl.value) {
-          showToast("⚠️ Veuillez sélectionner votre Wilaya !");
+          showToast("Veuillez sélectionner votre Wilaya !");
           return;
         }
 
-        const wilayaName =
-          wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
-        const customer = nameEl?.value.trim() || "Client";
-        const phone = phoneEl?.value.trim() || "—";
-        const address = addrEl?.value.trim() || "—";
+        const wilayaName = wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
+        const phone = phoneEl?.value.trim();
+        const customer = document.getElementById("checkout-name")?.value.trim() || phone;
+        const address = document.getElementById("checkout-address")?.value.trim() || "—";
+        const notes = document.getElementById("checkout-notes")?.value.trim() || "";
 
         const orderData = {
           customer,
           phone,
           wilaya: wilayaName,
-          address,
+          address: (() => {
+            const type = document.getElementById("delivery-type")?.value;
+            if (type === "bureau") {
+              const company = document.getElementById("bureau-company")?.options[document.getElementById("bureau-company").selectedIndex]?.text || "";
+              const office = document.getElementById("bureau-office")?.value || "";
+              return `Bureau — ${company} — ${office}`;
+            }
+            return "Domicile — " + (document.getElementById("checkout-address")?.value.trim() || "—");
+          })(),
+          notes: document.getElementById("checkout-notes")?.value.trim() || "",
           items: checkoutCart.map((item) => ({
             id: item.id,
             variant: item.variant,
@@ -4716,6 +4922,28 @@
           // Send email notification (optional)
           sendOrderEmail(resOrder);
 
+          // Save to localStorage so guest can view in "Mes commandes"
+          if (!currentUser || currentUser.role !== "admin") {
+            try {
+              const saved = JSON.parse(localStorage.getItem("mt_guest_orders") || "[]");
+              saved.unshift({
+                id: resOrder.id,
+                order_ref: resOrder.order_ref || ("#MT-" + resOrder.id),
+                customer: orderData.customer,
+                phone: orderData.phone,
+                wilaya: orderData.wilaya,
+                items: resOrder.items || checkoutCart.map(item => {
+                  const p = PRODUCTS.find(x => x.id === item.id);
+                  return { name: p ? p.name : item.id, qty: item.qty };
+                }),
+                total: resOrder.total || 0,
+                status: "pending",
+                created_at: new Date().toISOString()
+              });
+              localStorage.setItem("mt_guest_orders", JSON.stringify(saved.slice(0, 20)));
+            } catch(e) {}
+          }
+
           // Update stats if we are admin
           if (currentUser && currentUser.role === "admin") {
             populateAdminTables();
@@ -4728,7 +4956,7 @@
           closeModal("checkout-modal");
           openModal("confirm-modal");
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4752,10 +4980,30 @@
         const links = document.querySelector(".nav-links");
         if (links.style.display === "flex") {
           links.style.display = "";
-        } else {
-          links.style.cssText =
-            "display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:white;padding:1.5rem 2rem;gap:1rem;z-index:99;box-shadow:var(--shadow-lg);border-bottom:1px solid var(--gray-100)";
+          return;
         }
+        links.style.cssText =
+          "display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:white;padding:1.5rem 2rem;gap:1rem;z-index:99;box-shadow:var(--shadow-lg);border-bottom:1px solid var(--gray-100)";
+
+        // Remove old injected items so they rebuild fresh
+        links.querySelectorAll(".mobile-injected").forEach(el => el.remove());
+
+        // Separator
+        const sep = document.createElement("li");
+        sep.className = "mobile-injected";
+        sep.style.cssText = "border-top:1px solid var(--gray-100);margin-top:0.25rem;padding-top:0.75rem;display:flex;flex-direction:column;gap:0.75rem;";
+
+        // Mes commandes button
+        sep.innerHTML += `<a href="javascript:void(0)" onclick="document.querySelector('.nav-links').style.display='';openMyOrders();" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--green-dark);font-size:0.95rem;"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Mes commandes</a>`;
+
+        // Connexion or logout based on state
+        if (currentUser) {
+          sep.innerHTML += `<a href="javascript:void(0)" onclick="document.querySelector('.nav-links').style.display='';logout();" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#ff6b6b;font-size:0.95rem;"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Se déconnecter</a>`;
+        } else {
+          sep.innerHTML += `<a href="javascript:void(0)" onclick="document.querySelector('.nav-links').style.display='';openModal('login-modal');" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--gray-900);font-size:0.95rem;"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Connexion</a>`;
+        }
+
+        links.appendChild(sep);
       }
 
       // PRODUCT DETAIL MODAL
@@ -4823,10 +5071,10 @@
         document.getElementById("pm-qty").textContent = 1;
         document.getElementById("pm-stock").textContent =
           p.stock > 10
-            ? `✓ En stock (${p.stock})`
+            ? `En stock (${p.stock})`
             : p.stock > 0
-              ? `⚠ Stock limité (${p.stock})`
-              : "✗ Rupture";
+              ? `Stock limité (${p.stock})`
+              : "Rupture de stock";
 
         const badgeEl = document.getElementById("pm-badge-img");
         if (p.badge) {
@@ -4840,13 +5088,34 @@
         variantsEl.innerHTML = p.variants
           .map(
             (v, i) => `
-    <button class="pm-variant-chip ${i === 0 ? "active" : ""}" onclick="pmSelectVariant(${i})">${v}</button>
+    <button class="pm-variant-chip" onclick="pmToggleVariant(${i})" data-index="${i}">${v}</button>
   `,
           )
           .join("");
+        // Select first variant by default
+        pmSelectedVariants = [0];
+        variantsEl.querySelector('[data-index="0"]')?.classList.add("active");
 
         updatePmPrice();
         openModal("product-modal");
+      }
+
+      // Multi-variant selection — declared at top level
+      var pmSelectedVariants = [0];
+
+      function pmToggleVariant(index) {
+        const chip = document.querySelector(`.pm-variant-chip[data-index="${index}"]`);
+        if (pmSelectedVariants.includes(index)) {
+          // Deselect only if more than one selected
+          if (pmSelectedVariants.length > 1) {
+            pmSelectedVariants = pmSelectedVariants.filter(i => i !== index);
+            chip?.classList.remove("active");
+          }
+        } else {
+          pmSelectedVariants.push(index);
+          chip?.classList.add("active");
+        }
+        updatePmPrice();
       }
 
       function pmSelectVariant(index) {
@@ -4882,33 +5151,34 @@
 
       function pmBuyNow() {
         if (!pmCurrentProduct) return;
-        // Pre-fill checkout cart with just this product at selected variant/qty
-        checkoutCart = [
-          {
-            id: pmCurrentProduct.id,
-            qty: pmCurrentQty,
-            variant: pmCurrentVariant,
-          },
-        ];
+        // Add one cart item per selected variant
+        checkoutCart = pmSelectedVariants.map(variantIndex => ({
+          id: pmCurrentProduct.id,
+          qty: pmCurrentQty,
+          variant: variantIndex,
+        }));
         closeModal("product-modal");
         openModal("checkout-modal");
       }
 
       function pmAddToCart() {
         if (!pmCurrentProduct) return;
-        const existing = checkoutCart.find(
-          (x) => x.id === pmCurrentProduct.id && x.variant === pmCurrentVariant,
-        );
-        if (existing) existing.qty += pmCurrentQty;
-        else
-          checkoutCart.push({
+        // Add one cart item per selected variant
+        pmSelectedVariants.forEach(variantIndex => {
+          const existing = checkoutCart.find(
+            (x) => x.id === pmCurrentProduct.id && x.variant === variantIndex,
+          );
+          if (existing) existing.qty += pmCurrentQty;
+          else checkoutCart.push({
             id: pmCurrentProduct.id,
             qty: pmCurrentQty,
-            variant: pmCurrentVariant,
+            variant: variantIndex,
           });
+        });
         updateCartBadge();
         closeModal("product-modal");
-        showToast(`✅ ${pmCurrentProduct.name} ajouté au panier !`);
+        const names = pmSelectedVariants.map(i => pmCurrentProduct.variants[i]).join(", ");
+        showToast(`${pmCurrentProduct.name} (${names}) ajouté au panier !`);
       }
 
       // AUTH
@@ -4949,7 +5219,7 @@
 
         if (!name || !email || pass.length < 6) {
           err.textContent =
-            "⚠️ Veuillez remplir tous les champs (mot de passe min. 6 caractères).";
+            "Veuillez remplir tous les champs (mot de passe min. 6 caractères).";
           err.style.display = "block";
           return;
         }
@@ -4959,9 +5229,9 @@
           err.style.display = "none";
           closeModal("login-modal");
           loginUser(user);
-          showToast(`🎉 Bienvenue, ${user.name} !`);
+          showToast(`Bienvenue, ${user.name} !`);
         } catch (e) {
-          err.textContent = "⚠️ " + e.message;
+          err.textContent = "Erreur: " + e.message;
           err.style.display = "block";
         }
       }
@@ -4979,10 +5249,10 @@
           err.style.display = "none";
           closeModal("login-modal");
           loginUser(user);
-          if (user.role === "admin") showToast("✅ Bienvenue, Admin !");
-          else showToast(`✅ Bienvenue, ${user.name} !`);
+          if (user.role === "admin") showToast("Bienvenue, Admin !");
+          else showToast(`Bienvenue, ${user.name} !`);
         } catch (e) {
-          err.textContent = "⚠️ " + e.message;
+          err.textContent = "Erreur: " + e.message;
           err.style.display = "block";
         }
       }
@@ -4993,11 +5263,11 @@
         const myOrdersBtn = document.getElementById("my-orders-btn");
 
         if (user.role === "admin") {
-          authBtn.textContent = "⚙️ Admin";
+          authBtn.textContent = "Admin";
           document.getElementById("admin-nav-link").style.display = "";
           if (myOrdersBtn) myOrdersBtn.style.display = "none";
         } else {
-          authBtn.textContent = "👤 " + user.name;
+          authBtn.textContent = user.name;
           document.getElementById("admin-nav-link").style.display = "none";
           if (myOrdersBtn) myOrdersBtn.style.display = "";
         }
@@ -5030,8 +5300,8 @@
         menu.style.cssText =
           "position:fixed;top:64px;right:1.5rem;background:#fff;border:1.5px solid var(--gray-100);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;min-width:180px;overflow:hidden;";
         menu.innerHTML = `
-    <button onclick="closeMenu();openMyOrders();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;border-bottom:1px solid var(--gray-50);">📦 Mes commandes</button>
-    <button onclick="closeMenu();logout();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;color:#dc2626;">🚪 Se déconnecter</button>
+    <button onclick="closeMenu();openMyOrders();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;border-bottom:1px solid var(--gray-50);"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Mes commandes</button>
+    <button onclick="closeMenu();logout();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;color:#dc2626;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Se déconnecter</button>
   `;
         document.body.appendChild(menu);
         setTimeout(
@@ -5053,55 +5323,84 @@
         currentUser = null;
         document.getElementById("admin-nav-link").style.display = "none";
         const myOrdersBtn = document.getElementById("my-orders-btn");
-        if (myOrdersBtn) myOrdersBtn.style.display = "none";
+        if (myOrdersBtn) myOrdersBtn.style.display = ""; // always visible after logout
         const authBtn = document.getElementById("auth-btn");
         authBtn.textContent = "Connexion";
         authBtn.onclick = () => openModal("login-modal");
         if (document.getElementById("admin-page")?.classList.contains("active"))
           showPage("home");
-        showToast("👋 Déconnecté avec succès.");
+        showToast("Déconnecté avec succès.");
       }
 
       async function openMyOrders() {
-        if (!Auth.isLoggedIn()) {
-          openModal("login-modal");
-          return;
-        }
+        const body = document.getElementById("my-orders-body");
+        if (!body) return;
 
+        // Load guest orders from localStorage (orders placed without account)
+        let guestOrders = [];
         try {
-          const orders = await OrdersAPI.myOrders();
-          const body = document.getElementById("my-orders-body");
-          if (!body) return;
+          guestOrders = JSON.parse(localStorage.getItem("mt_guest_orders") || "[]");
+        } catch(e) {}
 
-          if (orders.length === 0) {
-            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
-        <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
-        <p>Vous n'avez pas encore de commandes.</p>
-        <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats →</button>
-      </div>`;
-          } else {
-            body.innerHTML = orders
-              .map((o) => {
-                const itemNames = o.items
-                  ? o.items.map((i) => i.name + " ×" + i.qty).join(", ")
-                  : o.items + " article(s)";
-                return `
+        function renderOrderCard(o) {
+          const itemNames = o.items
+            ? (Array.isArray(o.items) ? o.items.map((i) => (i.name || i.id) + " ×" + (i.qty||1)).join(", ") : o.items)
+            : "—";
+          return `
         <div style="border:1.5px solid var(--gray-100);border-radius:12px;padding:1rem;margin-bottom:0.75rem;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
             <span style="font-weight:800;color:var(--green-dark)">${o.order_ref || "#MT-" + o.id}</span>
             <span class="status-badge status-${o.status}">${statusLabel(o.status)}</span>
           </div>
-          <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.4rem;">📅 ${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
-          <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.4rem;">📍 ${o.wilaya}</div>
+          <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.4rem;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
+          <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.4rem;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${o.wilaya}</div>
           <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;">${itemNames}</div>
-          <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">${o.total.toLocaleString()} DA</div>
+          <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">${(o.total||0).toLocaleString()} DA</div>
         </div>`;
-              })
-              .join("");
+        }
+
+        if (!Auth.isLoggedIn()) {
+          // Show guest orders if available, otherwise prompt login
+          if (guestOrders.length > 0) {
+            body.innerHTML = `
+              <div style="background:var(--green-light);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.85rem;color:var(--green-dark);font-weight:600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Ces commandes ont été passées sans compte. <a href="javascript:void(0)" onclick="closeModal('my-orders-modal');openModal('login-modal');" style="color:var(--green-dark);text-decoration:underline;">Connectez-vous</a> pour voir toutes vos commandes.
+              </div>
+              ${guestOrders.map(renderOrderCard).join("")}`;
+          } else {
+            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
+              <div style="margin-bottom:1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.35"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
+              <p style="margin-bottom:0.75rem;">Vous n'avez pas encore de commandes.</p>
+              <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1rem;">Si vous avez commandé sans compte, vos commandes apparaissent ici sur cet appareil.</p>
+              <button class="btn btn-primary" style="margin-top:0.5rem;" onclick="closeModal('my-orders-modal');openModal('login-modal');"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Se connecter</button>
+            </div>`;
+          }
+          openModal("my-orders-modal");
+          return;
+        }
+
+        try {
+          const orders = await OrdersAPI.myOrders();
+
+          // Merge: account orders + guest orders not already in account
+          const accountRefs = new Set(orders.map(o => o.order_ref || ("#MT-" + o.id)));
+          const extraGuest = guestOrders.filter(o => !accountRefs.has(o.order_ref));
+          const allOrders = [...orders, ...extraGuest].sort((a, b) =>
+            new Date(b.created_at) - new Date(a.created_at)
+          );
+
+          if (allOrders.length === 0) {
+            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
+        <div style="margin-bottom:1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.35"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div>
+        <p>Vous n'avez pas encore de commandes.</p>
+        <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+      </div>`;
+          } else {
+            body.innerHTML = allOrders.map(renderOrderCard).join("");
           }
           openModal("my-orders-modal");
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -5162,7 +5461,7 @@
           // Show empty state
           const empty = document.createElement("div");
           empty.className = "hero-carousel-card active";
-          empty.innerHTML = `<div class="hero-carousel-bg"></div><div class="hc-icon">🛍️</div><div class="hc-badge">Boutique</div><h4>Aucun produit</h4><p>Ajoutez des produits depuis l'admin</p>`;
+          empty.innerHTML = `<div class="hero-carousel-bg"></div><div class="hc-icon"></div><div class="hc-badge">Boutique</div><h4>Aucun produit</h4><p>Ajoutez des produits depuis l'admin</p>`;
           wrapper.insertBefore(empty, progressEl);
           return;
         }
@@ -5191,7 +5490,10 @@
         </div>
       </div>
     `;
-          card.addEventListener("click", () => openProductModal(item.id));
+          card.addEventListener(
+            "click",
+            () => (window.location.href = "product.html?id=" + item.id),
+          );
           wrapper.insertBefore(card, progressEl);
         });
 
@@ -5299,68 +5601,6 @@
       } else {
         initCarouselHover();
       }
-
-      // ── 58 WILAYAS FALLBACK ──────────────────────────────────
-      const WILAYAS_58 = [
-        "Adrar",
-        "Chlef",
-        "Laghouat",
-        "Oum El Bouaghi",
-        "Batna",
-        "Béjaïa",
-        "Biskra",
-        "Béchar",
-        "Blida",
-        "Bouira",
-        "Tamanrasset",
-        "Tébessa",
-        "Tlemcen",
-        "Tiaret",
-        "Tizi Ouzou",
-        "Alger",
-        "Djelfa",
-        "Jijel",
-        "Sétif",
-        "Saïda",
-        "Skikda",
-        "Sidi Bel Abbès",
-        "Annaba",
-        "Guelma",
-        "Constantine",
-        "Médéa",
-        "Mostaganem",
-        "Msila",
-        "Mascara",
-        "Ouargla",
-        "Oran",
-        "El Bayadh",
-        "Illizi",
-        "Bordj Bou Arréridj",
-        "Boumerdès",
-        "El Tarf",
-        "Tindouf",
-        "Tissemsilt",
-        "El Oued",
-        "Khenchela",
-        "Souk Ahras",
-        "Tipaza",
-        "Mila",
-        "Aïn Defla",
-        "Naâma",
-        "Aïn Témouchent",
-        "Ghardaïa",
-        "Relizane",
-        "Timimoun",
-        "Bordj Badji Mokhtar",
-        "Ouled Djellal",
-        "Béni Abbès",
-        "In Salah",
-        "In Guezzam",
-        "Touggourt",
-        "Djanet",
-        "El Mghair",
-        "El Meniaa",
-      ];
 
       async function initAll() {
         try {
