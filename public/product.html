@@ -584,7 +584,22 @@
       <a href="/" class="nav-logo"
         >M<span class="dot"></span>T &nbsp;Mus Tech</a
       >
-      <a href="/" class="back-btn">← Retour</a>
+      <a href="/" class="back-btn"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Retour</a
+      >
     </nav>
 
     <div class="page" id="page">
@@ -646,7 +661,7 @@
       function copyLink() {
         navigator.clipboard
           .writeText(window.location.href)
-          .then(() => showToast("🔗 Lien copié!"))
+          .then(() => showToast("Lien copié !"))
           .catch(() => prompt("Copiez ce lien:", window.location.href));
       }
 
@@ -709,7 +724,7 @@
         const address = document.getElementById("co-address").value.trim();
         const note = document.getElementById("co-note").value.trim();
         if (!name || !phone || !wilaya || !address) {
-          showToast("⚠️ Veuillez remplir tous les champs *");
+          showToast("Veuillez remplir tous les champs *");
           return;
         }
         const orderData = {
@@ -722,7 +737,7 @@
         };
         const btn = document.getElementById("confirm-btn");
         btn.disabled = true;
-        btn.textContent = "⏳ En cours...";
+        btn.textContent = "En cours...";
         try {
           const res = await OrdersAPI.place(orderData);
           // Save order ref locally so user can track without account
@@ -750,17 +765,17 @@
           document.getElementById("share-actions").style.display = "none";
           const box = document.getElementById("success-box");
           box.innerHTML = `
-            <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
+            <div style="margin-bottom:1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-dark)"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
             <h2 style="color:var(--green-dark);margin-bottom:0.5rem;">Commande confirmée !</h2>
             <p style="color:var(--gray-700);margin-bottom:0.25rem;">Merci <strong>${name}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
             <p style="color:var(--green-dark);font-weight:700;font-size:1.1rem;margin:0.75rem 0;">${res.order_ref || "#MT-" + res.id}</p>
-            <a href="/" style="display:inline-block;margin-top:1rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">← Retour à la boutique</a>`;
+            <a href="/" style="display:inline-block;margin-top:1rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Retour à la boutique</a>`;
           box.classList.add("show");
           box.scrollIntoView({ behavior: "smooth", block: "center" });
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
           btn.disabled = false;
-          btn.textContent = "✅ Confirmer la Commande";
+          btn.textContent = "Confirmer la Commande";
         }
       }
 
@@ -880,7 +895,7 @@
 
             <!-- CHECKOUT FORM -->
             <div class="checkout-form" id="checkout-form">
-              <h4>🧾 Informations de livraison</h4>
+              <h4><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Informations de livraison</h4>
               <div class="order-summary-mini" id="order-summary-mini"></div>
               <div class="frow">
                 <div class="fgroup"><label>Nom complet *</label><input id="co-name" placeholder="Votre nom"/></div>
@@ -896,7 +911,7 @@
               <div class="fgroup" style="margin-bottom:0.9rem;">
                 <label>Note (optionnel)</label><textarea id="co-note" rows="2" placeholder="Instructions spéciales..."></textarea>
               </div>
-              <button class="btn btn-confirm" id="confirm-btn" onclick="placeOrder()">✅ Confirmer la Commande</button>
+              <button class="btn btn-confirm" id="confirm-btn" onclick="placeOrder()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmer la Commande</button>
             </div>
 
             <!-- SHARE BUTTONS — after confirm -->
