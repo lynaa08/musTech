@@ -19,6 +19,7 @@
         --gray-700: #2e2e38;
         --gray-900: #111118;
         --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.09);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
         --radius: 14px;
         --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -31,10 +32,11 @@
       }
       body {
         font-family: "Outfit", system-ui, sans-serif;
-        background: var(--white);
+        background: #f8fdf9;
         color: var(--gray-900);
         min-height: 100vh;
       }
+
       nav {
         position: sticky;
         top: 0;
@@ -77,60 +79,65 @@
         color: var(--gray-700);
         cursor: pointer;
         text-decoration: none;
+        transition: all 0.2s;
       }
       .back-btn:hover {
         background: var(--gray-100);
       }
+
       .page {
-        max-width: 900px;
-        margin: 3rem auto;
-        padding: 0 1.5rem;
+        max-width: 860px;
+        margin: 2.5rem auto;
+        padding: 0 1.25rem;
       }
+
+      /* CARD */
       .card {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        background: var(--white);
+        background: #fff;
         border-radius: 20px;
         box-shadow: var(--shadow-md);
-        padding: 2.5rem;
+        overflow: hidden;
       }
-      @media (max-width: 640px) {
-        .card {
-          grid-template-columns: 1fr;
-          gap: 1.5rem;
-          padding: 1.5rem;
-        }
+
+      /* IMAGE SECTION */
+      .img-section {
+        background: linear-gradient(135deg, var(--gray-50), var(--green-light));
+        position: relative;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .img-wrap {
-        background: linear-gradient(135deg, var(--gray-50), var(--green-light));
-        border-radius: 16px;
         width: 100%;
+        max-width: 380px;
         aspect-ratio: 1/1;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 6rem;
+        font-size: 7rem;
         position: relative;
-        margin-bottom: 0.75rem;
+        border-radius: 16px;
         overflow: hidden;
+        background: rgba(255, 255, 255, 0.6);
       }
       .img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        padding: 1.5rem;
+        padding: 1.25rem;
       }
       .badge {
         position: absolute;
-        top: 14px;
-        left: 14px;
+        top: 12px;
+        left: 12px;
         background: var(--green);
         color: #fff;
         font-size: 0.72rem;
         font-weight: 700;
         padding: 0.25rem 0.7rem;
         border-radius: 50px;
+        z-index: 2;
       }
       .badge.sale {
         background: #ff4b6e;
@@ -139,24 +146,26 @@
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
-        margin-top: 0.5rem;
+        margin-top: 1rem;
+        justify-content: center;
       }
       .thumb {
-        width: 56px;
-        height: 56px;
+        width: 54px;
+        height: 54px;
         object-fit: cover;
         border-radius: 8px;
         cursor: pointer;
         border: 2px solid transparent;
         transition: 0.2s;
+        background: #fff;
       }
       .thumb.active {
         border-color: var(--green);
       }
+
+      /* INFO SECTION */
       .info {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
+        padding: 1.75rem 2rem 2rem;
       }
       .cat {
         font-size: 0.72rem;
@@ -164,33 +173,59 @@
         color: var(--green-dark);
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        margin-bottom: 0.35rem;
       }
       .pname {
-        font-size: 1.6rem;
+        font-size: 1.7rem;
         font-weight: 900;
         line-height: 1.2;
+        margin-bottom: 0.6rem;
       }
       .desc {
         font-size: 0.9rem;
         color: var(--gray-500);
         line-height: 1.7;
+        margin-bottom: 1.25rem;
       }
+      .stock-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        background: var(--green-light);
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        margin-bottom: 1.25rem;
+      }
+      .stock-badge.low {
+        color: #d97706;
+        background: #fff8e6;
+      }
+      .stock-badge.out {
+        color: #dc2626;
+        background: #fee2e2;
+      }
+
+      /* VARIANTS */
       .vlabel {
         font-size: 0.8rem;
         font-weight: 700;
         color: var(--gray-700);
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
       }
       .variants {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
+        margin-bottom: 1.25rem;
       }
       .vchip {
-        padding: 0.35rem 1rem;
+        padding: 0.4rem 1rem;
         border-radius: 50px;
         border: 2px solid var(--gray-100);
-        background: var(--white);
+        background: #fff;
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
@@ -202,29 +237,39 @@
         border-color: var(--green);
         color: #fff;
       }
+
+      /* PRICE */
       .price-row {
         display: flex;
         align-items: baseline;
         gap: 0.6rem;
+        margin-bottom: 1.25rem;
       }
       .pmain {
-        font-size: 2rem;
+        font-size: 2.2rem;
         font-weight: 900;
+        color: var(--gray-900);
       }
       .pold {
         font-size: 1rem;
         color: var(--gray-300);
         text-decoration: line-through;
       }
-      .pstock {
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: var(--green-dark);
+      .pdiscount {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #ff4b6e;
+        background: #fee2e2;
+        padding: 0.2rem 0.6rem;
+        border-radius: 50px;
       }
+
+      /* QTY */
       .qty-row {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        margin-bottom: 1.5rem;
       }
       .qlabel {
         font-size: 0.8rem;
@@ -237,15 +282,17 @@
         border: 1.5px solid var(--gray-100);
         border-radius: 50px;
         overflow: hidden;
+        background: #fff;
       }
       .qbtn {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         border: none;
         background: transparent;
         font-size: 1.2rem;
         cursor: pointer;
         color: var(--gray-700);
+        transition: background 0.15s;
       }
       .qbtn:hover {
         background: var(--gray-50);
@@ -261,11 +308,81 @@
         font-weight: 700;
         color: var(--green-dark);
       }
-      .actions {
+
+      /* CHECKOUT FORM — inline, no overlay */
+      .checkout-form {
+        background: var(--gray-50);
+        border-radius: 14px;
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+        display: none;
+      }
+      .checkout-form.open {
+        display: block;
+      }
+      .checkout-form h4 {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: var(--gray-900);
+      }
+      .order-summary-mini {
+        background: #fff;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--gray-100);
+      }
+      .orow {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.88rem;
+        padding: 0.2rem 0;
+        color: var(--gray-700);
+      }
+      .orow.total {
+        font-weight: 800;
+        border-top: 1px solid var(--gray-100);
+        margin-top: 0.5rem;
+        padding-top: 0.65rem;
+        color: var(--gray-900);
+      }
+      .frow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+      }
+      .fgroup {
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
+        gap: 0.35rem;
       }
+      .fgroup label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--gray-700);
+      }
+      .fgroup input,
+      .fgroup select,
+      .fgroup textarea {
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid var(--gray-100);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        width: 100%;
+        outline: none;
+        background: #fff;
+        transition: border-color 0.2s;
+      }
+      .fgroup input:focus,
+      .fgroup select:focus,
+      .fgroup textarea:focus {
+        border-color: var(--green);
+      }
+
+      /* BUTTONS */
       .btn {
         display: flex;
         align-items: center;
@@ -273,12 +390,13 @@
         gap: 0.5rem;
         border: none;
         border-radius: 50px;
-        padding: 0.75rem 1.5rem;
+        padding: 0.8rem 1.5rem;
         font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
         transition: var(--transition);
         width: 100%;
+        font-family: inherit;
       }
       .btn-primary {
         background: var(--green);
@@ -297,14 +415,29 @@
       .btn-ghost:hover {
         background: var(--gray-100);
       }
+      .btn-confirm {
+        background: var(--green-dark);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(31, 173, 82, 0.35);
+      }
+      .btn-confirm:hover {
+        background: #178a3f;
+        transform: translateY(-1px);
+      }
       .btn:disabled {
         opacity: 0.4;
         cursor: not-allowed;
-        transform: none;
+        transform: none !important;
+      }
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
       }
       .share-row {
         display: flex;
         gap: 0.5rem;
+        margin-top: 0.25rem;
       }
       .sbtn {
         background: var(--gray-50);
@@ -315,108 +448,28 @@
         border-radius: 50px;
         cursor: pointer;
         flex: 1;
+        font-family: inherit;
+        font-weight: 600;
+        transition: all 0.2s;
       }
       .sbtn:hover {
         background: var(--gray-100);
       }
-      .overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 200;
+
+      /* SUCCESS */
+      .success-box {
+        text-align: center;
+        padding: 2.5rem;
+        background: var(--green-light);
+        border-radius: 14px;
+        margin-top: 1.25rem;
         display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
       }
-      .overlay.open {
-        display: flex;
+      .success-box.show {
+        display: block;
       }
-      .modal {
-        background: var(--white);
-        border-radius: 20px;
-        width: 100%;
-        max-width: 500px;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-      }
-      .mhead {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--gray-100);
-      }
-      .mhead h3 {
-        font-size: 1.1rem;
-        font-weight: 800;
-      }
-      .mclose {
-        background: none;
-        border: none;
-        font-size: 1.2rem;
-        cursor: pointer;
-        color: var(--gray-500);
-      }
-      .mbody {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .order-summary {
-        background: var(--gray-50);
-        border-radius: 12px;
-        padding: 1rem;
-      }
-      .order-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-        padding: 0.3rem 0;
-      }
-      .order-row.total {
-        font-weight: 800;
-        font-size: 1rem;
-        border-top: 1px solid var(--gray-100);
-        margin-top: 0.5rem;
-        padding-top: 0.75rem;
-      }
-      .fgroup {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-      }
-      .fgroup label {
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: var(--gray-700);
-      }
-      .fgroup input,
-      .fgroup select,
-      .fgroup textarea {
-        padding: 0.65rem 0.9rem;
-        border: 1.5px solid var(--gray-100);
-        border-radius: 10px;
-        font-size: 0.9rem;
-        font-family: inherit;
-        width: 100%;
-        outline: none;
-      }
-      .fgroup input:focus,
-      .fgroup select:focus {
-        border-color: var(--green);
-      }
-      .frow {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-      }
-      .mfoot {
-        padding: 1.25rem 1.5rem;
-        border-top: 1px solid var(--gray-100);
-      }
+
+      /* LOADING */
       .loading {
         text-align: center;
         padding: 5rem 2rem;
@@ -436,6 +489,7 @@
           transform: rotate(360deg);
         }
       }
+
       .toast {
         position: fixed;
         bottom: 2rem;
@@ -455,6 +509,24 @@
       .toast.show {
         opacity: 1;
       }
+
+      @media (max-width: 600px) {
+        .info {
+          padding: 1.25rem 1.25rem 1.5rem;
+        }
+        .pname {
+          font-size: 1.35rem;
+        }
+        .pmain {
+          font-size: 1.8rem;
+        }
+        .frow {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          padding: 0 1rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -462,57 +534,13 @@
       <a href="/" class="nav-logo"
         >M<span class="dot"></span>T &nbsp;Mus Tech</a
       >
-      <a href="/" class="back-btn">← Retour à la boutique</a>
+      <a href="/" class="back-btn">← Retour</a>
     </nav>
+
     <div class="page" id="page">
       <div class="loading">
         <div class="spinner"></div>
         Chargement...
-      </div>
-    </div>
-
-    <!-- CHECKOUT MODAL -->
-    <div class="overlay" id="checkout-overlay">
-      <div class="modal">
-        <div class="mhead">
-          <h3>🧾 Commander</h3>
-          <button class="mclose" onclick="closeCheckout()">✕</button>
-        </div>
-        <div class="mbody">
-          <div class="order-summary" id="order-summary"></div>
-          <div class="frow">
-            <div class="fgroup">
-              <label>Nom complet *</label
-              ><input id="co-name" placeholder="Votre nom" />
-            </div>
-            <div class="fgroup">
-              <label>Téléphone *</label
-              ><input id="co-phone" placeholder="06xxxxxxxx" />
-            </div>
-          </div>
-          <div class="fgroup">
-            <label>Wilaya *</label>
-            <select id="co-wilaya">
-              <option value="">-- Choisir --</option>
-            </select>
-          </div>
-          <div class="fgroup">
-            <label>Adresse *</label
-            ><input id="co-address" placeholder="Rue, quartier..." />
-          </div>
-          <div class="fgroup">
-            <label>Note (optionnel)</label
-            ><textarea
-              id="co-note"
-              rows="2"
-              placeholder="Instructions spéciales..."></textarea>
-          </div>
-        </div>
-        <div class="mfoot">
-          <button class="btn btn-primary" onclick="placeOrder()">
-            ✅ Confirmer la Commande
-          </button>
-        </div>
       </div>
     </div>
 
@@ -545,12 +573,14 @@
           .querySelectorAll(".vchip")
           .forEach((c, i) => c.classList.toggle("active", i === index));
         updatePrice();
+        updateOrderSummary();
       }
 
       function changeQty(delta) {
         currentQty = Math.max(1, currentQty + delta);
         document.getElementById("qval").textContent = currentQty;
         updatePrice();
+        updateOrderSummary();
       }
 
       function updatePrice() {
@@ -566,7 +596,7 @@
       function copyLink() {
         navigator.clipboard
           .writeText(window.location.href)
-          .then(() => showToast("Lien copié!"))
+          .then(() => showToast("🔗 Lien copié!"))
           .catch(() => prompt("Copiez ce lien:", window.location.href));
       }
 
@@ -576,55 +606,66 @@
         else copyLink();
       }
 
-      async function openCheckout() {
-        if (!product) return;
-        const price =
-          product.variantPrices[currentVariant] ?? product.variantPrices[0];
-        const variant = product.variants[currentVariant] || "Standard";
-        const total = price * currentQty;
-
-        document.getElementById("order-summary").innerHTML = `
-        <div class="order-row"><span>${product.name} (${variant}) x${currentQty}</span><span>${total.toLocaleString()} DA</span></div>
-        <div class="order-row"><span>Livraison</span><span id="shipping-display">Choisir wilaya</span></div>
-        <div class="order-row total"><span>Total</span><span id="total-display">${total.toLocaleString()} DA</span></div>`;
+      // ── CHECKOUT FORM (inline, no modal) ──────────────────────
+      function openCheckout() {
+        const form = document.getElementById("checkout-form");
+        if (!form) return;
+        form.classList.add("open");
 
         // Populate wilayas
         const sel = document.getElementById("co-wilaya");
-        sel.innerHTML = '<option value="">-- Choisir --</option>';
-        WILAYAS.forEach((w) => {
-          const o = document.createElement("option");
-          o.value = w.shipping_price ?? w.price ?? 0;
-          o.dataset.name = w.name;
-          o.textContent =
-            w.name + " — " + (w.shipping_price ?? w.price ?? 0) + " DA";
-          sel.appendChild(o);
-        });
+        if (sel.options.length <= 1) {
+          WILAYAS.forEach((w) => {
+            const o = document.createElement("option");
+            o.value = w.shipping_price ?? w.price ?? 0;
+            o.dataset.name = w.name;
+            o.textContent =
+              w.name + " — " + (w.shipping_price ?? w.price ?? 0) + " DA";
+            sel.appendChild(o);
+          });
+          sel.onchange = updateOrderSummary;
+        }
 
-        sel.onchange = function () {
-          const shipping = parseInt(this.value) || 0;
-          const name = this.options[this.selectedIndex]?.dataset.name || "";
-          document.getElementById("shipping-display").textContent = shipping
-            ? name + " — " + shipping + " DA"
-            : "Choisir wilaya";
-          document.getElementById("total-display").textContent =
-            (total + shipping).toLocaleString() + " DA";
-        };
-
-        // Pre-fill from localStorage if logged in
+        // Pre-fill from localStorage
         try {
           const user = JSON.parse(localStorage.getItem("mt_user"));
           if (user) {
-            if (user.name) document.getElementById("co-name").value = user.name;
-            if (user.phone)
+            if (user.name && !document.getElementById("co-name").value)
+              document.getElementById("co-name").value = user.name;
+            if (user.phone && !document.getElementById("co-phone").value)
               document.getElementById("co-phone").value = user.phone;
           }
         } catch (e) {}
 
-        document.getElementById("checkout-overlay").classList.add("open");
+        updateOrderSummary();
+
+        // Scroll into view
+        setTimeout(
+          () => form.scrollIntoView({ behavior: "smooth", block: "nearest" }),
+          100,
+        );
       }
 
-      function closeCheckout() {
-        document.getElementById("checkout-overlay").classList.remove("open");
+      function updateOrderSummary() {
+        if (!product) return;
+        const price =
+          product.variantPrices[currentVariant] ?? product.variantPrices[0];
+        const variant = product.variants[currentVariant] || "Standard";
+        const subtotal = price * currentQty;
+        const sel = document.getElementById("co-wilaya");
+        const shipping = sel ? parseInt(sel.value) || 0 : 0;
+        const wilayaName =
+          sel && sel.selectedIndex > 0
+            ? sel.options[sel.selectedIndex].dataset.name
+            : "—";
+        const total = subtotal + shipping;
+
+        const summary = document.getElementById("order-summary-mini");
+        if (summary)
+          summary.innerHTML = `
+        <div class="orow"><span>${product.name} (${variant}) ×${currentQty}</span><span>${subtotal.toLocaleString()} DA</span></div>
+        <div class="orow"><span>Livraison (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
+        <div class="orow total"><span>Total</span><span>${total.toLocaleString()} DA</span></div>`;
       }
 
       async function placeOrder() {
@@ -638,13 +679,12 @@
         const note = document.getElementById("co-note").value.trim();
 
         if (!name || !phone || !wilaya || !address) {
-          showToast("Veuillez remplir tous les champs *");
+          showToast("⚠️ Veuillez remplir tous les champs *");
           return;
         }
 
         const price =
           product.variantPrices[currentVariant] ?? product.variantPrices[0];
-        const variant = product.variants[currentVariant] || "Standard";
 
         const orderData = {
           customer: name,
@@ -655,23 +695,30 @@
           items: [{ id: product.id, variant: currentVariant, qty: currentQty }],
         };
 
+        const btn = document.getElementById("confirm-btn");
+        btn.disabled = true;
+        btn.textContent = "⏳ En cours...";
+
         try {
           const res = await OrdersAPI.place(orderData);
-          closeCheckout();
-          showToast("Commande confirmée!");
-          document.getElementById("page").innerHTML += `
-          <div style="text-align:center;padding:3rem;background:var(--green-light);border-radius:16px;margin-top:2rem;">
-            <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
-            <h2 style="color:var(--green-dark);">Commande confirmée !</h2>
-            <p style="color:var(--gray-700);margin-top:0.5rem;">Merci ${name}, nous vous contacterons au ${phone}.</p>
-            <p style="color:var(--green-dark);font-weight:700;margin-top:0.5rem;">N° ${res.order_ref || "#MT-" + res.id}</p>
-            <a href="/" style="display:inline-block;margin-top:1.5rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">Retour à la boutique</a>
-          </div>`;
+          document.getElementById("checkout-form").classList.remove("open");
+          const box = document.getElementById("success-box");
+          box.innerHTML = `
+          <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
+          <h2 style="color:var(--green-dark);margin-bottom:0.5rem;">Commande confirmée !</h2>
+          <p style="color:var(--gray-700);margin-bottom:0.25rem;">Merci <strong>${name}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
+          <p style="color:var(--green-dark);font-weight:700;font-size:1.1rem;margin:0.75rem 0;">${res.order_ref || "#MT-" + res.id}</p>
+          <a href="/" style="display:inline-block;margin-top:1rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">← Retour à la boutique</a>`;
+          box.classList.add("show");
+          box.scrollIntoView({ behavior: "smooth", block: "center" });
         } catch (e) {
-          showToast("Erreur: " + e.message);
+          showToast("⚠️ Erreur: " + e.message);
+          btn.disabled = false;
+          btn.textContent = "✅ Confirmer la Commande";
         }
       }
 
+      // ── RENDER ──────────────────────────────────────────────
       function renderProduct(p) {
         const images =
           p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
@@ -679,7 +726,7 @@
 
         const mainImgHTML =
           images.length > 0
-            ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1.5rem;"/>`
+            ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1.25rem;"/>`
             : `<span>${p.icon || "🎮"}</span>`;
 
         const thumbsHTML =
@@ -698,46 +745,59 @@
 
         const variantsHTML =
           p.variants.length > 0
-            ? `<div><div class="vlabel">Options</div><div class="variants">${p.variants.map((v, i) => `<button class="vchip ${i === 0 ? "active" : ""}" onclick="selectVariant(${i})">${v}</button>`).join("")}</div></div>`
+            ? `<div class="vlabel">Options</div><div class="variants">${p.variants.map((v, i) => `<button class="vchip ${i === 0 ? "active" : ""}" onclick="selectVariant(${i})">${v}</button>`).join("")}</div>`
             : "";
 
         const oldPriceHTML = p.oldPrice
           ? `<span class="pold">${p.oldPrice.toLocaleString()} DA</span>`
           : "";
-        const stockText =
-          p.stock > 10
-            ? `En stock (${p.stock})`
-            : p.stock > 0
-              ? `Stock limité (${p.stock})`
-              : "Rupture de stock";
 
-        // Update page title and URL slug
+        const discountHTML = p.oldPrice
+          ? `<span class="pdiscount">-${Math.round((1 - p.variantPrices[0] / p.oldPrice) * 100)}%</span>`
+          : "";
+
+        const stockHTML =
+          p.stock > 10
+            ? `<span class="stock-badge">✓ En stock (${p.stock})</span>`
+            : p.stock > 0
+              ? `<span class="stock-badge low">⚠ Stock limité (${p.stock})</span>`
+              : `<span class="stock-badge out">✗ Rupture de stock</span>`;
+
+        // Update URL slug
         const slug = p.name
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/(^-|-$)/g, "");
         document.title = p.name + " — Mus Tech";
-        const newUrl = `/product.html?id=${p.id}&slug=${slug}`;
-        window.history.replaceState({}, "", newUrl);
+        window.history.replaceState(
+          {},
+          "",
+          `/product.html?id=${p.id}&slug=${slug}`,
+        );
 
         document.getElementById("page").innerHTML = `
         <div class="card">
-          <div>
-            <div class="img-wrap">${badgeHTML}${mainImgHTML}</div>
+          <!-- IMAGE -->
+          <div class="img-section">
+            ${badgeHTML}
+            <div class="img-wrap">${mainImgHTML}</div>
             <div class="thumbs">${thumbsHTML}</div>
           </div>
+
+          <!-- INFO -->
           <div class="info">
             <div class="cat">${p.cat}</div>
             <div class="pname">${p.name}</div>
             ${p.description ? `<div class="desc">${p.description}</div>` : ""}
+            ${stockHTML}
             ${variantsHTML}
             <div class="price-row">
               <span class="pmain" id="price-main">${p.variantPrices[0].toLocaleString()} DA</span>
               ${oldPriceHTML}
-              <span class="pstock">${stockText}</span>
+              ${discountHTML}
             </div>
             <div class="qty-row">
-              <span class="qlabel">Qté</span>
+              <span class="qlabel">Quantité</span>
               <div class="qctrl">
                 <button class="qbtn" onclick="changeQty(-1)">−</button>
                 <span class="qval" id="qval">1</span>
@@ -745,9 +805,34 @@
               </div>
               <span class="qtotal" id="qtotal">${p.variantPrices[0].toLocaleString()} DA</span>
             </div>
+
+            <!-- CHECKOUT FORM (inline) -->
+            <div class="checkout-form" id="checkout-form">
+              <h4>🧾 Informations de livraison</h4>
+              <div class="order-summary-mini" id="order-summary-mini"></div>
+              <div class="frow">
+                <div class="fgroup"><label>Nom complet *</label><input id="co-name" placeholder="Votre nom"/></div>
+                <div class="fgroup"><label>Téléphone *</label><input id="co-phone" placeholder="06xxxxxxxx"/></div>
+              </div>
+              <div class="fgroup" style="margin-bottom:0.75rem;">
+                <label>Wilaya *</label>
+                <select id="co-wilaya"><option value="">-- Choisir --</option></select>
+              </div>
+              <div class="fgroup" style="margin-bottom:0.75rem;">
+                <label>Adresse *</label><input id="co-address" placeholder="Rue, quartier..."/>
+              </div>
+              <div class="fgroup" style="margin-bottom:1rem;">
+                <label>Note (optionnel)</label><textarea id="co-note" rows="2" placeholder="Instructions spéciales..."></textarea>
+              </div>
+              <button class="btn btn-confirm" id="confirm-btn" onclick="placeOrder()">✅ Confirmer la Commande</button>
+            </div>
+
+            <!-- SUCCESS BOX -->
+            <div class="success-box" id="success-box"></div>
+
+            <!-- ACTIONS -->
             <div class="actions">
-              <button class="btn btn-primary" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>⚡ Acheter Maintenant</button>
-              <button class="btn btn-ghost" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>🛒 Ajouter au Panier</button>
+              <button class="btn btn-primary" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>🛒 Commander maintenant</button>
               <div class="share-row">
                 <button class="sbtn" onclick="copyLink()">🔗 Copier le lien</button>
                 <button class="sbtn" onclick="shareProduct()">📤 Partager</button>
