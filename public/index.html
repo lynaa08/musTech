@@ -64,7 +64,7 @@
           sans-serif;
       }
 
-      /* NAVBAR */
+      /* ── NAVBAR ── */
       nav {
         position: sticky;
         top: 0;
@@ -87,9 +87,6 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-      }
-      .nav-logo span {
-        color: var(--green-dark);
       }
       .nav-links {
         display: flex;
@@ -133,12 +130,7 @@
         gap: 0.4rem;
         padding: 0.55rem 1.2rem;
         border-radius: 50px;
-        font-family:
-          "Outfit",
-          "Segoe UI",
-          system-ui,
-          -apple-system,
-          sans-serif;
+        font-family: inherit;
         font-weight: 600;
         font-size: 0.9rem;
         cursor: pointer;
@@ -180,6 +172,7 @@
         font-size: 0.9rem;
         transition: all var(--transition);
         color: var(--gray-700);
+        font-family: inherit;
       }
       .cart-btn:hover {
         border-color: var(--green);
@@ -215,7 +208,7 @@
         transition: all var(--transition);
       }
 
-      /* MOBILE MENU */
+      /* ── MOBILE MENU ── */
       .mobile-menu {
         display: none;
         position: fixed;
@@ -259,19 +252,21 @@
         background: var(--gray-100);
         margin: 0.5rem 0;
       }
+      /* Fix: auth section on mobile stacked properly */
       .mobile-menu-auth {
         display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
       }
       .mobile-menu-auth .btn {
-        flex: 1;
+        width: 100%;
         justify-content: center;
         font-size: 0.88rem;
-        padding: 0.6rem 1rem;
+        padding: 0.7rem 1rem;
       }
 
-      /* HERO */
+      /* ── HERO ── */
       .hero {
         min-height: 88vh;
         background: linear-gradient(
@@ -296,20 +291,6 @@
         background: radial-gradient(
           circle,
           rgba(62, 207, 110, 0.12) 0%,
-          transparent 70%
-        );
-        border-radius: 50%;
-      }
-      .hero::after {
-        content: "";
-        position: absolute;
-        bottom: -80px;
-        left: -80px;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(
-          circle,
-          rgba(62, 207, 110, 0.08) 0%,
           transparent 70%
         );
         border-radius: 50%;
@@ -382,7 +363,7 @@
         gap: 1rem;
       }
 
-      /* HERO CAROUSEL */
+      /* ── HERO CAROUSEL ── */
       .hero-carousel-wrapper {
         position: relative;
         background: #fff;
@@ -429,11 +410,6 @@
       .hero-carousel-card > * {
         position: relative;
         z-index: 1;
-      }
-      .hc-icon {
-        font-size: 3rem;
-        margin-bottom: 0.75rem;
-        line-height: 1;
       }
       .hc-badge {
         display: inline-flex;
@@ -524,7 +500,7 @@
         opacity: 0.8;
       }
 
-      /* SECTIONS */
+      /* ── SECTIONS ── */
       .section {
         padding: 5rem 2rem;
       }
@@ -554,7 +530,7 @@
         text-align: right;
       }
 
-      /* CATEGORIES BAR */
+      /* ── CATEGORIES BAR ── */
       .categories-bar {
         background: var(--off-white);
         padding: 1.5rem 2rem;
@@ -589,7 +565,7 @@
         box-shadow: 0 4px 12px rgba(62, 207, 110, 0.3);
       }
 
-      /* PRODUCT GRID */
+      /* ── PRODUCT GRID ── */
       .product-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -644,13 +620,15 @@
       .product-badge.sale {
         background: #ff4b6e;
       }
+
+      /* ── WISHLIST HEART BUTTON ── */
       .product-wishlist {
         position: absolute;
         top: 10px;
         right: 10px;
         z-index: 2;
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
         background: #fff;
         border-radius: 50%;
         display: flex;
@@ -658,7 +636,6 @@
         justify-content: center;
         box-shadow: var(--shadow-sm);
         cursor: pointer;
-        font-size: 0.9rem;
         transition: all var(--transition);
         border: none;
         opacity: 0;
@@ -668,8 +645,20 @@
       }
       .product-wishlist:hover {
         background: var(--green-light);
-        transform: scale(1.1);
+        transform: scale(1.15);
       }
+      .product-wishlist svg {
+        transition: all 0.2s;
+      }
+      .product-wishlist.liked {
+        opacity: 1;
+        background: #fff0f3;
+      }
+      .product-wishlist.liked svg {
+        stroke: #ff4b6e;
+        fill: #ff4b6e;
+      }
+
       .product-body {
         padding: 1.1rem 1.25rem 1.25rem;
       }
@@ -703,7 +692,7 @@
         background: #fff;
         cursor: pointer;
         transition: all var(--transition);
-        color: var(--gray-600);
+        color: var(--gray-700);
       }
       .variant-chip:hover,
       .variant-chip.active {
@@ -731,11 +720,6 @@
         color: var(--gray-300);
         text-decoration: line-through;
       }
-      .price-discount {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #ff4b6e;
-      }
       .btn-add {
         width: 36px;
         height: 36px;
@@ -756,13 +740,15 @@
         transform: scale(1.1);
       }
 
-      /* ADMIN PANEL */
-      .admin-panel {
+      /* ── FAVORITES SECTION ── */
+      #favorites-section {
         display: none;
       }
-      .admin-panel.open {
+      #favorites-section.has-items {
         display: block;
       }
+
+      /* ── ADMIN ── */
       .admin-layout {
         display: grid;
         grid-template-columns: 240px 1fr;
@@ -967,12 +953,7 @@
         padding: 0.4rem 0.8rem;
         border-radius: var(--radius-sm);
         border: 1.5px solid var(--gray-100);
-        font-family:
-          "Outfit",
-          "Segoe UI",
-          system-ui,
-          -apple-system,
-          sans-serif;
+        font-family: inherit;
         font-size: 0.85rem;
         cursor: pointer;
         outline: none;
@@ -1006,8 +987,6 @@
         gap: 0.3rem;
         flex-wrap: wrap;
       }
-
-      /* SHIPPING MANAGER */
       .wilaya-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1043,12 +1022,8 @@
       .wilaya-price-input:focus {
         border-color: var(--green);
       }
-      .wilaya-toggle {
-        cursor: pointer;
-        font-size: 0.8rem;
-      }
 
-      /* FOOTER */
+      /* ── FOOTER ── */
       footer {
         background: var(--gray-900);
         color: rgba(255, 255, 255, 0.7);
@@ -1129,7 +1104,7 @@
         font-size: 0.82rem;
       }
 
-      /* PAGE SECTIONS */
+      /* ── PAGE SECTIONS ── */
       .page-section {
         display: none;
       }
@@ -1139,6 +1114,8 @@
       #home-page {
         display: block;
       }
+
+      /* ── TOAST ── */
       .toast {
         position: fixed;
         bottom: 2rem;
@@ -1163,7 +1140,7 @@
         opacity: 1;
       }
 
-      /* MODALS */
+      /* ── MODALS ── */
       .modal-overlay {
         position: fixed;
         inset: 0;
@@ -1249,12 +1226,7 @@
         padding: 0.65rem 0.9rem;
         border-radius: var(--radius-sm);
         border: 1.5px solid var(--gray-100);
-        font-family:
-          "Outfit",
-          "Segoe UI",
-          system-ui,
-          -apple-system,
-          sans-serif;
+        font-family: inherit;
         font-size: 0.9rem;
         color: var(--gray-900);
         transition: border-color var(--transition);
@@ -1294,8 +1266,6 @@
       .modal-footer {
         padding: 1rem 1.75rem 1.5rem;
       }
-
-      /* PRODUCT DETAIL MODAL */
       .pm-variant-chip {
         padding: 0.4rem 1rem;
         border-radius: 50px;
@@ -1314,7 +1284,7 @@
         color: var(--green-dark);
       }
 
-      /* SCROLL TOP */
+      /* ── SCROLL TOP ── */
       .scroll-top {
         position: fixed;
         bottom: 2rem;
@@ -1345,7 +1315,6 @@
         background: var(--green-dark);
       }
 
-      /* ANIMATIONS */
       @keyframes fadeUp {
         from {
           opacity: 0;
@@ -1369,7 +1338,7 @@
         animation: fadeUp 0.6s 0.3s both;
       }
 
-      /* RESPONSIVE */
+      /* ── RESPONSIVE ── */
       @media (max-width: 900px) {
         .hero-inner {
           grid-template-columns: 1fr;
@@ -1411,6 +1380,10 @@
         }
         .nav-actions .btn.btn-ghost {
           display: none;
+        }
+        /* FIX: connexion + mes commandes wrap properly on mobile */
+        .nav-actions {
+          gap: 0.4rem;
         }
         .cart-btn {
           padding: 0.4rem 0.75rem;
@@ -1459,10 +1432,6 @@
         }
         .hero-carousel-card .price {
           font-size: 1.2rem;
-        }
-        .hc-icon {
-          font-size: 2rem;
-          margin-bottom: 0.35rem;
         }
         .categories-bar {
           padding: 0.5rem 0;
@@ -1598,6 +1567,10 @@
           height: 36px;
           font-size: 0.85rem;
         }
+        /* Fix: wishlist always visible on mobile */
+        .product-wishlist {
+          opacity: 1;
+        }
       }
       @media (max-width: 360px) {
         .product-grid {
@@ -1610,7 +1583,7 @@
     </style>
   </head>
   <body>
-    <!-- NAVBAR -->
+    <!-- ── NAVBAR ── -->
     <nav id="main-nav">
       <a
         class="nav-logo"
@@ -1734,7 +1707,7 @@
       </ul>
 
       <div class="nav-actions">
-        <!-- Mes Commandes (desktop, visible quand connecté) -->
+        <!-- FIX: Mes commandes & Connexion use SVG icons, no text overflow on mobile -->
         <a
           href="javascript:void(0)"
           class="btn btn-ghost"
@@ -1753,9 +1726,8 @@
             <path
               d="M5 8h14M5 8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2" />
           </svg>
-          Mes commandes
+          <span class="btn-label">Mes commandes</span>
         </a>
-        <!-- Connexion (desktop) -->
         <a
           href="javascript:void(0)"
           class="btn btn-ghost"
@@ -1773,9 +1745,8 @@
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          Connexion
+          <span class="btn-label">Connexion</span>
         </a>
-        <!-- Panier -->
         <button class="cart-btn" onclick="openModal('cart-modal')">
           <svg
             width="16"
@@ -1798,13 +1769,12 @@
         </button>
       </div>
 
-      <!-- HAMBURGER -->
       <div class="hamburger" onclick="toggleMobileMenu()" id="hamburger-btn">
         <span></span><span></span><span></span>
       </div>
     </nav>
 
-    <!-- MOBILE MENU -->
+    <!-- ── MOBILE MENU ── -->
     <div class="mobile-menu" id="mobile-menu">
       <a
         class="mobile-menu-link"
@@ -1916,20 +1886,15 @@
         </svg>
         Admin
       </a>
-
       <div class="mobile-menu-divider"></div>
-
-      <!-- Auth actions dans le menu mobile -->
       <div id="mobile-auth-section">
-        <!-- Si non connecté -->
         <div id="mobile-not-logged" class="mobile-menu-auth">
           <button
             class="btn btn-primary"
             onclick="
               closeMobileMenu();
               openModal('login-modal');
-            "
-            style="flex: 1; justify-content: center">
+            ">
             <svg
               width="15"
               height="15"
@@ -1945,7 +1910,6 @@
             Connexion
           </button>
         </div>
-        <!-- Si connecté -->
         <div id="mobile-logged" style="display: none">
           <a
             class="mobile-menu-link"
@@ -1996,7 +1960,7 @@
       </div>
     </div>
 
-    <!-- HOME PAGE -->
+    <!-- ── HOME PAGE ── -->
     <div id="home-page" class="page-section active">
       <section class="hero">
         <div class="hero-inner">
@@ -2064,6 +2028,32 @@
         </div>
       </div>
 
+      <!-- FAVORITES SECTION -->
+      <section class="section" id="favorites-section">
+        <div class="section-inner">
+          <div class="section-header">
+            <h2>
+              Mes <span>Favoris</span>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="#ff4b6e"
+                stroke="#ff4b6e"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="vertical-align: middle; margin-left: 0.4rem">
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </h2>
+            <p id="fav-count-label">0 produit(s)</p>
+          </div>
+          <div class="product-grid" id="favorites-grid"></div>
+        </div>
+      </section>
+
       <!-- ALL PRODUCTS -->
       <section class="section">
         <div class="section-inner">
@@ -2076,7 +2066,7 @@
       </section>
     </div>
 
-    <!-- SHOP PAGE -->
+    <!-- ── SHOP PAGE ── -->
     <div id="shop-page" class="page-section">
       <section class="section">
         <div class="section-inner">
@@ -2088,7 +2078,7 @@
       </section>
     </div>
 
-    <!-- ADMIN PAGE -->
+    <!-- ── ADMIN PAGE ── -->
     <div id="admin-page" class="page-section">
       <div class="admin-layout">
         <aside class="admin-sidebar">
@@ -2197,6 +2187,7 @@
           </ul>
         </aside>
         <main class="admin-content">
+          <!-- DASHBOARD TAB -->
           <div id="admin-dashboard" class="admin-tab">
             <div class="admin-header"><h1>Tableau de Bord</h1></div>
             <div class="stats-grid">
@@ -2249,6 +2240,7 @@
                     <tr>
                       <th>Produit</th>
                       <th>Catégorie</th>
+                      <th>Prix</th>
                       <th>Ventes</th>
                       <th>Revenus</th>
                       <th>Stock</th>
@@ -2259,6 +2251,7 @@
               </div>
             </div>
           </div>
+          <!-- ORDERS TAB -->
           <div id="admin-orders" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Gestion des Commandes</h1>
@@ -2300,6 +2293,7 @@
               </div>
             </div>
           </div>
+          <!-- PRODUCTS TAB -->
           <div id="admin-products" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Produits</h1>
@@ -2327,6 +2321,7 @@
               </div>
             </div>
           </div>
+          <!-- SHIPPING TAB -->
           <div id="admin-shipping" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Livraison par Wilaya</h1>
@@ -2344,6 +2339,7 @@
               <div class="wilaya-grid" id="wilaya-manager"></div>
             </div>
           </div>
+          <!-- FINANCE TAB -->
           <div id="admin-finance" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Aperçu Financier</h1>
@@ -2417,7 +2413,7 @@
       </div>
     </div>
 
-    <!-- FOOTER -->
+    <!-- ── FOOTER ── -->
     <footer id="main-footer">
       <div class="footer-inner">
         <div class="footer-grid">
@@ -2428,10 +2424,68 @@
               cosmétiques premium. Livraison rapide dans les 69 wilayas.
             </p>
             <div class="social-links">
-              <a class="social-btn" href="#">f</a>
-              <a class="social-btn" href="#">in</a>
-              <a class="social-btn" href="#">tw</a>
-              <a class="social-btn" href="#">yt</a>
+              <a
+                class="social-btn"
+                href="https://www.instagram.com/mustech.shop?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                title="Instagram">
+                <!-- Instagram SVG icon -->
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a class="social-btn" href="#" title="Facebook">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+              </a>
+              <a class="social-btn" href="#" title="YouTube">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+                  <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+                </svg>
+              </a>
+              <a class="social-btn" href="#" title="TikTok">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                </svg>
+              </a>
             </div>
           </div>
           <div class="footer-col">
@@ -2471,7 +2525,7 @@
       </div>
     </footer>
 
-    <!-- PRODUCT DETAIL MODAL -->
+    <!-- ── PRODUCT DETAIL MODAL ── -->
     <div class="modal-overlay" id="product-modal">
       <div class="modal" style="max-width: 700px" id="product-modal-inner">
         <div class="modal-header">
@@ -3086,7 +3140,7 @@
       </div>
     </div>
 
-    <!-- CART MODAL -->
+    <!-- ── CART MODAL ── -->
     <div class="modal-overlay" id="cart-modal">
       <div class="modal">
         <div class="modal-header">
@@ -3120,7 +3174,7 @@
       </div>
     </div>
 
-    <!-- CHECKOUT MODAL -->
+    <!-- ── CHECKOUT MODAL ── -->
     <div class="modal-overlay" id="checkout-modal">
       <div class="modal" style="max-width: 660px">
         <div class="modal-header">
@@ -3205,7 +3259,7 @@
       </div>
     </div>
 
-    <!-- LOGIN MODAL -->
+    <!-- ── LOGIN MODAL ── -->
     <div class="modal-overlay" id="login-modal">
       <div class="modal" style="max-width: 420px">
         <div class="modal-header">
@@ -3237,6 +3291,7 @@
                 background: var(--green);
                 color: #fff;
                 transition: all 0.2s;
+                font-family: inherit;
               ">
               Connexion
             </button>
@@ -3253,6 +3308,7 @@
                 background: #fff;
                 color: var(--gray-500);
                 transition: all 0.2s;
+                font-family: inherit;
               ">
               Créer un compte
             </button>
@@ -3335,7 +3391,7 @@
       </div>
     </div>
 
-    <!-- MY ORDERS MODAL -->
+    <!-- ── MY ORDERS MODAL ── -->
     <div class="modal-overlay" id="my-orders-modal">
       <div class="modal" style="max-width: 580px">
         <div class="modal-header">
@@ -3348,7 +3404,7 @@
       </div>
     </div>
 
-    <!-- ADD PRODUCT MODAL -->
+    <!-- ── ADD PRODUCT MODAL ── -->
     <div class="modal-overlay" id="add-product-modal">
       <div class="modal">
         <div class="modal-header">
@@ -3401,7 +3457,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Emoji Icône</label
+            <label>Icône (texte/emoji)</label
             ><input
               type="text"
               id="ap-icon"
@@ -3437,10 +3493,9 @@
               id="ap-imgs-preview"
               style="
                 margin-top: 0.5rem;
-                display: flex;
+                display: none;
                 gap: 0.5rem;
                 flex-wrap: wrap;
-                display: none;
               "></div>
           </div>
         </div>
@@ -3455,7 +3510,7 @@
       </div>
     </div>
 
-    <!-- ORDER CONFIRMATION -->
+    <!-- ── CONFIRM ORDER MODAL ── -->
     <div class="modal-overlay" id="confirm-modal">
       <div class="modal">
         <div class="modal-header">
@@ -3517,7 +3572,7 @@
       </div>
     </div>
 
-    <!-- RATING MODAL -->
+    <!-- ── RATING MODAL ── -->
     <div class="modal-overlay" id="rating-modal">
       <div class="modal" style="max-width: 420px">
         <div class="modal-header">
@@ -3624,7 +3679,7 @@
       </div>
     </div>
 
-    <!-- EDIT PRODUCT MODAL -->
+    <!-- ── EDIT PRODUCT MODAL ── -->
     <div class="modal-overlay" id="edit-product-modal">
       <div class="modal">
         <div class="modal-header">
@@ -3665,7 +3720,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Emoji Icône</label
+            <label>Icône</label
             ><input
               type="text"
               id="ep-icon"
@@ -3738,9 +3793,7 @@
                     background 0.2s;
                   background: transparent;
                 ">
-                <div
-                  id="ep-drop-icon"
-                  style="font-size: 1.6rem; margin-bottom: 0.3rem">
+                <div style="font-size: 1.6rem; margin-bottom: 0.3rem">
                   <svg
                     width="28"
                     height="28"
@@ -3755,9 +3808,7 @@
                     <polyline points="21 15 16 10 5 21" />
                   </svg>
                 </div>
-                <div
-                  id="ep-drop-label"
-                  style="font-size: 0.82rem; color: var(--gray-500)">
+                <div style="font-size: 0.82rem; color: var(--gray-500)">
                   Cliquer ou glisser une nouvelle image ici
                 </div>
                 <div
@@ -3849,7 +3900,7 @@
       </div>
     </div>
 
-    <!-- VIEW ORDER MODAL -->
+    <!-- ── VIEW ORDER MODAL ── -->
     <div class="modal-overlay" id="view-order-modal">
       <div class="modal">
         <div class="modal-header">
@@ -3884,7 +3935,6 @@
       </div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast" id="toast">
       <span class="icon"></span><span id="toast-msg"></span>
     </div>
@@ -3898,8 +3948,7 @@
     <script>
       // ── MOBILE MENU ───────────────────────────────────────────
       function toggleMobileMenu() {
-        const menu = document.getElementById("mobile-menu");
-        menu.classList.toggle("open");
+        document.getElementById("mobile-menu").classList.toggle("open");
       }
       function closeMobileMenu() {
         document.getElementById("mobile-menu").classList.remove("open");
@@ -3911,12 +3960,11 @@
           menu.classList.contains("open") &&
           !menu.contains(e.target) &&
           !hamburger.contains(e.target)
-        ) {
+        )
           menu.classList.remove("open");
-        }
       });
 
-      // MODALS
+      // ── MODALS ────────────────────────────────────────────────
       function openModal(id) {
         document.getElementById(id).classList.add("open");
         if (id === "cart-modal") renderCartItems();
@@ -3928,34 +3976,84 @@
       function closeModal(id) {
         document.getElementById(id).classList.remove("open");
       }
-      function initModalClose() {
+      (function initModalClose() {
         document.querySelectorAll(".modal-overlay").forEach((m) => {
           m.addEventListener("click", (e) => {
             if (e.target === m) m.classList.remove("open");
           });
         });
-      }
-      if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", initModalClose);
-      else initModalClose();
+      })();
 
-      // AUTH
+      // ── STATE ─────────────────────────────────────────────────
       let currentUser = null;
-
-      // CAROUSEL STATE
-      let carouselIndex = 0;
-      let carouselTimer = null;
-      let carouselProgress = 0;
-      let progressTimer = null;
+      let carouselIndex = 0,
+        carouselTimer = null,
+        carouselProgress = 0,
+        progressTimer = null;
       const CAROUSEL_INTERVAL = 3000;
+      let WILAYAS = [],
+        PRODUCTS = [],
+        ORDERS = [],
+        PRODUCT_DESCS = {};
 
-      // DATA
-      let WILAYAS = [];
-      let PRODUCTS = [];
-      let ORDERS = [];
-      let PRODUCT_DESCS = {};
+      // ── FAVORITES ─────────────────────────────────────────────
+      // Stored as Set of product IDs
+      let FAVORITES = new Set(
+        JSON.parse(localStorage.getItem("mt_favorites") || "[]"),
+      );
 
-      // RENDER PRODUCTS
+      function saveFavorites() {
+        localStorage.setItem("mt_favorites", JSON.stringify([...FAVORITES]));
+      }
+
+      function toggleFavorite(pid, event) {
+        if (event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
+        if (FAVORITES.has(pid)) {
+          FAVORITES.delete(pid);
+          showToast("Retiré des favoris");
+        } else {
+          FAVORITES.add(pid);
+          showToast("Ajouté aux favoris !");
+        }
+        saveFavorites();
+        // Update all heart buttons for this product
+        document
+          .querySelectorAll(`.wishlist-btn[data-id="${pid}"]`)
+          .forEach((btn) => {
+            btn.classList.toggle("liked", FAVORITES.has(pid));
+            btn
+              .querySelector("svg")
+              .setAttribute("fill", FAVORITES.has(pid) ? "#ff4b6e" : "none");
+            btn
+              .querySelector("svg")
+              .setAttribute(
+                "stroke",
+                FAVORITES.has(pid) ? "#ff4b6e" : "currentColor",
+              );
+          });
+        renderFavoritesSection();
+      }
+
+      function renderFavoritesSection() {
+        const section = document.getElementById("favorites-section");
+        const grid = document.getElementById("favorites-grid");
+        const countLabel = document.getElementById("fav-count-label");
+        if (!section || !grid) return;
+        const favProducts = PRODUCTS.filter((p) => FAVORITES.has(p.id));
+        if (favProducts.length === 0) {
+          section.classList.remove("has-items");
+          return;
+        }
+        section.classList.add("has-items");
+        if (countLabel)
+          countLabel.textContent = favProducts.length + " produit(s)";
+        grid.innerHTML = favProducts.map(renderProductCard).join("");
+      }
+
+      // ── RENDER PRODUCT CARD ───────────────────────────────────
       function renderProductCard(p) {
         const variantHTML = p.variants
           .map(
@@ -3970,13 +4068,18 @@
           ? `<span class="price-old" id="old-price-${p.id}">${p.oldPrice.toLocaleString()} DA</span>`
           : "";
         const imgContent = p.img
-          ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="${p.name}">`
+          ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" alt="${p.name}">`
           : `<span style="font-size:3.5rem">${p.icon}</span>`;
+        const isFav = FAVORITES.has(p.id);
         return `
           <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer">
             <div class="product-img" id="card-img-${p.id}">
               ${badgeHTML}
-              <button class="product-wishlist" title="Wishlist" onclick="event.stopPropagation()">&#9825;</button>
+              <button class="product-wishlist wishlist-btn ${isFav ? "liked" : ""}" data-id="${p.id}" title="${isFav ? "Retirer des favoris" : "Ajouter aux favoris"}" onclick="toggleFavorite(${p.id},event)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav ? "#ff4b6e" : "none"}" stroke="${isFav ? "#ff4b6e" : "currentColor"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
               ${imgContent}
             </div>
             <div class="product-body">
@@ -4006,10 +4109,11 @@
         if (sg) sg.innerHTML = fg ? fg.innerHTML : "";
         const countEl = document.getElementById("products-count");
         if (countEl) countEl.textContent = PRODUCTS.length;
+        renderFavoritesSection();
         buildCarousel();
       }
 
-      // ADMIN TABLES
+      // ── ADMIN TABLES ──────────────────────────────────────────
       function statusLabel(s) {
         return (
           {
@@ -4027,6 +4131,7 @@
           const ordersRes = await OrdersAPI.getAll();
           ORDERS = ordersRes.orders || [];
           PRODUCTS = await ProductsAPI.getAll();
+
           const set = (id, val) => {
             const el = document.getElementById(id);
             if (el) el.textContent = val;
@@ -4039,52 +4144,95 @@
           set("stat-orders", stats.total_orders);
           set("stat-orders-sub", stats.pending_orders + " en attente");
           set("stat-products", stats.total_products);
-          set("fin-total-orders", "—");
-          set("fin-revenue", "— DA");
-          set("fin-delivered", "—");
-          set("fin-pending", "—");
+          // Finance stats
+          const delivered = ORDERS.filter(
+            (o) => o.status === "delivered",
+          ).length;
+          const pending = ORDERS.filter((o) => o.status === "pending").length;
+          const revenue = ORDERS.reduce((s, o) => s + (o.total || 0), 0);
+          set("fin-total-orders", ORDERS.length);
+          set("fin-revenue", revenue.toLocaleString() + " DA");
+          set("fin-delivered", delivered);
+          set("fin-pending", pending);
+
           const t1 = document.getElementById("admin-orders-table");
           if (t1)
             t1.innerHTML = ORDERS.map(
-              (o) =>
-                `<tr><td><strong>${o.order_ref || "#MT-" + o.id}</strong></td><td>${o.customer}</td><td>${o.wilaya}</td><td><strong>${(o.total || 0).toLocaleString()} DA</strong></td><td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td><td><div class="action-btns"><button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button><button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'shipped')">Expédier</button><button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button></div></td></tr>`,
+              (o) => `
+            <tr>
+              <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
+              <td>${o.customer}</td><td>${o.wilaya}</td>
+              <td><strong>${(o.total || 0).toLocaleString()} DA</strong></td>
+              <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
+              <td><div class="action-btns">
+                <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
+                <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'shipped')">Expédier</button>
+                <button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button>
+              </div></td>
+            </tr>`,
             ).join("");
+
           const t2 = document.getElementById("all-orders-table");
           if (t2)
             t2.innerHTML = ORDERS.map(
-              (o) =>
-                `<tr><td><strong>${o.order_ref || "#MT-" + o.id}</strong></td><td>${o.customer}</td><td>${o.phone}</td><td>${o.wilaya}</td><td>${o.items ? o.items.length : 0}</td><td><strong>${(o.total || 0).toLocaleString()} DA</strong></td><td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td><td><div class="action-btns"><button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button><button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button></div></td></tr>`,
+              (o) => `
+            <tr>
+              <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
+              <td>${o.customer}</td><td>${o.phone}</td><td>${o.wilaya}</td>
+              <td>${o.items ? o.items.length : 0}</td>
+              <td><strong>${(o.total || 0).toLocaleString()} DA</strong></td>
+              <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
+              <td><div class="action-btns">
+                <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
+                <button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button>
+              </div></td>
+            </tr>`,
             ).join("");
+
           const t3 = document.getElementById("admin-products-table");
           if (t3)
             t3.innerHTML = PRODUCTS.slice(0, 5)
               .map(
-                (p) =>
-                  `<tr><td>${p.icon} ${p.name}</td><td>${p.cat}</td><td>${p.price.toLocaleString()} DA</td><td>${p.reviews * 3}</td><td>${(p.price * p.reviews * 0.8).toFixed(0)} DA</td><td><span class="status-badge ${p.stock < 15 ? "status-pending" : "status-delivered"}">${p.stock < 15 ? "Stock Faible" : "En Stock"}</span></td></tr>`,
+                (p) => `
+            <tr>
+              <td>${p.icon} ${p.name}</td><td>${p.cat}</td>
+              <td>${p.price.toLocaleString()} DA</td>
+              <td>${p.reviews * 3}</td>
+              <td>${(p.price * p.reviews * 0.8).toFixed(0)} DA</td>
+              <td><span class="status-badge ${p.stock < 15 ? "status-pending" : "status-delivered"}">${p.stock < 15 ? "Stock Faible" : "En Stock"}</span></td>
+            </tr>`,
               )
               .join("");
+
           const t4 = document.getElementById("admin-products-list");
           if (t4) {
             t4.innerHTML = PRODUCTS.map(
-              (p) =>
-                `<tr><td><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:42px;height:42px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0;cursor:pointer;border:2px dashed ${p.img ? "var(--green)" : "var(--gray-200)"};position:relative" onclick="triggerImgUpload(${p.id})">${p.img ? `<img src="${p.img.startsWith("http") ? p.img : "http://localhost:3001" + p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">` : p.icon}<div style="position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:0.2s" class="img-hover-overlay"><span style="color:#fff;font-size:0.7rem;font-weight:700">img</span></div></div><span style="font-weight:600">${p.name}</span></div><input type="file" id="img-input-${p.id}" accept="image/*" style="display:none" onchange="uploadProductImg(${p.id},this)"></td><td>${p.cat}</td><td>${p.price.toLocaleString()} DA</td><td>${p.stock}</td><td><span class="status-badge ${p.stock > 0 ? "status-delivered" : "status-cancelled"}">${p.stock > 0 ? "Actif" : "Rupture"}</span></td><td><div class="action-btns"><button class="action-btn action-edit" onclick="openEditProduct(${p.id})">Modifier</button><button class="action-btn action-del" onclick="deleteOrder(${p.id})">Supprimer</button></div></td></tr>`,
+              (p) => `
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:0.75rem">
+                    <div style="width:42px;height:42px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:1.4rem;overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;border:2px dashed ${p.img ? "var(--green)" : "var(--gray-200)"}" onclick="triggerImgUpload(${p.id})">
+                      ${p.img ? `<img src="${p.img.startsWith("http") ? p.img : "http://localhost:3001" + p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">` : p.icon}
+                    </div>
+                    <span style="font-weight:600">${p.name}</span>
+                  </div>
+                  <input type="file" id="img-input-${p.id}" accept="image/*" style="display:none" onchange="uploadProductImg(${p.id},this)">
+                </td>
+                <td>${p.cat}</td><td>${p.price.toLocaleString()} DA</td><td>${p.stock}</td>
+                <td><span class="status-badge ${p.stock > 0 ? "status-delivered" : "status-cancelled"}">${p.stock > 0 ? "Actif" : "Rupture"}</span></td>
+                <td><div class="action-btns">
+                  <button class="action-btn action-edit" onclick="openEditProduct(${p.id})">Modifier</button>
+                  <button class="action-btn action-del" onclick="deleteProduct(${p.id})">Supprimer</button>
+                </div></td>
+              </tr>`,
             ).join("");
-            t4.querySelectorAll(".img-hover-overlay").forEach((ov) => {
-              ov.parentElement.addEventListener(
-                "mouseenter",
-                () => (ov.style.opacity = "1"),
-              );
-              ov.parentElement.addEventListener(
-                "mouseleave",
-                () => (ov.style.opacity = "0"),
-              );
-            });
           }
         } catch (e) {
           console.error("Tables load error:", e);
         }
       }
 
+      // ── EDIT PRODUCT ──────────────────────────────────────────
       function openEditProduct(id) {
         const p = PRODUCTS.find((x) => x.id === id);
         if (!p) return;
@@ -4099,19 +4247,19 @@
         document.getElementById("ep-variant-prices").value =
           p.variantPrices.join(", ");
         document.getElementById("ep-desc").value = PRODUCT_DESCS[id] || "";
-        const currentWrap = document.getElementById("ep-current-img-wrap");
-        const currentImg = document.getElementById("ep-current-img");
-        const newWrap = document.getElementById("ep-new-img-wrap");
-        const newImg = document.getElementById("ep-new-img");
-        const fileInput = document.getElementById("ep-image");
-        if (fileInput) fileInput.value = "";
-        if (newWrap) newWrap.style.display = "none";
-        if (newImg) newImg.src = "";
+        const cw = document.getElementById("ep-current-img-wrap"),
+          ci = document.getElementById("ep-current-img");
+        const nw = document.getElementById("ep-new-img-wrap"),
+          ni = document.getElementById("ep-new-img");
+        const fi = document.getElementById("ep-image");
+        if (fi) fi.value = "";
+        if (nw) nw.style.display = "none";
+        if (ni) ni.src = "";
         const imgSrc = p.images && p.images.length > 0 ? p.images[0] : p.img;
-        if (imgSrc && currentImg && currentWrap) {
-          currentImg.src = imgSrc;
-          currentWrap.style.display = "block";
-        } else if (currentWrap) currentWrap.style.display = "none";
+        if (imgSrc && ci && cw) {
+          ci.src = imgSrc;
+          cw.style.display = "block";
+        } else if (cw) cw.style.display = "none";
         initEditImageListeners();
         openModal("edit-product-modal");
       }
@@ -4181,8 +4329,8 @@
         if (_imgListenersAttached) return;
         _imgListenersAttached = true;
         const fi = document.getElementById("ep-image"),
-          dz = document.getElementById("ep-drop-zone"),
-          nw = document.getElementById("ep-new-img-wrap"),
+          dz = document.getElementById("ep-drop-zone");
+        const nw = document.getElementById("ep-new-img-wrap"),
           ni = document.getElementById("ep-new-img");
         if (!fi) return;
         fi.addEventListener("change", () => {
@@ -4244,8 +4392,16 @@
               )
               .join("<br>")
           : o.items || "—";
-        document.getElementById("view-order-body").innerHTML =
-          `<div class="order-summary"><div class="order-row"><span>N° Commande</span><span style="font-weight:700;color:var(--green-dark)">${o.order_ref || "#MT-" + o.id}</span></div><div class="order-row"><span>Client</span><span>${o.customer}</span></div><div class="order-row"><span>Téléphone</span><span>${o.phone}</span></div><div class="order-row"><span>Wilaya</span><span>${o.wilaya}</span></div><div class="order-row"><span>Articles</span><span style="text-align:right;line-height:1.6">${itemsDisplay}</span></div><div class="order-row total"><span>Total</span><span>${(o.total || 0).toLocaleString()} DA</span></div><div class="order-row"><span>Statut</span><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></div></div>`;
+        document.getElementById("view-order-body").innerHTML = `
+          <div class="order-summary">
+            <div class="order-row"><span>N° Commande</span><span style="font-weight:700;color:var(--green-dark)">${o.order_ref || "#MT-" + o.id}</span></div>
+            <div class="order-row"><span>Client</span><span>${o.customer}</span></div>
+            <div class="order-row"><span>Téléphone</span><span>${o.phone}</span></div>
+            <div class="order-row"><span>Wilaya</span><span>${o.wilaya}</span></div>
+            <div class="order-row"><span>Articles</span><span style="text-align:right;line-height:1.6">${itemsDisplay}</span></div>
+            <div class="order-row total"><span>Total</span><span>${(o.total || 0).toLocaleString()} DA</span></div>
+            <div class="order-row"><span>Statut</span><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></div>
+          </div>`;
         openModal("view-order-modal");
       }
       function changeOrderStatus(status) {
@@ -4256,22 +4412,23 @@
         try {
           await OrdersAPI.updateStatus(id, status);
           await populateAdminTables();
-          showToast(`Commande ${id} → ${statusLabel(status)}`);
+          showToast("Commande " + id + " → " + statusLabel(status));
         } catch (e) {
           showToast("Erreur: " + e.message);
         }
       }
       async function deleteOrder(id) {
-        if (!confirm(`Supprimer la commande ${id} ?`)) return;
+        if (!confirm("Supprimer la commande " + id + " ?")) return;
         try {
           await OrdersAPI.delete(id);
           await populateAdminTables();
-          showToast(`Commande ${id} supprimée.`);
+          showToast("Commande " + id + " supprimée.");
         } catch (e) {
           showToast("Erreur: " + e.message);
         }
       }
 
+      // ── ADD PRODUCT ───────────────────────────────────────────
       document.addEventListener("change", (e) => {
         if (e.target.id === "ap-imgs") {
           const pc = document.getElementById("ap-imgs-preview");
@@ -4334,10 +4491,9 @@
         fd.append("variants", JSON.stringify(variants));
         fd.append("variant_prices", JSON.stringify(variantPrices));
         const fi = document.getElementById("ap-imgs");
-        if (fi && fi.files.length > 0) {
+        if (fi && fi.files.length > 0)
           for (let i = 0; i < fi.files.length && i < 5; i++)
             fd.append("images", fi.files[i]);
-        }
         try {
           const res = await ProductsAPI.create(fd);
           PRODUCT_DESCS[res.id] = desc || "";
@@ -4385,6 +4541,7 @@
         r.readAsDataURL(f);
       }
 
+      // ── WILAYAS ───────────────────────────────────────────────
       function populateWilayas() {
         const sel = document.getElementById("wilaya-select");
         if (sel) {
@@ -4458,6 +4615,7 @@
         }
       }
 
+      // ── CHECKOUT CART ─────────────────────────────────────────
       let checkoutCart = [];
       function getSubtotal() {
         return checkoutCart.reduce((sum, item) => {
@@ -4561,7 +4719,7 @@
         bars.innerHTML = vals
           .map(
             (v, i) =>
-              `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="font-size:0.65rem;color:var(--gray-500)">${(v / 1000).toFixed(0)}K</span><div style="width:100%;height:${Math.round((v / max) * 140)}px;background:${i === 5 ? "var(--green)" : "var(--green-light)"};border-radius:6px 6px 0 0"></div></div>`,
+              `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="font-size:0.65rem;color:var(--gray-500)">${(v / 1000).toFixed(0)}K</span><div style="width:100%;height:${Math.round((v / max) * 140)}px;background:${i === 5 ? "var(--green)" : "var(--green-light)"};border-radius:6px 6px 0 0;transition:all 0.5s"></div></div>`,
           )
           .join("");
         labels.innerHTML = days
@@ -4572,6 +4730,7 @@
           .join("");
       }
 
+      // ── PAGE NAVIGATION ───────────────────────────────────────
       function showPage(page) {
         if (
           page === "admin" &&
@@ -4621,6 +4780,7 @@
                 : "none";
           });
       }
+
       function renderCartItems() {
         const container = document.getElementById("cart-items"),
           summary = document.getElementById("cart-summary"),
@@ -4700,99 +4860,6 @@
         });
       }
 
-      // ── EMAILJS ───────────────────────────────────────────────
-      const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY",
-        EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID",
-        EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-      function initEmailJS() {
-        if (
-          typeof emailjs !== "undefined" &&
-          EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY"
-        )
-          emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-      }
-      if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", initEmailJS);
-      else initEmailJS();
-      function sendOrderEmail(order) {
-        if (
-          typeof emailjs === "undefined" ||
-          EMAILJS_PUBLIC_KEY === "YOUR_PUBLIC_KEY"
-        ) {
-          console.log("EmailJS not configured", order);
-          return;
-        }
-        const itemsList = checkoutCart
-          .map((item) => {
-            const p = PRODUCTS.find((x) => x.id === item.id);
-            return p
-              ? `${p.name} (${p.variants[item.variant]}) x${item.qty}`
-              : "";
-          })
-          .join("\n");
-        emailjs
-          .send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_email: "mus.softwares@gmail.com",
-            order_id: order.id,
-            customer: order.customer,
-            phone: order.phone,
-            wilaya: order.wilaya,
-            address: order.address,
-            items: itemsList,
-            total: order.total,
-            date: new Date().toLocaleString("fr-DZ"),
-          })
-          .then(() => console.log("Email envoyé"))
-          .catch((e) => console.error("Email error:", e));
-      }
-
-      // ── RATINGS ───────────────────────────────────────────────
-      let RATINGS = [],
-        _currentRating = 0;
-      const RATING_LABELS = [
-        "",
-        "Très mauvais",
-        "Mauvais",
-        "Correct",
-        "Bien",
-        "Excellent !",
-      ];
-      function setRating(n) {
-        _currentRating = n;
-        document.querySelectorAll(".star-btn").forEach((s, i) => {
-          s.textContent = i < n ? "★" : "☆";
-          s.style.color = i < n ? "#f59e0b" : "#d1d5db";
-          s.style.transform = i < n ? "scale(1.15)" : "scale(1)";
-        });
-        document.getElementById("rating-label").textContent = RATING_LABELS[n];
-      }
-      function submitRating() {
-        if (!_currentRating) {
-          showToast("Choisissez une note !");
-          return;
-        }
-        const comment = document.getElementById("rating-comment").value.trim();
-        RATINGS.push({
-          rating: _currentRating,
-          comment,
-          date: new Date().toLocaleDateString("fr-DZ"),
-        });
-        closeModal("rating-modal");
-        _currentRating = 0;
-        document.querySelectorAll(".star-btn").forEach((s) => {
-          s.textContent = "☆";
-          s.style.color = "";
-          s.style.transform = "";
-        });
-        document.getElementById("rating-comment").value = "";
-        document.getElementById("rating-label").textContent = "";
-        updateDashboardStats();
-        showToast("Merci pour votre avis !");
-      }
-      function updateDashboardStats() {
-        populateAdminTables();
-      }
-
       // ── ORDER ─────────────────────────────────────────────────
       async function placeOrder() {
         const wilEl = document.getElementById("wilaya-select");
@@ -4831,7 +4898,6 @@
             resOrder.order_ref || "#MT-" + resOrder.id;
           document.getElementById("confirm-total").textContent =
             resOrder.total_formatted || resOrder.total + " DA";
-          sendOrderEmail(resOrder);
           if (currentUser && currentUser.role === "admin")
             populateAdminTables();
           checkoutCart = [];
@@ -4843,7 +4909,7 @@
         }
       }
 
-      // TOAST
+      // ── TOAST ─────────────────────────────────────────────────
       function showToast(msg) {
         const t = document.getElementById("toast");
         document.getElementById("toast-msg").textContent = msg;
@@ -4851,18 +4917,17 @@
         setTimeout(() => t.classList.remove("show"), 3000);
       }
 
-      // SCROLL TOP
       window.addEventListener("scroll", () => {
         const btn = document.getElementById("scroll-top");
         if (window.scrollY > 400) btn.classList.add("visible");
         else btn.classList.remove("visible");
       });
 
-      // PRODUCT DETAIL MODAL
+      // ── PRODUCT MODAL ─────────────────────────────────────────
       let pmCurrentProduct = null,
         pmCurrentVariant = 0,
-        pmCurrentQty = 1;
-      let pmSelectedVariants = [0];
+        pmCurrentQty = 1,
+        pmSelectedVariants = [0];
 
       function openProductModal(pid) {
         const p = PRODUCTS.find((x) => x.id === pid);
@@ -4872,8 +4937,8 @@
         pmCurrentQty = 1;
         pmSelectedVariants = [0];
         document.getElementById("pm-title").textContent = p.name;
-        const imgParent = document.getElementById("pm-img");
-        const thumbnailsContainer = document.getElementById("pm-thumbnails");
+        const imgParent = document.getElementById("pm-img"),
+          thumbnailsContainer = document.getElementById("pm-thumbnails");
         imgParent
           .querySelectorAll("img.pm-real-img")
           .forEach((el) => el.remove());
@@ -4967,10 +5032,10 @@
           btn.textContent = "Confirmer la Commande";
         }
         if (currentUser) {
-          const nameEl = document.getElementById("pm-name"),
-            phoneEl = document.getElementById("pm-phone");
-          if (nameEl && currentUser.name) nameEl.value = currentUser.name;
-          if (phoneEl && currentUser.phone) phoneEl.value = currentUser.phone;
+          const ne = document.getElementById("pm-name"),
+            pe = document.getElementById("pm-phone");
+          if (ne && currentUser.name) ne.value = currentUser.name;
+          if (pe && currentUser.phone) pe.value = currentUser.phone;
         }
         setPmDelivery("domicile");
         const pbc = document.getElementById("pm-bureau-company"),
@@ -5013,15 +5078,12 @@
         pmUpdateShipping();
       }
 
-      // ── BUREAU OFFICES ────────────────────────────────────────
       const BUREAU_OFFICES = {
         yalidine: [
           "Alger - Hussein Dey",
           "Alger - Bab Ezzouar",
           "Alger - Dar El Beida",
-          "Alger - Rouiba",
           "Oran - Oran Centre",
-          "Oran - Es Senia",
           "Constantine - Constantine Centre",
           "Annaba - Annaba Centre",
           "Blida - Blida Centre",
@@ -5030,18 +5092,17 @@
           "Tlemcen - Tlemcen Centre",
           "Béjaïa - Béjaïa Centre",
           "Tizi Ouzou - Tizi Ouzou Centre",
-          "Boumerdès - Boumerdès Centre",
+          "Msila - Msila Centre",
         ],
         zaki: [
           "Alger - Kouba",
           "Alger - Bab El Oued",
-          "Alger - El Harrach",
           "Oran - Oran Centre",
           "Constantine - Constantine Centre",
           "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
           "Sétif - Sétif Centre",
           "Batna - Batna Centre",
+          "Msila - Msila Centre",
         ],
         procolis: [
           "Alger - Bachdjarrah",
@@ -5049,30 +5110,30 @@
           "Oran - Oran Centre",
           "Constantine - Constantine Centre",
           "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
           "Sétif - Sétif Centre",
+          "Msila - Msila Centre",
         ],
         noest: [
           "Alger - Hussein Dey",
           "Alger - Bab Ezzouar",
           "Oran - Oran Centre",
           "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
           "Sétif - Sétif Centre",
+          "Msila - Msila Centre",
         ],
         eship: [
           "Alger - Bab Ezzouar",
           "Alger - Dar El Beida",
           "Oran - Oran Centre",
           "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
+          "Msila - Msila Centre",
         ],
         maystro: [
           "Alger - Kouba",
           "Alger - Hussein Dey",
           "Oran - Oran Centre",
           "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
+          "Sétif - Sétif Centre",
         ],
         dhlex: [
           "Alger - El Harrach",
@@ -5083,21 +5144,20 @@
         guepex: [
           "Alger - Bachdjarrah",
           "Alger - Bab Ezzouar",
-          "Alger - Hussein Dey",
           "Oran - Oran Centre",
           "Oran - Bir El Djir",
           "Constantine - Constantine Centre",
           "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
           "Sétif - Sétif Centre",
+          "Msila - Msila Centre",
         ],
       };
 
       function setPmDelivery(type) {
         document.getElementById("pm-delivery-type").value = type;
         const dom = document.getElementById("pm-del-domicile"),
-          bur = document.getElementById("pm-del-bureau"),
-          bureauSel = document.getElementById("pm-bureau-selector"),
+          bur = document.getElementById("pm-del-bureau");
+        const bureauSel = document.getElementById("pm-bureau-selector"),
           domFields = document.getElementById("pm-domicile-fields");
         if (type === "domicile") {
           dom.style.cssText =
@@ -5153,7 +5213,6 @@
             : (productPrice * pmCurrentQty).toLocaleString() +
               " DA + livraison";
       }
-
       async function pmPlaceOrder() {
         const phone = document.getElementById("pm-phone")?.value.trim();
         const wilEl = document.getElementById("pm-wilaya");
@@ -5173,8 +5232,8 @@
           const companyEl = document.getElementById("pm-bureau-company"),
             officeEl = document.getElementById("pm-bureau-office");
           const company =
-            companyEl?.options[companyEl.selectedIndex]?.text || "";
-          const office = officeEl?.value || "";
+              companyEl?.options[companyEl.selectedIndex]?.text || "",
+            office = officeEl?.value || "";
           if (!company || !office) {
             showToast("Choisissez la société et le bureau !");
             return;
@@ -5295,8 +5354,8 @@
       }
       async function handleRegister() {
         const name = document.getElementById("reg-name").value.trim(),
-          phone = document.getElementById("reg-phone").value.trim(),
-          email = document
+          phone = document.getElementById("reg-phone").value.trim();
+        const email = document
             .getElementById("reg-email")
             .value.trim()
             .toLowerCase(),
@@ -5345,30 +5404,25 @@
         const mobileLogged = document.getElementById("mobile-logged"),
           mobileNotLogged = document.getElementById("mobile-not-logged");
         if (user.role === "admin") {
-          authBtn.innerHTML =
-            '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Admin';
+          authBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span class="btn-label">Admin</span>`;
           document.getElementById("admin-nav-link").style.display = "";
           document.getElementById("admin-mobile-link").style.display = "";
           if (myOrdersBtn) myOrdersBtn.style.display = "none";
         } else {
-          authBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ${user.name}`;
+          authBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="btn-label">${user.name}</span>`;
           document.getElementById("admin-nav-link").style.display = "none";
           document.getElementById("admin-mobile-link").style.display = "none";
           if (myOrdersBtn) myOrdersBtn.style.display = "";
         }
         authBtn.onclick = showUserMenu;
-        // Update mobile menu auth state
         if (mobileLogged) mobileLogged.style.display = "";
         if (mobileNotLogged) mobileNotLogged.style.display = "none";
-        // Update mobile orders text with user name
-        const mobileOrdersText = document.getElementById("mobile-orders-text");
-        if (mobileOrdersText) mobileOrdersText.textContent = "Mes commandes";
         const nameInput = document.querySelector(
-          '#checkout-modal input[type="text"]',
-        );
-        const phoneInput = document.querySelector(
-          '#checkout-modal input[type="tel"]',
-        );
+            '#checkout-modal input[type="text"]',
+          ),
+          phoneInput = document.querySelector(
+            '#checkout-modal input[type="tel"]',
+          );
         if (nameInput && user.name) nameInput.value = user.name;
         if (phoneInput && user.phone) phoneInput.value = user.phone;
       }
@@ -5385,7 +5439,7 @@
         menu = document.createElement("div");
         menu.id = "user-dropdown";
         menu.style.cssText =
-          "position:fixed;top:64px;right:1.5rem;background:#fff;border:1.5px solid var(--gray-100);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;min-width:180px;overflow:hidden";
+          "position:fixed;top:68px;right:1.5rem;background:#fff;border:1.5px solid var(--gray-100);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;min-width:180px;overflow:hidden";
         menu.innerHTML = `<button onclick="closeMenu();openMyOrders();" style="display:flex;align-items:center;gap:0.6rem;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;border-bottom:1px solid var(--gray-50)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2M5 8V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg> Mes commandes</button><button onclick="closeMenu();logout();" style="display:flex;align-items:center;gap:0.6rem;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;color:#dc2626"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Se déconnecter</button>`;
         document.body.appendChild(menu);
         setTimeout(
@@ -5409,14 +5463,12 @@
         const myOrdersBtn = document.getElementById("my-orders-btn");
         if (myOrdersBtn) myOrdersBtn.style.display = "none";
         const authBtn = document.getElementById("auth-btn");
-        authBtn.innerHTML =
-          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Connexion';
+        authBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="btn-label">Connexion</span>`;
         authBtn.onclick = () => openModal("login-modal");
-        // Reset mobile menu auth state
-        const mobileLogged = document.getElementById("mobile-logged"),
-          mobileNotLogged = document.getElementById("mobile-not-logged");
-        if (mobileLogged) mobileLogged.style.display = "none";
-        if (mobileNotLogged) mobileNotLogged.style.display = "";
+        const ml = document.getElementById("mobile-logged"),
+          mn = document.getElementById("mobile-not-logged");
+        if (ml) ml.style.display = "none";
+        if (mn) mn.style.display = "";
         if (document.getElementById("admin-page")?.classList.contains("active"))
           showPage("home");
         showToast("Déconnecté avec succès.");
@@ -5457,6 +5509,49 @@
         }
       });
 
+      // ── RATINGS ───────────────────────────────────────────────
+      let RATINGS = [],
+        _currentRating = 0;
+      const RATING_LABELS = [
+        "",
+        "Très mauvais",
+        "Mauvais",
+        "Correct",
+        "Bien",
+        "Excellent !",
+      ];
+      function setRating(n) {
+        _currentRating = n;
+        document.querySelectorAll(".star-btn").forEach((s, i) => {
+          s.textContent = i < n ? "★" : "☆";
+          s.style.color = i < n ? "#f59e0b" : "#d1d5db";
+          s.style.transform = i < n ? "scale(1.15)" : "scale(1)";
+        });
+        document.getElementById("rating-label").textContent = RATING_LABELS[n];
+      }
+      function submitRating() {
+        if (!_currentRating) {
+          showToast("Choisissez une note !");
+          return;
+        }
+        const comment = document.getElementById("rating-comment").value.trim();
+        RATINGS.push({
+          rating: _currentRating,
+          comment,
+          date: new Date().toLocaleDateString("fr-DZ"),
+        });
+        closeModal("rating-modal");
+        _currentRating = 0;
+        document.querySelectorAll(".star-btn").forEach((s) => {
+          s.textContent = "☆";
+          s.style.color = "";
+          s.style.transform = "";
+        });
+        document.getElementById("rating-comment").value = "";
+        document.getElementById("rating-label").textContent = "";
+        showToast("Merci pour votre avis !");
+      }
+
       // ── HERO CAROUSEL ─────────────────────────────────────────
       function getCarouselItems() {
         if (PRODUCTS.length === 0) return [];
@@ -5471,9 +5566,6 @@
           price: p.variantPrices[0].toLocaleString() + " DA",
           id: p.id,
         }));
-      }
-      function initCarousel() {
-        buildCarousel();
       }
       function buildCarousel() {
         const wrapper = document.getElementById("hero-carousel"),
@@ -5492,7 +5584,7 @@
           const empty = document.createElement("div");
           empty.className = "hero-carousel-card active";
           empty.innerHTML =
-            '<div class="hero-carousel-bg"></div><div class="hc-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div><div class="hc-badge">Boutique</div><h4>Aucun produit</h4><p>Ajoutez des produits depuis l\'admin</p>';
+            '<div class="hero-carousel-bg"></div><div style="font-size:2rem;margin-bottom:0.5rem"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div><div class="hc-badge">Boutique</div><h4>Aucun produit</h4><p>Ajoutez des produits depuis l\'admin</p>';
           wrapper.insertBefore(empty, progressEl);
           return;
         }
@@ -5501,7 +5593,7 @@
           card.className = "hero-carousel-card" + (i === 0 ? " active" : "");
           card.id = "hc-" + i;
           card.style.cursor = "pointer";
-          card.innerHTML = `<div class="hero-carousel-bg"></div><div style="display:flex;gap:1.5rem;align-items:center;z-index:1;width:100%;overflow:hidden"><div style="flex-shrink:0">${item.img ? `<img src="${item.img}" style="width:120px;height:120px;object-fit:cover;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.15);display:block">` : `<div class="hc-icon" style="margin:0;font-size:4rem">${item.icon}</div>`}</div><div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;color:#fff;width:100%;overflow:hidden"><div class="hc-badge" style="margin-bottom:0.4rem">${item.badge || "Nouveau"}</div><h4 style="font-size:1.4rem;margin-bottom:0.2rem;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">${item.name}</h4><p style="margin-bottom:0.5rem;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;color:var(--gray-500)">${item.desc || ""}</p><div class="price" style="font-size:1.4rem;color:var(--green-dark)">${item.price}</div></div></div>`;
+          card.innerHTML = `<div class="hero-carousel-bg"></div><div style="display:flex;gap:1.5rem;align-items:center;z-index:1;width:100%;overflow:hidden"><div style="flex-shrink:0">${item.img ? `<img src="${item.img}" style="width:120px;height:120px;object-fit:cover;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.15);display:block">` : `<div style="font-size:4rem">${item.icon}</div>`}</div><div style="display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;overflow:hidden"><div class="hc-badge" style="margin-bottom:0.4rem">${item.badge || "Nouveau"}</div><h4 style="font-size:1.4rem;margin-bottom:0.2rem;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">${item.name}</h4><p style="margin-bottom:0.5rem;font-size:0.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;color:var(--gray-500)">${item.desc || ""}</p><div class="price" style="font-size:1.4rem;color:var(--green-dark)">${item.price}</div></div></div>`;
           card.addEventListener(
             "click",
             () => (window.location.href = "product.html?id=" + item.id),
@@ -5552,7 +5644,7 @@
         if (progressEl) progressEl.style.width = "0%";
         startProgress();
       }
-      function initCarouselHover() {
+      (function initCarouselHover() {
         const wrapper = document.getElementById("hero-carousel");
         if (wrapper) {
           wrapper.addEventListener("mouseenter", () =>
@@ -5590,11 +5682,9 @@
             isDragging = false;
           });
         }
-      }
-      if (document.readyState === "loading")
-        document.addEventListener("DOMContentLoaded", initCarouselHover);
-      else initCarouselHover();
+      })();
 
+      // ── INIT ──────────────────────────────────────────────────
       async function initAll() {
         try {
           WILAYAS = await WilayasAPI.getAll();
@@ -5602,16 +5692,14 @@
           if (Auth.isLoggedIn()) {
             currentUser = Auth.getUser();
             loginUser(currentUser);
-            if (currentUser && currentUser.role === "admin") {
+            if (currentUser && currentUser.role === "admin")
               ORDERS = await OrdersAPI.getAll();
-            }
           }
         } catch (e) {
           console.error("API error", e);
         }
         populateProducts();
         populateWilayas();
-        initCarousel();
       }
       if (document.readyState === "loading")
         document.addEventListener("DOMContentLoaded", initAll);
