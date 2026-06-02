@@ -11,7 +11,6 @@
         --green: #3ecf6e;
         --green-light: #d4f7e2;
         --green-dark: #1fad52;
-        --white: #ffffff;
         --gray-50: #f4f4f5;
         --gray-100: #e8e8ea;
         --gray-300: #b0b0b8;
@@ -19,6 +18,7 @@
         --gray-700: #2e2e38;
         --gray-900: #111118;
         --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.09);
+        --radius: 14px;
         --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
       *,
@@ -30,7 +30,7 @@
       }
       body {
         font-family: "Outfit", system-ui, sans-serif;
-        background: var(--white);
+        background: #f8fdf9;
         color: var(--gray-900);
         min-height: 100vh;
       }
@@ -75,54 +75,60 @@
         font-size: 0.9rem;
         font-weight: 600;
         color: var(--gray-700);
+        cursor: pointer;
         text-decoration: none;
+        transition: all 0.2s;
       }
       .back-btn:hover {
         background: var(--gray-100);
       }
 
       .page {
-        max-width: 900px;
-        margin: 3rem auto;
-        padding: 0 1.5rem;
-      }
-      .card {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        background: var(--white);
-        border-radius: 20px;
-        box-shadow: var(--shadow-md);
-        padding: 2.5rem;
-      }
-      @media (max-width: 640px) {
-        .card {
-          grid-template-columns: 1fr;
-          gap: 1.5rem;
-          padding: 1.5rem;
-        }
+        max-width: 1140px;
+        margin: 2.5rem auto;
+        padding: 0 1.25rem;
       }
 
-      .img-wrap {
+      /* TWO COLUMN LAYOUT */
+      .card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: var(--shadow-md);
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        overflow: hidden;
+      }
+
+      /* LEFT IMAGE */
+      .img-section {
         background: linear-gradient(135deg, var(--gray-50), var(--green-light));
-        border-radius: 16px;
+        position: relative;
+        padding: 1.5rem 1.5rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-right: 1px solid var(--gray-100);
+      }
+      .img-wrap {
         width: 100%;
+        max-width: 380px;
         aspect-ratio: 1/1;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 6rem;
-        position: relative;
-        margin-bottom: 0.75rem;
+        font-size: 9rem;
+        border-radius: 16px;
         overflow: hidden;
+        background: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
       }
       .img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        padding: 1.5rem;
+        padding: 1rem;
       }
-      .badge-img {
+      .badge {
         position: absolute;
         top: 14px;
         left: 14px;
@@ -132,29 +138,38 @@
         font-weight: 700;
         padding: 0.25rem 0.7rem;
         border-radius: 50px;
+        z-index: 2;
+      }
+      .badge.sale {
+        background: #ff4b6e;
       }
       .thumbs {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
+        margin-top: 0.85rem;
+        justify-content: center;
       }
       .thumb {
         width: 56px;
         height: 56px;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: 10px;
         cursor: pointer;
         border: 2px solid transparent;
         transition: 0.2s;
+        background: #fff;
       }
       .thumb.active {
         border-color: var(--green);
       }
 
+      /* RIGHT INFO + FORM */
       .info {
+        padding: 1.75rem 1.75rem 1.75rem;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        overflow-y: auto;
       }
       .cat {
         font-size: 0.72rem;
@@ -162,122 +177,282 @@
         color: var(--green-dark);
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        margin-bottom: 0.3rem;
       }
       .pname {
-        font-size: 1.6rem;
+        font-size: 1.55rem;
         font-weight: 900;
         line-height: 1.2;
+        margin-bottom: 0.4rem;
       }
       .desc {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         color: var(--gray-500);
-        line-height: 1.7;
-      }
-      .pstock {
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: var(--green-dark);
+        line-height: 1.65;
+        margin-bottom: 0.9rem;
       }
 
-      /* VARIANT SELECTOR WITH QTY */
-      .vlabel {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: var(--gray-700);
-        margin-bottom: 0.5rem;
-      }
-      .variant-rows {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .variant-row {
+      /* VARIANTS + STOCK */
+      .variants-stock-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.6rem 0.9rem;
-        border: 2px solid var(--gray-100);
-        border-radius: 12px;
-        background: var(--white);
-        transition: var(--transition);
+        gap: 0.75rem;
+        margin-bottom: 0.9rem;
+        flex-wrap: wrap;
       }
-      .variant-row.selected {
-        border-color: var(--green);
-        background: var(--green-light);
-      }
-      .variant-name {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--gray-700);
-        flex: 1;
-      }
-      .variant-row.selected .variant-name {
-        color: var(--green-dark);
-      }
-      .variant-price {
-        font-size: 0.85rem;
+      .vlabel {
+        font-size: 0.78rem;
         font-weight: 700;
-        color: var(--gray-500);
-        margin-right: 0.75rem;
+        color: var(--gray-700);
+        margin-bottom: 0.35rem;
       }
-      .variant-row.selected .variant-price {
-        color: var(--green-dark);
-      }
-      .qty-ctrl {
+      .variants {
         display: flex;
-        align-items: center;
-        border: 1.5px solid var(--gray-200);
-        border-radius: 50px;
-        overflow: hidden;
-        background: white;
+        gap: 0.4rem;
+        flex-wrap: wrap;
       }
-      .qbtn {
-        width: 28px;
-        height: 28px;
-        border: none;
-        background: transparent;
-        font-size: 1rem;
+      .vchip {
+        padding: 0.35rem 0.85rem;
+        border-radius: 50px;
+        border: 2px solid var(--gray-100);
+        background: #fff;
+        font-size: 0.82rem;
+        font-weight: 600;
         cursor: pointer;
         color: var(--gray-700);
+        transition: var(--transition);
+      }
+      .vchip.active {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+      }
+      .stock-icon-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        border: 2px solid;
+        white-space: nowrap;
+      }
+      .stock-icon-badge svg {
+        width: 13px;
+        height: 13px;
+        flex-shrink: 0;
+      }
+      .stock-in {
+        color: var(--green-dark);
+        background: var(--green-light);
+        border-color: #a8edca;
+      }
+      .stock-low {
+        color: #d97706;
+        background: #fff8e6;
+        border-color: #fcd34d;
+      }
+      .stock-out {
+        color: #dc2626;
+        background: #fee2e2;
+        border-color: #fca5a5;
+      }
+
+      /* PRICE + QTY */
+      .price-row {
+        display: flex;
+        align-items: baseline;
+        gap: 0.55rem;
+        margin-bottom: 0.9rem;
+      }
+      .pmain {
+        font-size: 1.9rem;
+        font-weight: 900;
+        color: var(--gray-900);
+      }
+      .pold {
+        font-size: 0.92rem;
+        color: var(--gray-300);
+        text-decoration: line-through;
+      }
+      .pdiscount {
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #ff4b6e;
+        background: #fee2e2;
+        padding: 0.2rem 0.55rem;
+        border-radius: 50px;
+      }
+      .qty-row {
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .qlabel {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--gray-700);
+      }
+      .qctrl {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid var(--gray-100);
+        border-radius: 50px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .qbtn {
+        width: 34px;
+        height: 34px;
+        border: none;
+        background: transparent;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--gray-700);
+        transition: background 0.15s;
       }
       .qbtn:hover {
         background: var(--gray-50);
       }
       .qval {
-        width: 28px;
+        width: 32px;
         text-align: center;
         font-weight: 700;
-        font-size: 0.85rem;
+        font-size: 0.92rem;
+      }
+      .qtotal {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--green-dark);
       }
 
-      /* TOTAL */
-      .total-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        background: var(--gray-50);
-        border-radius: 10px;
-      }
-      .total-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--gray-500);
-      }
-      .total-amount {
-        font-size: 1.4rem;
-        font-weight: 900;
-        color: var(--gray-900);
+      /* DIVIDER */
+      .divider {
+        height: 1px;
+        background: var(--gray-100);
+        margin: 0.85rem 0;
       }
 
-      .actions {
+      /* FORM SECTION */
+      .form-section {
         display: flex;
         flex-direction: column;
         gap: 0.6rem;
       }
+      .form-title {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--gray-700);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 0.1rem;
+      }
+      .frow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+      .fgroup {
+        display: flex;
+        flex-direction: column;
+        gap: 0.28rem;
+      }
+      .fgroup label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--gray-700);
+      }
+      .fgroup input,
+      .fgroup select,
+      .fgroup textarea {
+        padding: 0.52rem 0.8rem;
+        border: 1.5px solid var(--gray-100);
+        border-radius: 10px;
+        font-size: 0.87rem;
+        font-family: inherit;
+        width: 100%;
+        outline: none;
+        background: #fff;
+        transition: border-color 0.2s;
+      }
+      .fgroup input:focus,
+      .fgroup select:focus,
+      .fgroup textarea:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(62, 207, 110, 0.1);
+      }
+
+      /* DELIVERY TYPE TOGGLE */
+      .delivery-toggle {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .del-option {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.7rem 0.85rem;
+        border-radius: 12px;
+        cursor: pointer;
+        border: 2px solid var(--gray-100);
+        background: #fff;
+        transition: all 0.2s;
+      }
+      .del-option.active {
+        border-color: var(--green);
+        background: var(--green-light);
+      }
+      .del-option svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        transition: stroke 0.2s;
+      }
+      .del-option .del-title {
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: var(--gray-700);
+        transition: color 0.2s;
+      }
+      .del-option .del-sub {
+        font-size: 0.7rem;
+        color: var(--gray-500);
+      }
+      .del-option.active .del-title {
+        color: var(--green-dark);
+      }
+      .del-option.active svg {
+        stroke: var(--green-dark);
+      }
+
+      /* ORDER SUMMARY */
+      .order-summary-mini {
+        background: #fff;
+        border-radius: 10px;
+        padding: 0.7rem 0.9rem;
+        border: 1px solid var(--gray-100);
+      }
+      .orow {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.84rem;
+        padding: 0.15rem 0;
+        color: var(--gray-700);
+      }
+      .orow.total {
+        font-weight: 800;
+        border-top: 1px solid var(--gray-100);
+        margin-top: 0.35rem;
+        padding-top: 0.5rem;
+        color: var(--gray-900);
+      }
+
+      /* BUTTONS */
       .btn {
         display: flex;
         align-items: center;
@@ -285,154 +460,71 @@
         gap: 0.5rem;
         border: none;
         border-radius: 50px;
-        padding: 0.75rem 1.5rem;
-        font-size: 0.95rem;
+        padding: 0.78rem 1.4rem;
+        font-size: 0.93rem;
         font-weight: 700;
         cursor: pointer;
         transition: var(--transition);
         width: 100%;
+        font-family: inherit;
       }
-      .btn-primary {
-        background: var(--green);
-        color: #fff;
-        box-shadow: 0 4px 14px rgba(62, 207, 110, 0.35);
-      }
-      .btn-primary:hover {
+      .btn-confirm {
         background: var(--green-dark);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(31, 173, 82, 0.3);
+      }
+      .btn-confirm:hover {
+        background: #178a3f;
         transform: translateY(-1px);
-      }
-      .btn-ghost {
-        background: var(--gray-50);
-        color: var(--gray-700);
-        border: 1.5px solid var(--gray-100);
-      }
-      .btn-ghost:hover {
-        background: var(--gray-100);
       }
       .btn:disabled {
         opacity: 0.4;
         cursor: not-allowed;
-        transform: none;
+        transform: none !important;
       }
       .share-row {
         display: flex;
         gap: 0.5rem;
       }
-      .sbtn {
-        background: var(--gray-50);
-        color: var(--gray-700);
-        border: 1.5px solid var(--gray-100);
-        font-size: 0.82rem;
-        padding: 0.4rem 1rem;
-        border-radius: 50px;
-        cursor: pointer;
+      .share-icon-btn {
         flex: 1;
-      }
-      .sbtn:hover {
-        background: var(--gray-100);
-      }
-
-      /* CHECKOUT MODAL */
-      .overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        z-index: 200;
-        display: none;
+        display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
-      }
-      .overlay.open {
-        display: flex;
-      }
-      .modal {
-        background: var(--white);
-        border-radius: 20px;
-        width: 100%;
-        max-width: 500px;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-      }
-      .mhead {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.25rem 1.5rem;
-        border-bottom: 1px solid var(--gray-100);
-      }
-      .mhead h3 {
-        font-size: 1.1rem;
-        font-weight: 800;
-      }
-      .mclose {
-        background: none;
-        border: none;
-        font-size: 1.4rem;
-        cursor: pointer;
-        color: var(--gray-500);
-        line-height: 1;
-      }
-      .mbody {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .order-summary {
-        background: var(--gray-50);
-        border-radius: 12px;
-        padding: 1rem;
-      }
-      .order-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-        padding: 0.3rem 0;
-      }
-      .order-row.total {
-        font-weight: 800;
-        font-size: 1rem;
-        border-top: 1px solid var(--gray-100);
-        margin-top: 0.5rem;
-        padding-top: 0.75rem;
-      }
-      .fgroup {
-        display: flex;
-        flex-direction: column;
         gap: 0.4rem;
-      }
-      .fgroup label {
-        font-size: 0.82rem;
-        font-weight: 700;
-        color: var(--gray-700);
-      }
-      .fgroup input,
-      .fgroup select,
-      .fgroup textarea {
-        padding: 0.65rem 0.9rem;
+        background: var(--gray-50);
         border: 1.5px solid var(--gray-100);
-        border-radius: 10px;
-        font-size: 0.9rem;
+        border-radius: 50px;
+        padding: 0.52rem 0.9rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        cursor: pointer;
+        transition: all 0.2s;
         font-family: inherit;
-        width: 100%;
-        outline: none;
       }
-      .fgroup input:focus,
-      .fgroup select:focus {
-        border-color: var(--green);
+      .share-icon-btn:hover {
+        background: var(--gray-100);
       }
-      .frow {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-      }
-      .mfoot {
-        padding: 1.25rem 1.5rem;
-        border-top: 1px solid var(--gray-100);
+      .share-icon-btn svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
       }
 
+      /* SUCCESS */
+      .success-box {
+        text-align: center;
+        padding: 2rem;
+        background: var(--green-light);
+        border-radius: 14px;
+        display: none;
+      }
+      .success-box.show {
+        display: block;
+      }
+
+      /* LOADING */
       .loading {
         text-align: center;
         padding: 5rem 2rem;
@@ -467,10 +559,45 @@
         transition: opacity 0.3s;
         pointer-events: none;
         z-index: 9999;
-        white-space: nowrap;
       }
       .toast.show {
         opacity: 1;
+      }
+
+      @media (max-width: 860px) {
+        .card {
+          grid-template-columns: 1fr;
+        }
+        .img-section {
+          border-right: none;
+          border-bottom: 1px solid var(--gray-100);
+        }
+        .img-wrap {
+          max-width: 260px;
+          font-size: 6rem;
+        }
+        .info {
+          padding: 1.25rem;
+        }
+        .pname {
+          font-size: 1.3rem;
+        }
+        .pmain {
+          font-size: 1.6rem;
+        }
+        .frow {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          padding: 0 1rem;
+        }
+        .page {
+          margin: 1.25rem auto;
+        }
+        .variants-stock-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
   </head>
@@ -479,7 +606,7 @@
       <a href="/" class="nav-logo"
         >M<span class="dot"></span>T &nbsp;Mus Tech</a
       >
-      <a href="/" class="back-btn">← Retour à la boutique</a>
+      <a href="/" class="back-btn">← Retour</a>
     </nav>
 
     <div class="page" id="page">
@@ -489,120 +616,237 @@
       </div>
     </div>
 
-    <!-- CHECKOUT MODAL -->
-    <div class="overlay" id="checkout-overlay">
-      <div class="modal">
-        <div class="mhead">
-          <h3>🧾 Commander</h3>
-          <button class="mclose" onclick="closeCheckout()">✕</button>
-        </div>
-        <div class="mbody">
-          <div class="order-summary" id="order-summary"></div>
-          <div class="frow">
-            <div class="fgroup">
-              <label>Nom complet *</label
-              ><input id="co-name" placeholder="Votre nom" />
-            </div>
-            <div class="fgroup">
-              <label>Téléphone *</label
-              ><input id="co-phone" placeholder="06xxxxxxxx" />
-            </div>
-          </div>
-          <div class="fgroup">
-            <label>Wilaya *</label>
-            <select id="co-wilaya">
-              <option value="">-- Choisir --</option>
-            </select>
-          </div>
-          <div class="fgroup">
-            <label>Adresse *</label
-            ><input id="co-address" placeholder="Rue, quartier..." />
-          </div>
-          <div class="fgroup">
-            <label>Note (optionnel)</label
-            ><textarea
-              id="co-note"
-              rows="2"
-              placeholder="Instructions spéciales..."></textarea>
-          </div>
-        </div>
-        <div class="mfoot">
-          <button class="btn btn-primary" onclick="placeOrder()">
-            ✅ Confirmer la Commande
-          </button>
-        </div>
-      </div>
-    </div>
-
     <div class="toast" id="toast"></div>
 
     <script>
       let product = null;
+      let currentVariant = 0;
+      let currentQty = 1;
       let WILAYAS = [];
+      let deliveryType = "domicile";
 
-      // variantQtys: { variantIndex: qty } — 0 means not selected
-      let variantQtys = {};
-
-      const WILAYAS_58 = [
-        "Adrar",
-        "Chlef",
-        "Laghouat",
-        "Oum El Bouaghi",
-        "Batna",
-        "Béjaïa",
-        "Biskra",
-        "Béchar",
-        "Blida",
-        "Bouira",
-        "Tamanrasset",
-        "Tébessa",
-        "Tlemcen",
-        "Tiaret",
-        "Tizi Ouzou",
-        "Alger",
-        "Djelfa",
-        "Jijel",
-        "Sétif",
-        "Saïda",
-        "Skikda",
-        "Sidi Bel Abbès",
-        "Annaba",
-        "Guelma",
-        "Constantine",
-        "Médéa",
-        "Mostaganem",
-        "Msila",
-        "Mascara",
-        "Ouargla",
-        "Oran",
-        "El Bayadh",
-        "Illizi",
-        "Bordj Bou Arréridj",
-        "Boumerdès",
-        "El Tarf",
-        "Tindouf",
-        "Tissemsilt",
-        "El Oued",
-        "Khenchela",
-        "Souk Ahras",
-        "Tipaza",
-        "Mila",
-        "Aïn Defla",
-        "Naâma",
-        "Aïn Témouchent",
-        "Ghardaïa",
-        "Relizane",
-        "Timimoun",
-        "Bordj Badji Mokhtar",
-        "Ouled Djellal",
-        "Béni Abbès",
-        "In Salah",
-        "In Guezzam",
-        "Touggourt",
-        "Djanet",
-        "El Mghair",
-        "El Meniaa",
-      ];
+      const BUREAU_OFFICES = {
+        yalidine: [
+          "Alger - Hussein Dey",
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Alger - Rouiba",
+          "Alger - Birtouta",
+          "Oran - Oran Centre",
+          "Oran - Es Senia",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Boumerdès - Boumerdès Centre",
+          "Tipaza - Tipaza Centre",
+          "Médéa - Médéa Centre",
+          "Chlef - Chlef Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Ouargla - Ouargla Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Msila - Msila Centre",
+          "Bordj Bou Arréridj - BBA Centre",
+          "Mila - Mila Centre",
+          "Djelfa - Djelfa Centre",
+          "Laghouat - Laghouat Centre",
+          "Tébessa - Tébessa Centre",
+          "Souk Ahras - Souk Ahras Centre",
+          "Adrar - Adrar Centre",
+          "Tamanrasset - Tamanrasset Centre",
+          "In Salah - In Salah Centre",
+          "Djanet - Djanet Centre",
+          "Illizi - Illizi Centre",
+          "Touggourt - Touggourt Centre",
+          "Mostaganem - Mostaganem Centre",
+          "Tiaret - Tiaret Centre",
+          "Sidi Bel Abbès - SBA Centre",
+          "Mascara - Mascara Centre",
+          "Aïn Defla - Aïn Defla Centre",
+          "Aïn Témouchent - Aïn Témouchent Centre",
+        ],
+        zaki: [
+          "Alger - Kouba",
+          "Alger - Bab El Oued",
+          "Alger - El Harrach",
+          "Alger - Hydra",
+          "Oran - Oran Centre",
+          "Oran - Bir El Djir",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Msila - Msila Centre",
+          "Bordj Bou Arréridj - BBA Centre",
+          "Mila - Mila Centre",
+          "Chlef - Chlef Centre",
+          "Mostaganem - Mostaganem Centre",
+          "Sidi Bel Abbès - SBA Centre",
+          "El Oued - El Oued Centre",
+          "Laghouat - Laghouat Centre",
+          "Tébessa - Tébessa Centre",
+          "Souk Ahras - Souk Ahras Centre",
+        ],
+        procolis: [
+          "Alger - Bachdjarrah",
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Alger - Birtouta",
+          "Oran - Oran Centre",
+          "Oran - Es Senia",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Boumerdès - Boumerdès Centre",
+          "Tipaza - Tipaza Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Msila - Msila Centre",
+          "Bordj Bou Arréridj - BBA Centre",
+          "Mila - Mila Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Laghouat - Laghouat Centre",
+          "Tébessa - Tébessa Centre",
+          "Guelma - Guelma Centre",
+        ],
+        noest: [
+          "Alger - Hussein Dey",
+          "Alger - Bab Ezzouar",
+          "Alger - El Harrach",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Boumerdès - Boumerdès Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Msila - Msila Centre",
+          "Bordj Bou Arréridj - BBA Centre",
+          "Mila - Mila Centre",
+          "Chlef - Chlef Centre",
+          "Mostaganem - Mostaganem Centre",
+          "Tiaret - Tiaret Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Sidi Bel Abbès - SBA Centre",
+        ],
+        eship: [
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Alger - Rouiba",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Ouargla - Ouargla Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Msila - Msila Centre",
+        ],
+        maystro: [
+          "Alger - Kouba",
+          "Alger - Bab El Oued",
+          "Alger - Hussein Dey",
+          "Alger - Bab Ezzouar",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Boumerdès - Boumerdès Centre",
+          "Chlef - Chlef Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Msila - Msila Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Ouargla - Ouargla Centre",
+        ],
+        dhlex: [
+          "Alger - El Harrach",
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Msila - Msila Centre",
+        ],
+        guepex: [
+          "Alger - Bachdjarrah",
+          "Alger - Bab Ezzouar",
+          "Alger - Hussein Dey",
+          "Alger - El Harrach",
+          "Oran - Oran Centre",
+          "Oran - Bir El Djir",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Boumerdès - Boumerdès Centre",
+          "Chlef - Chlef Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Djelfa - Djelfa Centre",
+          "Msila - Msila Centre",
+          "Bordj Bou Arréridj - BBA Centre",
+          "Mila - Mila Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Ouargla - Ouargla Centre",
+          "Laghouat - Laghouat Centre",
+          "Tébessa - Tébessa Centre",
+          "Souk Ahras - Souk Ahras Centre",
+          "Guelma - Guelma Centre",
+          "Mostaganem - Mostaganem Centre",
+          "Tiaret - Tiaret Centre",
+          "Sidi Bel Abbès - SBA Centre",
+          "Mascara - Mascara Centre",
+          "Aïn Defla - Aïn Defla Centre",
+          "Aïn Témouchent - Aïn Témouchent Centre",
+        ],
+      };
 
       function showToast(msg) {
         const t = document.getElementById("toast");
@@ -619,274 +863,417 @@
         el.classList.add("active");
       }
 
-      // ── VARIANT QTY LOGIC ───────────────────────────────────
-      function changeVariantQty(index, delta) {
-        const current = variantQtys[index] || 0;
-        const newVal = Math.max(0, current + delta);
-        variantQtys[index] = newVal;
-
-        // Update display
-        document.getElementById("vqty-" + index).textContent = newVal;
-        const row = document.getElementById("vrow-" + index);
-        row.classList.toggle("selected", newVal > 0);
-
-        updateTotal();
+      function selectVariant(index) {
+        currentVariant = index;
+        document
+          .querySelectorAll(".vchip")
+          .forEach((c, i) => c.classList.toggle("active", i === index));
+        updatePrice();
+        updateOrderSummary();
       }
 
-      function getTotal() {
-        if (!product) return 0;
-        return Object.entries(variantQtys).reduce((sum, [i, qty]) => {
-          const price =
-            product.variantPrices[parseInt(i)] ?? product.variantPrices[0];
-          return sum + price * qty;
-        }, 0);
+      function changeQty(delta) {
+        currentQty = Math.max(1, currentQty + delta);
+        document.getElementById("qval").textContent = currentQty;
+        updatePrice();
+        updateOrderSummary();
       }
 
-      function getTotalQty() {
-        return Object.values(variantQtys).reduce((s, q) => s + q, 0);
-      }
-
-      function updateTotal() {
-        const total = getTotal();
-        const qty = getTotalQty();
-        const el = document.getElementById("total-amount");
-        if (el) el.textContent = total.toLocaleString() + " DA";
-        const subEl = document.getElementById("total-qty");
-        if (subEl)
-          subEl.textContent =
-            qty > 0 ? qty + " article(s)" : "Sélectionnez une option";
-      }
-
-      // ── CHECKOUT ────────────────────────────────────────────
-      function openCheckout() {
+      function updatePrice() {
         if (!product) return;
-        if (getTotalQty() === 0) {
-          showToast("Choisissez au moins une option !");
-          return;
-        }
-
-        const productTotal = getTotal();
-
-        // Build summary rows
-        let rows = "";
-        Object.entries(variantQtys).forEach(([i, qty]) => {
-          if (qty === 0) return;
-          const idx = parseInt(i);
-          const variant = product.variants[idx] || "Standard";
-          const price = product.variantPrices[idx] ?? product.variantPrices[0];
-          rows += `<div class="order-row"><span>${product.name} — ${variant} ×${qty}</span><span>${(price * qty).toLocaleString()} DA</span></div>`;
-        });
-
-        document.getElementById("order-summary").innerHTML = `
-          ${rows}
-          <div class="order-row"><span>Livraison</span><span id="shipping-display">Choisir wilaya</span></div>
-          <div class="order-row total"><span>Total</span><span id="total-display">${productTotal.toLocaleString()} DA</span></div>
-        `;
-
-        // Populate wilayas
-        const sel = document.getElementById("co-wilaya");
-        sel.innerHTML = '<option value="">-- Choisir --</option>';
-        if (WILAYAS && WILAYAS.length > 0) {
-          WILAYAS.forEach((w) => {
-            const o = document.createElement("option");
-            const price = w.shipping_price ?? w.price ?? 0;
-            o.value = price;
-            o.dataset.name = w.name;
-            o.textContent = w.name + " — " + price + " DA";
-            sel.appendChild(o);
-          });
-        } else {
-          WILAYAS_58.forEach((name) => {
-            const o = document.createElement("option");
-            o.value = 0;
-            o.dataset.name = name;
-            o.textContent = name;
-            sel.appendChild(o);
-          });
-        }
-
-        sel.onchange = function () {
-          const shipping = parseInt(this.value) || 0;
-          const name = this.options[this.selectedIndex]?.dataset.name || "";
-          document.getElementById("shipping-display").textContent = shipping
-            ? name + " — " + shipping + " DA"
-            : name || "Choisir wilaya";
-          document.getElementById("total-display").textContent =
-            (productTotal + shipping).toLocaleString() + " DA";
-        };
-
-        document.getElementById("checkout-overlay").classList.add("open");
-      }
-
-      function closeCheckout() {
-        document.getElementById("checkout-overlay").classList.remove("open");
-      }
-
-      async function placeOrder() {
-        const name = document.getElementById("co-name").value.trim();
-        const phone = document.getElementById("co-phone").value.trim();
-        const wilayaEl = document.getElementById("co-wilaya");
-        const wilaya =
-          wilayaEl.options[wilayaEl.selectedIndex]?.dataset.name ||
-          wilayaEl.options[wilayaEl.selectedIndex]?.text ||
-          "";
-        const shipping = parseInt(wilayaEl.value) || 0;
-        const address = document.getElementById("co-address").value.trim();
-        const note = document.getElementById("co-note").value.trim();
-
-        if (!name || !phone || !wilaya || !address) {
-          showToast("Veuillez remplir tous les champs *");
-          return;
-        }
-
-        // Build items array (one per variant selected)
-        const items = [];
-        Object.entries(variantQtys).forEach(([i, qty]) => {
-          if (qty === 0) return;
-          const idx = parseInt(i);
-          items.push({
-            product_id: product.id,
-            product_name: product.name,
-            variant: product.variants[idx] || "Standard",
-            quantity: qty,
-            unit_price: product.variantPrices[idx] ?? product.variantPrices[0],
-          });
-        });
-
-        const orderData = {
-          customer_name: name,
-          customer: name,
-          phone,
-          wilaya,
-          address,
-          note,
-          shipping_price: shipping,
-          total: getTotal() + shipping,
-          items,
-        };
-
-        try {
-          await OrdersAPI.place(orderData);
-          closeCheckout();
-          document.getElementById("page").innerHTML += `
-            <div style="text-align:center;padding:3rem;background:var(--green-light);border-radius:16px;margin-top:2rem;">
-              <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
-              <h2 style="color:var(--green-dark);">Commande confirmée !</h2>
-              <p style="color:var(--gray-700);margin-top:0.5rem;">Merci ${name}, nous vous contacterons au ${phone}.</p>
-              <a href="/" style="display:inline-block;margin-top:1.5rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">Retour à la boutique</a>
-            </div>`;
-        } catch (e) {
-          showToast(
-            "Erreur: " + (e.message || "impossible de passer la commande"),
-          );
-        }
-      }
-
-      // ── RENDER ──────────────────────────────────────────────
-      function renderProduct(p) {
-        const images =
-          p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
-        const outOfStock = p.stock === 0;
-
-        const mainImgHTML =
-          images.length > 0
-            ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1.5rem;" />`
-            : `<span>${p.icon || "🎮"}</span>`;
-
-        const thumbsHTML =
-          images.length > 1
-            ? images
-                .map(
-                  (src, i) =>
-                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${src}" onclick="switchImage(this,'${src}')" />`,
-                )
-                .join("")
-            : "";
-
-        const badgeHTML = p.badge
-          ? `<div class="badge-img">${p.badge}</div>`
-          : "";
-
-        // Build variant rows — each with its own +/- qty control
-        const variantRowsHTML = p.variants
-          .map((v, i) => {
-            const price = p.variantPrices[i] ?? p.variantPrices[0];
-            return `
-            <div class="variant-row" id="vrow-${i}">
-              <span class="variant-name">${v}</span>
-              <span class="variant-price">${price.toLocaleString()} DA</span>
-              <div class="qty-ctrl">
-                <button class="qbtn" onclick="changeVariantQty(${i}, -1)">−</button>
-                <span class="qval" id="vqty-${i}">0</span>
-                <button class="qbtn" onclick="changeVariantQty(${i}, 1)">+</button>
-              </div>
-            </div>`;
-          })
-          .join("");
-
-        const stockText =
-          p.stock > 10
-            ? `En stock (${p.stock})`
-            : p.stock > 0
-              ? `Stock limité (${p.stock})`
-              : "Rupture de stock";
-        const oldPriceHTML = p.oldPrice
-          ? `<span style="font-size:0.9rem;color:var(--gray-300);text-decoration:line-through;">${p.oldPrice.toLocaleString()} DA</span>`
-          : "";
-
-        document.title = p.name + " — Mus Tech";
-        document.getElementById("page").innerHTML = `
-          <div class="card">
-            <div>
-              <div class="img-wrap">${badgeHTML}${mainImgHTML}</div>
-              <div class="thumbs">${thumbsHTML}</div>
-            </div>
-            <div class="info">
-              <div class="cat">${p.cat}</div>
-              <div class="pname">${p.name}</div>
-              ${p.description ? `<div class="desc">${p.description}</div>` : ""}
-              <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-                ${oldPriceHTML}
-                <span class="pstock">${stockText}</span>
-              </div>
-
-              <div>
-                <div class="vlabel">Choisissez vos options et quantités :</div>
-                <div class="variant-rows">${variantRowsHTML}</div>
-              </div>
-
-              <div class="total-row">
-                <div>
-                  <div class="total-label" id="total-qty">Sélectionnez une option</div>
-                  <div class="total-amount" id="total-amount">0 DA</div>
-                </div>
-                <div style="font-size:0.75rem;color:var(--gray-300);text-align:right;">+ livraison</div>
-              </div>
-
-              <div class="actions">
-                <button class="btn btn-primary" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>⚡ Acheter Maintenant</button>
-                <div class="share-row">
-                  <button class="sbtn" onclick="copyLink()">🔗 Copier le lien</button>
-                  <button class="sbtn" onclick="shareProduct()">📤 Partager</button>
-                </div>
-              </div>
-            </div>
-          </div>`;
+        const price =
+          product.variantPrices[currentVariant] ?? product.variantPrices[0];
+        document.getElementById("price-main").textContent =
+          price.toLocaleString() + " DA";
+        document.getElementById("qtotal").textContent =
+          (price * currentQty).toLocaleString() + " DA";
       }
 
       function copyLink() {
         navigator.clipboard
           .writeText(window.location.href)
-          .then(() => showToast("Lien copié !"))
+          .then(() => showToast("🔗 Lien copié!"))
           .catch(() => prompt("Copiez ce lien:", window.location.href));
       }
+
       function shareProduct() {
-        if (navigator.share && product)
+        if (navigator.share)
           navigator.share({ title: product.name, url: window.location.href });
         else copyLink();
       }
 
-      // ── LOAD ────────────────────────────────────────────────
+      // ── DELIVERY TYPE ─────────────────────────────────────────
+      function setDelivery(type) {
+        deliveryType = type;
+        const domEl = document.getElementById("del-domicile");
+        const burEl = document.getElementById("del-bureau");
+        const bureauFields = document.getElementById("bureau-fields");
+        const domFields = document.getElementById("domicile-fields");
+
+        if (type === "domicile") {
+          domEl.classList.add("active");
+          burEl.classList.remove("active");
+          bureauFields.style.display = "none";
+          domFields.style.display = "flex";
+        } else {
+          burEl.classList.add("active");
+          domEl.classList.remove("active");
+          bureauFields.style.display = "flex";
+          domFields.style.display = "none";
+        }
+        updateOrderSummary();
+      }
+
+      function updateBureauOffices() {
+        const company = document.getElementById("co-company")?.value;
+        const officeSelect = document.getElementById("co-office");
+        if (!officeSelect) return;
+        officeSelect.innerHTML =
+          '<option value="">-- Choisir le bureau --</option>';
+        if (company && BUREAU_OFFICES[company]) {
+          BUREAU_OFFICES[company].forEach((office) => {
+            const o = document.createElement("option");
+            o.value = office;
+            o.textContent = office;
+            officeSelect.appendChild(o);
+          });
+          officeSelect.style.display = "block";
+        } else {
+          officeSelect.style.display = "none";
+        }
+      }
+
+      // ── WILAYA + SUMMARY ──────────────────────────────────────
+      function populateWilayas() {
+        const sel = document.getElementById("co-wilaya");
+        if (!sel || sel.options.length > 1) return;
+        WILAYAS.forEach((w) => {
+          const o = document.createElement("option");
+          o.value = w.shipping_price ?? w.price ?? 0;
+          o.dataset.name = w.name;
+          o.textContent =
+            w.name + " — " + (w.shipping_price ?? w.price ?? 0) + " DA";
+          sel.appendChild(o);
+        });
+        sel.onchange = updateOrderSummary;
+        try {
+          const user = JSON.parse(localStorage.getItem("mt_user"));
+          if (user) {
+            if (user.name) document.getElementById("co-name").value = user.name;
+            if (user.phone)
+              document.getElementById("co-phone").value = user.phone;
+          }
+        } catch (e) {}
+        updateOrderSummary();
+      }
+
+      function updateOrderSummary() {
+        if (!product) return;
+        const price =
+          product.variantPrices[currentVariant] ?? product.variantPrices[0];
+        const variant = product.variants[currentVariant] || "Standard";
+        const subtotal = price * currentQty;
+        const sel = document.getElementById("co-wilaya");
+        const shipping = sel ? parseInt(sel.value) || 0 : 0;
+        const wilayaName =
+          sel && sel.selectedIndex > 0
+            ? sel.options[sel.selectedIndex].dataset.name
+            : "—";
+        const typeLabel =
+          deliveryType === "bureau" ? "Au Bureau" : "À Domicile";
+        const summary = document.getElementById("order-summary-mini");
+        if (summary)
+          summary.innerHTML = `
+          <div class="orow"><span>${product.name} (${variant}) ×${currentQty}</span><span>${subtotal.toLocaleString()} DA</span></div>
+          <div class="orow"><span>Livraison ${typeLabel} (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
+          <div class="orow total"><span>Total</span><span>${(subtotal + shipping).toLocaleString()} DA</span></div>`;
+      }
+
+      // ── PLACE ORDER ───────────────────────────────────────────
+      async function placeOrder() {
+        const name = document.getElementById("co-name").value.trim();
+        const phone = document.getElementById("co-phone").value.trim();
+        const wilEl = document.getElementById("co-wilaya");
+        const wilaya = wilEl.options[wilEl.selectedIndex]?.dataset.name || "";
+        const note = document.getElementById("co-note").value.trim();
+
+        if (!phone || !wilaya) {
+          showToast("⚠️ Téléphone et Wilaya sont obligatoires");
+          return;
+        }
+
+        let address = "";
+        if (deliveryType === "bureau") {
+          const compEl = document.getElementById("co-company");
+          const offEl = document.getElementById("co-office");
+          const company = compEl?.options[compEl.selectedIndex]?.text || "";
+          const office = offEl?.value || "";
+          if (!company || !office) {
+            showToast("⚠️ Choisissez la société et le bureau");
+            return;
+          }
+          address = "Bureau — " + company + " — " + office;
+        } else {
+          address =
+            "Domicile — " +
+            (document.getElementById("co-address").value.trim() || "—");
+        }
+
+        const orderData = {
+          customer: name || phone,
+          phone,
+          wilaya,
+          address,
+          note,
+          items: [{ id: product.id, variant: currentVariant, qty: currentQty }],
+        };
+
+        const btn = document.getElementById("confirm-btn");
+        btn.disabled = true;
+        btn.textContent = "⏳ En cours...";
+
+        try {
+          const res = await OrdersAPI.place(orderData);
+          // save guest order
+          try {
+            const saved = JSON.parse(
+              localStorage.getItem("mt_guest_orders") || "[]",
+            );
+            saved.unshift({
+              id: res.id,
+              order_ref: res.order_ref || "#MT-" + res.id,
+              customer: orderData.customer,
+              phone,
+              wilaya,
+              items: [{ name: product.name, qty: currentQty }],
+              total: res.total || 0,
+              status: "pending",
+              created_at: new Date().toISOString(),
+            });
+            localStorage.setItem(
+              "mt_guest_orders",
+              JSON.stringify(saved.slice(0, 20)),
+            );
+          } catch (e) {}
+
+          document.getElementById("checkout-form").style.display = "none";
+          document.getElementById("share-actions").style.display = "none";
+          const box = document.getElementById("success-box");
+          box.innerHTML = `
+            <div style="font-size:3rem;margin-bottom:0.75rem;">✅</div>
+            <h2 style="color:var(--green-dark);margin-bottom:0.4rem;font-size:1.2rem;">Commande confirmée !</h2>
+            <p style="color:var(--gray-700);font-size:0.9rem;margin-bottom:0.3rem;">Merci <strong>${orderData.customer}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
+            <p style="color:var(--green-dark);font-weight:800;font-size:1.05rem;margin:0.6rem 0;">${res.order_ref || "#MT-" + res.id}</p>
+            <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1rem;">${address}</p>
+            <a href="/" style="display:inline-block;padding:0.65rem 1.75rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;font-size:0.9rem;">← Retour à la boutique</a>`;
+          box.classList.add("show");
+          box.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch (e) {
+          showToast("⚠️ Erreur: " + e.message);
+          btn.disabled = false;
+          btn.textContent = "✅ Confirmer la Commande";
+        }
+      }
+
+      // ── STOCK BADGE ───────────────────────────────────────────
+      function stockBadge(stock) {
+        if (stock > 10)
+          return `<span class="stock-icon-badge stock-in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4L6 11l-3-3"/></svg>En stock (${stock})</span>`;
+        if (stock > 0)
+          return `<span class="stock-icon-badge stock-low"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v5M8 11v1"/></svg>Stock limité (${stock})</span>`;
+        return `<span class="stock-icon-badge stock-out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>Rupture</span>`;
+      }
+
+      // ── RENDER ────────────────────────────────────────────────
+      function renderProduct(p) {
+        const images = p.images?.length ? p.images : p.img ? [p.img] : [];
+        const mainImg = images.length
+          ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1rem;"/>`
+          : `<span>${p.icon || "🎮"}</span>`;
+        const thumbs =
+          images.length > 1
+            ? images
+                .map(
+                  (s, i) =>
+                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${s}" onclick="switchImage(this,'${s}')"/>`,
+                )
+                .join("")
+            : "";
+        const badgeHTML = p.badge
+          ? `<div class="badge ${p.badge === "Sale" ? "sale" : ""}">${p.badge}</div>`
+          : "";
+        const variantsHTML = p.variants
+          .map(
+            (v, i) =>
+              `<button class="vchip ${i === 0 ? "active" : ""}" onclick="selectVariant(${i})">${v}</button>`,
+          )
+          .join("");
+        const oldHTML = p.oldPrice
+          ? `<span class="pold">${p.oldPrice.toLocaleString()} DA</span>`
+          : "";
+        const discHTML = p.oldPrice
+          ? `<span class="pdiscount">-${Math.round((1 - p.variantPrices[0] / p.oldPrice) * 100)}%</span>`
+          : "";
+
+        document.title = p.name + " — Mus Tech";
+        const slug = p.name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+        window.history.replaceState(
+          {},
+          "",
+          `/product.html?id=${p.id}&slug=${slug}`,
+        );
+
+        document.getElementById("page").innerHTML = `
+        <div class="card">
+          <!-- LEFT IMAGE -->
+          <div class="img-section">
+            ${badgeHTML}
+            <div class="img-wrap">${mainImg}</div>
+            <div class="thumbs">${thumbs}</div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="info">
+            <div class="cat">${p.cat}</div>
+            <div class="pname">${p.name}</div>
+            ${p.description ? `<div class="desc">${p.description}</div>` : ""}
+
+            <div class="variants-stock-row">
+              <div>
+                <div class="vlabel">Options</div>
+                <div class="variants">${variantsHTML}</div>
+              </div>
+              ${stockBadge(p.stock)}
+            </div>
+
+            <div class="price-row">
+              <span class="pmain" id="price-main">${p.variantPrices[0].toLocaleString()} DA</span>
+              ${oldHTML}${discHTML}
+            </div>
+
+            <div class="qty-row">
+              <span class="qlabel">Quantité</span>
+              <div class="qctrl">
+                <button class="qbtn" onclick="changeQty(-1)">−</button>
+                <span class="qval" id="qval">1</span>
+                <button class="qbtn" onclick="changeQty(1)">+</button>
+              </div>
+              <span class="qtotal" id="qtotal">${p.variantPrices[0].toLocaleString()} DA</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- FORM -->
+            <div class="checkout-form" id="checkout-form">
+              <div class="form-section">
+                <div class="form-title">🧾 Informations de livraison</div>
+
+                <!-- SUMMARY -->
+                <div class="order-summary-mini" id="order-summary-mini"></div>
+
+                <!-- NOM + TEL -->
+                <div class="frow">
+                  <div class="fgroup">
+                    <label>Nom <span style="font-weight:400;color:var(--gray-400)">(facultatif)</span></label>
+                    <input id="co-name" placeholder="Ahmed Benali"/>
+                  </div>
+                  <div class="fgroup">
+                    <label>Téléphone *</label>
+                    <input id="co-phone" type="tel" placeholder="06xxxxxxxx"/>
+                  </div>
+                </div>
+
+                <!-- WILAYA -->
+                <div class="fgroup">
+                  <label>Wilaya *</label>
+                  <select id="co-wilaya"><option value="">-- Choisir votre Wilaya --</option></select>
+                </div>
+
+                <!-- DELIVERY TYPE -->
+                <div class="fgroup">
+                  <label>Type de livraison</label>
+                  <div class="delivery-toggle">
+                    <div class="del-option active" id="del-domicile" onclick="setDelivery('domicile')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                      <div>
+                        <div class="del-title">À Domicile</div>
+                        <div class="del-sub">Livré chez vous</div>
+                      </div>
+                    </div>
+                    <div class="del-option" id="del-bureau" onclick="setDelivery('bureau')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                      <div>
+                        <div class="del-title">Au Bureau</div>
+                        <div class="del-sub">Point de retrait</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- DOMICILE FIELDS -->
+                <div id="domicile-fields" style="display:flex;flex-direction:column;gap:0.6rem;">
+                  <div class="fgroup">
+                    <label>Adresse <span style="font-weight:400;color:var(--gray-400)">(facultatif)</span></label>
+                    <input id="co-address" placeholder="Rue, quartier, commune..."/>
+                  </div>
+                </div>
+
+                <!-- BUREAU FIELDS -->
+                <div id="bureau-fields" style="display:none;flex-direction:column;gap:0.6rem;">
+                  <div class="fgroup">
+                    <label>Société de livraison *</label>
+                    <select id="co-company" onchange="updateBureauOffices()">
+                      <option value="">-- Choisir la société --</option>
+                      <option value="yalidine">Yalidine Express</option>
+                      <option value="zaki">Zaki Express</option>
+                      <option value="procolis">Procolis</option>
+                      <option value="noest">Noest Express</option>
+                      <option value="eship">eShip</option>
+                      <option value="maystro">Maystro Delivery</option>
+                      <option value="dhlex">DHlex</option>
+                      <option value="guepex">Guepex</option>
+                    </select>
+                  </div>
+                  <div class="fgroup">
+                    <label>Bureau de dépôt *</label>
+                    <select id="co-office" style="display:none">
+                      <option value="">-- Choisir le bureau --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- NOTE -->
+                <div class="fgroup">
+                  <label>Note <span style="font-weight:400;color:var(--gray-400)">(optionnel)</span></label>
+                  <textarea id="co-note" rows="2" placeholder="Instructions spéciales..."></textarea>
+                </div>
+
+                <!-- CONFIRM -->
+                <button class="btn btn-confirm" id="confirm-btn" onclick="placeOrder()">✅ Confirmer la Commande</button>
+              </div>
+            </div>
+
+            <!-- SHARE -->
+            <div class="share-row" id="share-actions" style="margin-top:0.6rem;">
+              <button class="share-icon-btn" onclick="copyLink()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                Copier le lien
+              </button>
+              <button class="share-icon-btn" onclick="shareProduct()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Partager
+              </button>
+            </div>
+
+            <!-- SUCCESS -->
+            <div class="success-box" id="success-box"></div>
+          </div>
+        </div>`;
+      }
+
       async function init() {
         const id = parseInt(
           new URLSearchParams(window.location.search).get("id"),
@@ -901,11 +1288,10 @@
             ProductsAPI.getOne(id),
             WilayasAPI.getAll(),
           ]);
-          WILAYAS = wilayas || [];
+          WILAYAS = wilayas;
           product = p;
-          if (!product.variants || !product.variants.length)
-            product.variants = ["Standard"];
-          if (!product.variantPrices || !product.variantPrices.length)
+          if (!product.variants?.length) product.variants = ["Standard"];
+          if (!product.variantPrices?.length)
             product.variantPrices = [product.price];
           if (typeof product.variants === "string")
             product.variants = JSON.parse(product.variants);
@@ -913,16 +1299,13 @@
             product.variantPrices = JSON.parse(product.variantPrices);
           if (typeof product.images === "string")
             product.images = JSON.parse(product.images);
-          // Init variantQtys to 0 for each variant
-          variantQtys = {};
-          product.variants.forEach((_, i) => (variantQtys[i] = 0));
           renderProduct(product);
+          populateWilayas();
         } catch (e) {
           document.getElementById("page").innerHTML =
             '<div class="loading">Impossible de charger ce produit. <a href="/">Retour</a></div>';
         }
       }
-
       init();
     </script>
   </body>
