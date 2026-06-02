@@ -2956,6 +2956,43 @@
             </select>
           </div>
           <div class="form-group">
+            <label>Type de Livraison *</label>
+            <div style="display:flex;gap:0.75rem;margin-top:0.25rem;">
+              <label onclick="setDeliveryType('domicile')" id="delivery-domicile" style="flex:1;display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;border:2px solid var(--green);border-radius:10px;cursor:pointer;background:var(--green-light);transition:all 0.2s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:700;color:var(--green-dark);">À Domicile</div>
+                  <div style="font-size:0.72rem;color:var(--gray-500);">Livré chez vous</div>
+                </div>
+              </label>
+              <label onclick="setDeliveryType('bureau')" id="delivery-bureau" style="flex:1;display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;border:2px solid var(--gray-100);border-radius:10px;cursor:pointer;background:#fff;transition:all 0.2s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gray-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <div>
+                  <div style="font-size:0.85rem;font-weight:700;color:var(--gray-700);">Au Bureau</div>
+                  <div style="font-size:0.72rem;color:var(--gray-500);">Point de retrait</div>
+                </div>
+              </label>
+            </div>
+            <input type="hidden" id="delivery-type" value="domicile" />
+            <!-- Bureau selector - hidden by default -->
+            <div id="bureau-selector" style="display:none;margin-top:0.75rem;">
+              <select id="bureau-company" onchange="updateBureauOffices()" style="width:100%;padding:0.65rem 0.9rem;border-radius:8px;border:1.5px solid var(--gray-100);font-family:inherit;font-size:0.9rem;margin-bottom:0.5rem;outline:none;">
+                <option value="">-- Choisir la société --</option>
+                <option value="yalidine">Yalidine Express</option>
+                <option value="zaki">Zaki Express</option>
+                <option value="procolis">Procolis</option>
+                <option value="noest">Noest Express</option>
+                <option value="eship">eShip</option>
+                <option value="maystro">Maystro Delivery</option>
+                <option value="dhlex">DHlex</option>
+                <option value="guepex">Guepex</option>
+              </select>
+              <select id="bureau-office" style="width:100%;padding:0.65rem 0.9rem;border-radius:8px;border:1.5px solid var(--gray-100);font-family:inherit;font-size:0.9rem;outline:none;display:none;">
+                <option value="">-- Choisir le bureau --</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
             <label>Adresse <span style="color:var(--gray-400);font-weight:400;">(facultatif)</span></label>
             <input type="text" id="checkout-address" placeholder="Rue, quartier, commune..." />
           </div>
@@ -4766,6 +4803,62 @@
         populateAdminTables();
       }
 
+      const BUREAU_OFFICES = {
+        yalidine: ["Alger - Hussein Dey","Alger - Bab Ezzouar","Alger - Dar El Beida","Alger - Rouiba","Alger - Birtouta","Oran - Oran Centre","Oran - Es Senia","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Tipaza - Tipaza Centre","Médéa - Médéa Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Jijel - Jijel Centre","Guelma - Guelma Centre","Souk Ahras - Souk Ahras Centre","Ouargla - Ouargla Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Mascara - Mascara Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Sidi Bel Abbès - Sidi Bel Abbès Centre","Relizane - Relizane Centre","Aïn Defla - Aïn Defla Centre","Tissemsilt - Tissemsilt Centre","Aïn Témouchent - Aïn Témouchent Centre","Naâma - Naâma Centre","El Bayadh - El Bayadh Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Touggourt - Touggourt Centre","Laghouat - Laghouat Centre","Saïda - Saïda Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Khenchela - Khenchela Centre","Tébessa - Tébessa Centre","Oum El Bouaghi - OEB Centre","Béchar - Béchar Centre","Adrar - Adrar Centre","Tamanrasset - Tamanrasset Centre"],
+        zaki: ["Alger - Kouba","Alger - Bab El Oued","Alger - El Harrach","Alger - Hydra","Oran - Oran Centre","Oran - Bir El Djir","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Ouargla - Ouargla Centre","Ghardaïa - Ghardaïa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Chlef - Chlef Centre","Tiaret - Tiaret Centre","Mostaganem - Mostaganem Centre","Sidi Bel Abbès - SBA Centre","Mascara - Mascara Centre","El Oued - El Oued Centre","Touggourt - Touggourt Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre"],
+        procolis: ["Alger - Bachdjarrah","Alger - Bab Ezzouar","Alger - Dar El Beida","Alger - Birtouta","Alger - Rouiba","Oran - Oran Centre","Oran - Es Senia","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Tipaza - Tipaza Centre","Médéa - Médéa Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre","Oum El Bouaghi - OEB Centre","Guelma - Guelma Centre"],
+        noest: ["Alger - Hussein Dey","Alger - Bab Ezzouar","Alger - El Harrach","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Chlef - Chlef Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Tlemcen - Tlemcen Centre","Sidi Bel Abbès - SBA Centre"],
+        eship: ["Alger - Bab Ezzouar","Alger - Dar El Beida","Alger - Rouiba","Alger - Birtouta","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Ouargla - Ouargla Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre"],
+        maystro: ["Alger - Kouba","Alger - Bab El Oued","Alger - Hussein Dey","Alger - Bab Ezzouar","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre"],
+        dhlex: ["Alger - El Harrach","Alger - Bab Ezzouar","Alger - Dar El Beida","Oran - Oran Centre","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre"],
+        guepex: ["Alger - Bachdjarrah","Alger - Bab Ezzouar","Alger - Hussein Dey","Alger - El Harrach","Oran - Oran Centre","Oran - Bir El Djir","Constantine - Constantine Centre","Annaba - Annaba Centre","Blida - Blida Centre","Sétif - Sétif Centre","Batna - Batna Centre","Tlemcen - Tlemcen Centre","Béjaïa - Béjaïa Centre","Tizi Ouzou - Tizi Ouzou Centre","Boumerdès - Boumerdès Centre","Chlef - Chlef Centre","Skikda - Skikda Centre","Biskra - Biskra Centre","Djelfa - Djelfa Centre","Msila - Msila Centre","Bordj Bou Arréridj - BBA Centre","Mila - Mila Centre","Ghardaïa - Ghardaïa Centre","El Oued - El Oued Centre","Ouargla - Ouargla Centre","Laghouat - Laghouat Centre","Tébessa - Tébessa Centre","Souk Ahras - Souk Ahras Centre","Guelma - Guelma Centre","Mostaganem - Mostaganem Centre","Tiaret - Tiaret Centre","Sidi Bel Abbès - SBA Centre","Mascara - Mascara Centre","Relizane - Relizane Centre","Aïn Defla - Aïn Defla Centre","Aïn Témouchent - Aïn Témouchent Centre"]
+      };
+
+      function updateBureauOffices() {
+        const company = document.getElementById("bureau-company").value;
+        const officeSelect = document.getElementById("bureau-office");
+        officeSelect.innerHTML = '<option value="">-- Choisir le bureau --</option>';
+        if (company && BUREAU_OFFICES[company]) {
+          BUREAU_OFFICES[company].forEach(office => {
+            const opt = document.createElement("option");
+            opt.value = office;
+            opt.textContent = office;
+            officeSelect.appendChild(opt);
+          });
+          officeSelect.style.display = "block";
+        } else {
+          officeSelect.style.display = "none";
+        }
+      }
+
+      function setDeliveryType(type) {
+        document.getElementById("delivery-type").value = type;
+        const domEl = document.getElementById("delivery-domicile");
+        const burEl = document.getElementById("delivery-bureau");
+        const bureauSel = document.getElementById("bureau-selector");
+        if (type === "domicile") {
+          domEl.style.border = "2px solid var(--green)";
+          domEl.style.background = "var(--green-light)";
+          domEl.querySelector("svg").setAttribute("stroke", "var(--green-dark)");
+          domEl.querySelector("div div").style.color = "var(--green-dark)";
+          burEl.style.border = "2px solid var(--gray-100)";
+          burEl.style.background = "#fff";
+          burEl.querySelector("svg").setAttribute("stroke", "var(--gray-500)");
+          burEl.querySelector("div div").style.color = "var(--gray-700)";
+          bureauSel.style.display = "none";
+        } else {
+          burEl.style.border = "2px solid var(--green)";
+          burEl.style.background = "var(--green-light)";
+          burEl.querySelector("svg").setAttribute("stroke", "var(--green-dark)");
+          burEl.querySelector("div div").style.color = "var(--green-dark)";
+          domEl.style.border = "2px solid var(--gray-100)";
+          domEl.style.background = "#fff";
+          domEl.querySelector("svg").setAttribute("stroke", "var(--gray-500)");
+          domEl.querySelector("div div").style.color = "var(--gray-700)";
+          bureauSel.style.display = "block";
+        }
+      }
+
       // ── ORDER ─────────────────────────────────────────────────
       async function placeOrder() {
         const wilEl = document.getElementById("wilaya-select");
@@ -4795,8 +4888,16 @@
           customer,
           phone,
           wilaya: wilayaName,
-          address,
-          notes,
+          address: (() => {
+            const type = document.getElementById("delivery-type")?.value;
+            if (type === "bureau") {
+              const company = document.getElementById("bureau-company")?.options[document.getElementById("bureau-company").selectedIndex]?.text || "";
+              const office = document.getElementById("bureau-office")?.value || "";
+              return `Bureau — ${company} — ${office}`;
+            }
+            return "Domicile — " + (document.getElementById("checkout-address")?.value.trim() || "—");
+          })(),
+          notes: document.getElementById("checkout-notes")?.value.trim() || "",
           items: checkoutCart.map((item) => ({
             id: item.id,
             variant: item.variant,
