@@ -86,20 +86,23 @@
       }
 
       .page {
-        max-width: 860px;
+        max-width: 1100px;
         margin: 2.5rem auto;
         padding: 0 1.25rem;
       }
 
-      /* CARD */
+      /* CARD — two-column layout */
       .card {
         background: #fff;
         border-radius: 20px;
         box-shadow: var(--shadow-md);
         overflow: hidden;
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        min-height: 560px;
       }
 
-      /* IMAGE SECTION */
+      /* LEFT: IMAGE SECTION */
       .img-section {
         background: linear-gradient(135deg, var(--gray-50), var(--green-light));
         position: relative;
@@ -107,10 +110,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
+        border-right: 1px solid var(--gray-100);
       }
       .img-wrap {
         width: 100%;
-        max-width: 380px;
+        max-width: 340px;
         aspect-ratio: 1/1;
         display: flex;
         align-items: center;
@@ -163,9 +168,13 @@
         border-color: var(--green);
       }
 
-      /* INFO SECTION */
+      /* RIGHT: INFO SECTION */
       .info {
-        padding: 1.75rem 2rem 2rem;
+        padding: 2rem 2rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow-y: auto;
       }
       .cat {
         font-size: 0.72rem;
@@ -309,7 +318,7 @@
         color: var(--green-dark);
       }
 
-      /* CHECKOUT FORM — inline, no overlay */
+      /* CHECKOUT FORM */
       .checkout-form {
         background: var(--gray-50);
         border-radius: 14px;
@@ -381,8 +390,6 @@
       .fgroup textarea:focus {
         border-color: var(--green);
       }
-
-      /* BUTTONS */
       .btn {
         display: flex;
         align-items: center;
@@ -398,23 +405,6 @@
         width: 100%;
         font-family: inherit;
       }
-      .btn-primary {
-        background: var(--green);
-        color: #fff;
-        box-shadow: 0 4px 14px rgba(62, 207, 110, 0.35);
-      }
-      .btn-primary:hover {
-        background: var(--green-dark);
-        transform: translateY(-1px);
-      }
-      .btn-ghost {
-        background: var(--gray-50);
-        color: var(--gray-700);
-        border: 1.5px solid var(--gray-100);
-      }
-      .btn-ghost:hover {
-        background: var(--gray-100);
-      }
       .btn-confirm {
         background: var(--green-dark);
         color: #fff;
@@ -429,15 +419,23 @@
         cursor: not-allowed;
         transform: none !important;
       }
-      .actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
+      .success-box {
+        text-align: center;
+        padding: 2.5rem;
+        background: var(--green-light);
+        border-radius: 14px;
+        margin-top: 1.25rem;
+        display: none;
       }
+      .success-box.show {
+        display: block;
+      }
+
+      /* SHARE ROW */
       .share-row {
         display: flex;
         gap: 0.5rem;
-        margin-top: 0.25rem;
+        margin-top: 0.5rem;
       }
       .sbtn {
         background: var(--gray-50);
@@ -454,19 +452,6 @@
       }
       .sbtn:hover {
         background: var(--gray-100);
-      }
-
-      /* SUCCESS */
-      .success-box {
-        text-align: center;
-        padding: 2.5rem;
-        background: var(--green-light);
-        border-radius: 14px;
-        margin-top: 1.25rem;
-        display: none;
-      }
-      .success-box.show {
-        display: block;
       }
 
       /* LOADING */
@@ -510,7 +495,20 @@
         opacity: 1;
       }
 
-      @media (max-width: 600px) {
+      /* RESPONSIVE: stack on mobile */
+      @media (max-width: 760px) {
+        .card {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
+        }
+        .img-section {
+          border-right: none;
+          border-bottom: 1px solid var(--gray-100);
+          padding: 1.5rem;
+        }
+        .img-wrap {
+          max-width: 260px;
+        }
         .info {
           padding: 1.25rem 1.25rem 1.5rem;
         }
@@ -520,11 +518,11 @@
         .pmain {
           font-size: 1.8rem;
         }
-        .frow {
-          grid-template-columns: 1fr;
-        }
         nav {
           padding: 0 1rem;
+        }
+        .page {
+          margin: 1.25rem auto;
         }
       }
     </style>
@@ -573,14 +571,12 @@
           .querySelectorAll(".vchip")
           .forEach((c, i) => c.classList.toggle("active", i === index));
         updatePrice();
-        updateOrderSummary();
       }
 
       function changeQty(delta) {
         currentQty = Math.max(1, currentQty + delta);
         document.getElementById("qval").textContent = currentQty;
         updatePrice();
-        updateOrderSummary();
       }
 
       function updatePrice() {
@@ -606,13 +602,11 @@
         else copyLink();
       }
 
-      // ── CHECKOUT FORM (inline, no modal) ──────────────────────
+      // ── CHECKOUT FORM ─────────────────────────────────────
       function openCheckout() {
         const form = document.getElementById("checkout-form");
         if (!form) return;
         form.classList.add("open");
-
-        // Populate wilayas
         const sel = document.getElementById("co-wilaya");
         if (sel.options.length <= 1) {
           WILAYAS.forEach((w) => {
@@ -625,8 +619,6 @@
           });
           sel.onchange = updateOrderSummary;
         }
-
-        // Pre-fill from localStorage
         try {
           const user = JSON.parse(localStorage.getItem("mt_user"));
           if (user) {
@@ -636,10 +628,7 @@
               document.getElementById("co-phone").value = user.phone;
           }
         } catch (e) {}
-
         updateOrderSummary();
-
-        // Scroll into view
         setTimeout(
           () => form.scrollIntoView({ behavior: "smooth", block: "nearest" }),
           100,
@@ -659,13 +648,12 @@
             ? sel.options[sel.selectedIndex].dataset.name
             : "—";
         const total = subtotal + shipping;
-
         const summary = document.getElementById("order-summary-mini");
         if (summary)
           summary.innerHTML = `
-        <div class="orow"><span>${product.name} (${variant}) ×${currentQty}</span><span>${subtotal.toLocaleString()} DA</span></div>
-        <div class="orow"><span>Livraison (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
-        <div class="orow total"><span>Total</span><span>${total.toLocaleString()} DA</span></div>`;
+          <div class="orow"><span>${product.name} (${variant}) ×${currentQty}</span><span>${subtotal.toLocaleString()} DA</span></div>
+          <div class="orow"><span>Livraison (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
+          <div class="orow total"><span>Total</span><span>${total.toLocaleString()} DA</span></div>`;
       }
 
       async function placeOrder() {
@@ -674,18 +662,12 @@
         const wilayaEl = document.getElementById("co-wilaya");
         const wilaya =
           wilayaEl.options[wilayaEl.selectedIndex]?.dataset.name || "";
-        const shipping = parseInt(wilayaEl.value) || 0;
         const address = document.getElementById("co-address").value.trim();
         const note = document.getElementById("co-note").value.trim();
-
         if (!name || !phone || !wilaya || !address) {
           showToast("⚠️ Veuillez remplir tous les champs *");
           return;
         }
-
-        const price =
-          product.variantPrices[currentVariant] ?? product.variantPrices[0];
-
         const orderData = {
           customer: name,
           phone,
@@ -694,21 +676,19 @@
           note,
           items: [{ id: product.id, variant: currentVariant, qty: currentQty }],
         };
-
         const btn = document.getElementById("confirm-btn");
         btn.disabled = true;
         btn.textContent = "⏳ En cours...";
-
         try {
           const res = await OrdersAPI.place(orderData);
           document.getElementById("checkout-form").classList.remove("open");
           const box = document.getElementById("success-box");
           box.innerHTML = `
-          <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
-          <h2 style="color:var(--green-dark);margin-bottom:0.5rem;">Commande confirmée !</h2>
-          <p style="color:var(--gray-700);margin-bottom:0.25rem;">Merci <strong>${name}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
-          <p style="color:var(--green-dark);font-weight:700;font-size:1.1rem;margin:0.75rem 0;">${res.order_ref || "#MT-" + res.id}</p>
-          <a href="/" style="display:inline-block;margin-top:1rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">← Retour à la boutique</a>`;
+            <div style="font-size:3rem;margin-bottom:1rem;">✅</div>
+            <h2 style="color:var(--green-dark);margin-bottom:0.5rem;">Commande confirmée !</h2>
+            <p style="color:var(--gray-700);margin-bottom:0.25rem;">Merci <strong>${name}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
+            <p style="color:var(--green-dark);font-weight:700;font-size:1.1rem;margin:0.75rem 0;">${res.order_ref || "#MT-" + res.id}</p>
+            <a href="/" style="display:inline-block;margin-top:1rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;">← Retour à la boutique</a>`;
           box.classList.add("show");
           box.scrollIntoView({ behavior: "smooth", block: "center" });
         } catch (e) {
@@ -722,7 +702,6 @@
       function renderProduct(p) {
         const images =
           p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
-        const outOfStock = p.stock === 0;
 
         const mainImgHTML =
           images.length > 0
@@ -763,7 +742,7 @@
               ? `<span class="stock-badge low">⚠ Stock limité (${p.stock})</span>`
               : `<span class="stock-badge out">✗ Rupture de stock</span>`;
 
-        // Update URL slug
+        // Update page title & URL slug
         const slug = p.name
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
@@ -777,14 +756,14 @@
 
         document.getElementById("page").innerHTML = `
         <div class="card">
-          <!-- IMAGE -->
+          <!-- LEFT: IMAGE -->
           <div class="img-section">
             ${badgeHTML}
             <div class="img-wrap">${mainImgHTML}</div>
             <div class="thumbs">${thumbsHTML}</div>
           </div>
 
-          <!-- INFO -->
+          <!-- RIGHT: INFO -->
           <div class="info">
             <div class="cat">${p.cat}</div>
             <div class="pname">${p.name}</div>
@@ -805,9 +784,13 @@
               </div>
               <span class="qtotal" id="qtotal">${p.variantPrices[0].toLocaleString()} DA</span>
             </div>
+            <div class="share-row">
+              <button class="sbtn" onclick="copyLink()">🔗 Copier le lien</button>
+              <button class="sbtn" onclick="shareProduct()">📤 Partager</button>
+            </div>
 
-            <!-- CHECKOUT FORM (inline) -->
-            <div class="checkout-form" id="checkout-form">
+            <!-- CHECKOUT FORM (inline, always open) -->
+            <div class="checkout-form open" id="checkout-form">
               <h4>🧾 Informations de livraison</h4>
               <div class="order-summary-mini" id="order-summary-mini"></div>
               <div class="frow">
@@ -829,15 +812,6 @@
 
             <!-- SUCCESS BOX -->
             <div class="success-box" id="success-box"></div>
-
-            <!-- ACTIONS -->
-            <div class="actions">
-              <button class="btn btn-primary" onclick="openCheckout()" ${outOfStock ? "disabled" : ""}>🛒 Commander maintenant</button>
-              <div class="share-row">
-                <button class="sbtn" onclick="copyLink()">🔗 Copier le lien</button>
-                <button class="sbtn" onclick="shareProduct()">📤 Partager</button>
-              </div>
-            </div>
           </div>
         </div>`;
       }
@@ -868,6 +842,7 @@
           if (typeof product.images === "string")
             product.images = JSON.parse(product.images);
           renderProduct(product);
+          openCheckout();
         } catch (e) {
           document.getElementById("page").innerHTML =
             '<div class="loading">Impossible de charger ce produit. <a href="/">Retour</a></div>';
