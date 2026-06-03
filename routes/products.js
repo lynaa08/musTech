@@ -70,7 +70,7 @@ router.get("/:id", (req, res) => {
 });
 
 // ── POST /api/products ── (admin) ─────────────────────────
-router.post("/", adminMiddleware, upload.array("images", 5), (req, res) => {
+router.post("/", adminMiddleware, upload.array("images", 15), (req, res) => {
   const {
     name,
     cat,
@@ -127,7 +127,7 @@ router.post("/", adminMiddleware, upload.array("images", 5), (req, res) => {
 });
 
 // ── PUT /api/products/:id ── (admin) ──────────────────────
-router.put("/:id", adminMiddleware, upload.array("images", 5), (req, res) => {
+router.put("/:id", adminMiddleware, upload.array("images", 15), (req, res) => {
   const existing = db
     .prepare("SELECT * FROM products WHERE id = ?")
     .get(req.params.id);
@@ -159,9 +159,9 @@ router.put("/:id", adminMiddleware, upload.array("images", 5), (req, res) => {
     : [];
   const newFiles =
     req.files && req.files.length > 0 ? req.files.map((f) => f.path) : [];
-  // Remove deleted images, add new ones, cap at 5
+  // Remove deleted images, add new ones, cap at 15
   const kept = existingImages.filter((img) => !toRemove.includes(img));
-  const uploadedFiles = [...kept, ...newFiles].slice(0, 5);
+  const uploadedFiles = [...kept, ...newFiles].slice(0, 15);
   const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : existing.img;
 
   // (Cloudinary files persist — no local deletion needed)
