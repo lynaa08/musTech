@@ -6,6 +6,18 @@
     <title>Mus Tech – Pièces PC & Cosmétiques PC</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="api.js"></script>
+    <script>
+      // Safe storage fallback (defined here too for inline use)
+      const _storeLocal = (() => {
+        try {
+          _storeLocal.setItem("_t", "1");
+          _storeLocal.removeItem("_t");
+          return localStorage;
+        } catch (e) {
+          return sessionStorage;
+        }
+      })();
+    </script>
     <!-- Export libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -1451,6 +1463,48 @@
         .form-row {
           grid-template-columns: 1fr;
         }
+        .admin-mobile-nav {
+          display: flex !important;
+        }
+        .admin-content {
+          padding: 1rem;
+        }
+      }
+      .admin-mobile-nav {
+        display: none;
+        overflow-x: auto;
+        gap: 0.4rem;
+        padding: 0.75rem 1rem;
+        background: var(--gray-900);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        scrollbar-width: none;
+      }
+      .admin-mobile-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .admin-mobile-nav a {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 1rem;
+        border-radius: 50px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s;
+        border: 1.5px solid transparent;
+      }
+      .admin-mobile-nav a:hover,
+      .admin-mobile-nav a.active {
+        background: var(--green);
+        color: #fff;
+        border-color: var(--green);
       }
       @media (max-width: 600px) {
         /* NAV */
@@ -2461,6 +2515,136 @@
           </ul>
         </aside>
         <main class="admin-content">
+          <!-- Mobile admin tab bar (visible only on small screens) -->
+          <nav class="admin-mobile-nav" id="admin-mobile-nav">
+            <a
+              href="javascript:void(0)"
+              class="active"
+              onclick="
+                showAdminTab('dashboard', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
+              Dashboard
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('orders', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              </svg>
+              Commandes
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('products', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              Produits
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('shipping', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13" rx="1" />
+                <path d="M16 8h4l3 3v5h-7V8z" />
+                <circle cx="5.5" cy="18.5" r="2.5" />
+                <circle cx="18.5" cy="18.5" r="2.5" />
+              </svg>
+              Livraison
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('finance', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              Finances
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="showPage('home')"
+              style="
+                border-color: rgba(255, 255, 255, 0.2);
+                color: rgba(255, 255, 255, 0.4);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              Boutique
+            </a>
+          </nav>
           <div id="admin-dashboard" class="admin-tab">
             <div class="admin-header">
               <h1>Tableau de Bord</h1>
@@ -4201,7 +4385,7 @@
                     color: var(--gray-400, #aaa);
                     margin-top: 0.2rem;
                   ">
-                  JPG, PNG, WEBP — max 5 Mo chacune
+                  JPG, PNG, WEBP — max 5 Mo chacune (15 max)
                 </div>
                 <input
                   type="file"
@@ -4422,7 +4606,7 @@
 
       function getFavIds() {
         try {
-          const raw = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+          const raw = JSON.parse(_storeLocal.getItem("mt_favorites") || "[]");
           // support both [{id:1}] and [1] formats, always return array of numbers
           return raw
             .map((f) => Number(typeof f === "object" ? f.id : f))
@@ -4432,7 +4616,7 @@
         }
       }
       function saveFavIds(ids) {
-        localStorage.setItem(
+        _storeLocal.setItem(
           "mt_favorites",
           JSON.stringify(ids.map((id) => ({ id }))),
         );
@@ -5383,6 +5567,13 @@
         }
       }
 
+      function syncMobileNav(el) {
+        document
+          .querySelectorAll(".admin-mobile-nav a")
+          .forEach((a) => a.classList.remove("active"));
+        if (el) el.classList.add("active");
+      }
+
       function showAdminTab(tab, el) {
         document
           .querySelectorAll(".admin-tab")
@@ -6307,7 +6498,7 @@
           const res = await OrdersAPI.place(orderData);
           try {
             const saved = JSON.parse(
-              localStorage.getItem("mt_guest_orders") || "[]",
+              _storeLocal.getItem("mt_guest_orders") || "[]",
             );
             saved.unshift({
               id: res.id,
@@ -6320,7 +6511,7 @@
               status: "pending",
               created_at: new Date().toISOString(),
             });
-            localStorage.setItem(
+            _storeLocal.setItem(
               "mt_guest_orders",
               JSON.stringify(saved.slice(0, 20)),
             );
@@ -6758,14 +6949,14 @@
       async function initAll() {
         // Migrate old favorites format if needed
         try {
-          const raw = localStorage.getItem("mt_favorites");
+          const raw = _storeLocal.getItem("mt_favorites");
           if (raw) {
             const parsed = JSON.parse(raw);
             // if it's not an array of objects with id, reset it
-            if (!Array.isArray(parsed)) localStorage.removeItem("mt_favorites");
+            if (!Array.isArray(parsed)) _storeLocal.removeItem("mt_favorites");
           }
         } catch {
-          localStorage.removeItem("mt_favorites");
+          _storeLocal.removeItem("mt_favorites");
         }
 
         try {
