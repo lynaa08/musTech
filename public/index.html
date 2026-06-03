@@ -2054,6 +2054,7 @@
         <li>
           <a href="#" onclick="showSection('cosmétiques')">Cosmétiques PC</a>
         </li>
+        <li><a href="#" onclick="showPage('favorites')">❤️ Favoris</a></li>
         <li id="admin-nav-link" style="display: none">
           <a href="#" onclick="showPage('admin')">Admin ⚙️</a>
         </li>
@@ -2182,6 +2183,36 @@
             <h2>Tous les <span>Produits</span></h2>
           </div>
           <div class="product-grid" id="shop-grid"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FAVORITES PAGE -->
+    <div id="favorites-page" class="page-section">
+      <section class="section">
+        <div class="section-inner">
+          <div class="section-header">
+            <h2>Mes <span>Favoris</span></h2>
+          </div>
+          <div
+            id="favorites-empty"
+            style="
+              text-align: center;
+              padding: 3rem 1rem;
+              color: var(--gray-500);
+            ">
+            <p style="font-size: 1.1rem; margin-bottom: 1rem">
+              ❤️ Aucun produit favori
+            </p>
+            <p>Ajoutez vos produits préférés en cliquant sur le cœur</p>
+            <button
+              class="btn btn-primary"
+              onclick="showPage('shop')"
+              style="margin-top: 1.5rem">
+              Découvrir les Produits
+            </button>
+          </div>
+          <div class="product-grid" id="favorites-grid"></div>
         </div>
       </section>
     </div>
@@ -4826,11 +4857,37 @@
           populateAdminTables();
           populateWilayas();
           renderFinanceChart();
+        } else if (page === "favorites") {
+          footer.style.display = "";
+          nav.style.display = "";
+          populateFavoritesPage();
+          window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
           footer.style.display = "";
           nav.style.display = "";
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
+      }
+
+      function populateFavoritesPage() {
+        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+        const favGrid = document.getElementById("favorites-grid");
+        const favEmpty = document.getElementById("favorites-empty");
+
+        if (favs.length === 0) {
+          favEmpty.style.display = "block";
+          favGrid.innerHTML = "";
+          return;
+        }
+
+        favEmpty.style.display = "none";
+        favGrid.innerHTML = favs
+          .map((fav) => {
+            const product = PRODUCTS.find((p) => p.id === fav.id);
+            if (!product) return "";
+            return renderProductCard(product);
+          })
+          .join("");
       }
 
       function showAdminTab(tab, el) {
