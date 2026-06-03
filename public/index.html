@@ -4598,7 +4598,7 @@
         <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
         <td><div class="action-btns">
           <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
-          <button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button>
+          <button class="action-btn action-del" onclick="deleteProduct(${o.id})">Supprimer</button>
         </div></td>
       </tr>`,
             ).join("");
@@ -4644,7 +4644,7 @@
           <td><span class="status-badge ${p.stock > 0 ? "status-delivered" : "status-cancelled"}">${p.stock > 0 ? "Actif" : "Rupture"}</span></td>
           <td><div class="action-btns">
             <button class="action-btn action-edit" onclick="openEditProduct(${p.id})">Modifier</button>
-            <button class="action-btn action-del" onclick="deleteOrder(${p.id})">Supprimer</button>
+            <button class="action-btn action-del" onclick="deleteProduct(${p.id})">Supprimer</button>
           </div></td>
         </tr>`,
             ).join("");
