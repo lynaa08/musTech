@@ -1076,6 +1076,12 @@
         background: var(--gray-50);
         padding: 2rem;
       }
+      /* Sur mobile, compenser la barre sticky admin */
+      @media (max-width: 900px) {
+        .admin-tab {
+          padding-top: 0.5rem;
+        }
+      }
       .admin-header {
         display: flex;
         align-items: center;
@@ -1468,6 +1474,10 @@
         }
         .admin-mobile-nav {
           display: flex !important;
+          /* marge gauche/droite négative pour contrer le padding du parent */
+          margin-left: -1rem;
+          margin-right: -1rem;
+          width: calc(100% + 2rem);
         }
         .admin-content {
           padding: 1rem;
@@ -1481,9 +1491,12 @@
         background: var(--gray-900);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         position: sticky;
-        top: 0;
+        top: 60px; /* hauteur de la navbar principale sur mobile */
         z-index: 50;
         scrollbar-width: none;
+        /* empêche le clipping horizontal */
+        width: 100%;
+        box-sizing: border-box;
       }
       .admin-mobile-nav::-webkit-scrollbar {
         display: none;
@@ -5601,9 +5614,19 @@
         document
           .querySelectorAll(".admin-tab")
           .forEach((t) => (t.style.display = "none"));
-        document.getElementById("admin-" + tab).style.display = "block";
+        const target = document.getElementById("admin-" + tab);
+        if (target) {
+          target.style.display = "block";
+          if (window.innerWidth <= 900) {
+            setTimeout(
+              () =>
+                target.scrollIntoView({ behavior: "smooth", block: "start" }),
+              80,
+            );
+          }
+        }
         document
-          .querySelectorAll(".admin-nav a")
+          .querySelectorAll(".admin-nav a, .admin-mobile-nav a")
           .forEach((a) => a.classList.remove("active"));
         if (el) el.classList.add("active");
         if (tab === "finance") renderFinanceChart();
