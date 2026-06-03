@@ -4209,7 +4209,7 @@
                 <div
                   id="ep-drop-label"
                   style="font-size: 0.82rem; color: var(--gray-500, #888)">
-                  Cliquer ou glisser une nouvelle image ici
+                  Cliquer ou glisser des images ici (max 5)
                 </div>
                 <div
                   style="
@@ -4217,68 +4217,49 @@
                     color: var(--gray-400, #aaa);
                     margin-top: 0.2rem;
                   ">
-                  JPG, PNG, WEBP — max 5 Mo
+                  JPG, PNG, WEBP — max 5 Mo chacune
                 </div>
                 <input
                   type="file"
                   id="ep-image"
                   accept="image/*"
+                  multiple
                   style="display: none" />
               </label>
-              <!-- New image preview (shown after selection) -->
+              <!-- New images preview (shown after selection) -->
               <div
                 id="ep-new-img-wrap"
-                style="
-                  display: none;
-                  position: relative;
-                  border-radius: 10px;
-                  overflow: hidden;
-                  background: var(--gray-50, #f9f9f9);
-                  border: 1.5px solid var(--green-dark, #2d6a4f);
-                ">
-                <img
-                  id="ep-new-img"
-                  src=""
-                  alt="Nouvelle image"
-                  style="
-                    width: 100%;
-                    max-height: 180px;
-                    object-fit: contain;
-                    display: block;
-                    padding: 0.5rem;
-                  " />
+                style="display: none; flex-direction: column; gap: 0.5rem">
                 <div
                   style="
-                    position: absolute;
-                    top: 6px;
-                    right: 6px;
                     display: flex;
-                    gap: 6px;
                     align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 0.2rem;
                   ">
                   <span
                     style="
                       background: var(--green-dark, #2d6a4f);
                       color: #fff;
                       font-size: 0.7rem;
-                      padding: 2px 8px;
+                      padding: 2px 10px;
                       border-radius: 99px;
                     "
-                    >Nouvelle image</span
+                    id="ep-new-count"
+                    >Nouvelles images</span
                   >
                   <button
                     type="button"
                     onclick="cancelNewImage()"
                     style="
-                      background: rgba(0, 0, 0, 0.55);
+                      background: rgba(0, 0, 0, 0.12);
                       border: none;
-                      color: #fff;
+                      color: var(--gray-700);
                       border-radius: 50%;
                       width: 22px;
                       height: 22px;
                       cursor: pointer;
-                      font-size: 0.9rem;
-                      line-height: 1;
+                      font-size: 0.85rem;
                       display: flex;
                       align-items: center;
                       justify-content: center;
@@ -4286,6 +4267,9 @@
                     ✕
                   </button>
                 </div>
+                <div
+                  id="ep-new-imgs-grid"
+                  style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
               </div>
             </div>
           </div>
@@ -4777,14 +4761,13 @@
       function cancelNewImage() {
         const fileInput = document.getElementById("ep-image");
         const newWrap = document.getElementById("ep-new-img-wrap");
-        const newImg = document.getElementById("ep-new-img");
+        const grid = document.getElementById("ep-new-imgs-grid");
         if (fileInput) fileInput.value = "";
-        if (newImg) newImg.src = "";
+        if (grid) grid.innerHTML = "";
         if (newWrap) newWrap.style.display = "none";
       }
 
-      // Wire up file input → live preview
-      // Called directly from openEditProduct (avoids DOMContentLoaded timing issue)
+      // Wire up file input → live multi-preview
       let _imgListenersAttached = false;
       function initEditImageListeners() {
         if (_imgListenersAttached) return;
@@ -4793,18 +4776,35 @@
         const fileInput = document.getElementById("ep-image");
         const dropZone = document.getElementById("ep-drop-zone");
         const newWrap = document.getElementById("ep-new-img-wrap");
-        const newImg = document.getElementById("ep-new-img");
+        const grid = document.getElementById("ep-new-imgs-grid");
+        const countEl = document.getElementById("ep-new-count");
         if (!fileInput) return;
 
+        function showPreviews(files) {
+          if (!grid) return;
+          grid.innerHTML = "";
+          const count = Math.min(files.length, 5);
+          if (countEl)
+            countEl.textContent =
+              count + " nouvelle" + (count > 1 ? "s images" : " image");
+          for (let i = 0; i < count; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.style.cssText =
+                "width:70px;height:70px;object-fit:cover;border-radius:8px;border:2px solid var(--green);";
+              grid.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          }
+          if (newWrap) newWrap.style.display = "flex";
+        }
+
         fileInput.addEventListener("change", () => {
-          const file = fileInput.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            if (newImg) newImg.src = e.target.result;
-            if (newWrap) newWrap.style.display = "block";
-          };
-          reader.readAsDataURL(file);
+          if (!fileInput.files.length) return;
+          showPreviews(fileInput.files);
         });
 
         if (dropZone) {
@@ -4821,10 +4821,12 @@
             e.preventDefault();
             dropZone.style.borderColor = "";
             dropZone.style.background = "";
-            const file = e.dataTransfer.files[0];
-            if (!file || !file.type.startsWith("image/")) return;
+            const files = Array.from(e.dataTransfer.files)
+              .filter((f) => f.type.startsWith("image/"))
+              .slice(0, 5);
+            if (!files.length) return;
             const dt = new DataTransfer();
-            dt.items.add(file);
+            files.forEach((f) => dt.items.add(f));
             fileInput.files = dt.files;
             fileInput.dispatchEvent(new Event("change"));
           });
