@@ -1034,6 +1034,7 @@
           const o = document.createElement("option");
           o.value = price;
           o.dataset.name = w.name;
+          o.dataset.id = w.id;
           o.textContent = w.name + " — " + price + " DA";
           sel.appendChild(o);
         });
@@ -1514,6 +1515,8 @@
         const phone = document.getElementById("co-phone").value.trim();
         const wilEl = document.getElementById("co-wilaya");
         const wilaya = wilEl.options[wilEl.selectedIndex]?.dataset.name || "";
+        const wilaya_id =
+          wilEl.options[wilEl.selectedIndex]?.dataset.id || null;
 
         if (!phone || !wilaya) {
           showToast("Téléphone et Wilaya sont obligatoires");
@@ -1554,8 +1557,9 @@
           customer: name || phone,
           phone,
           wilaya,
+          wilaya_id,
           address,
-          note: document.getElementById("co-note").value.trim(),
+          notes: document.getElementById("co-note").value.trim(),
           items: itemsToOrder,
         };
 
