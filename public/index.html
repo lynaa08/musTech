@@ -1078,7 +1078,6 @@
       }
       /* MOBILE ADMIN MENU */
       .admin-mobile-toggle {
-        display: none;
         background: transparent;
         border: none;
         color: var(--gray-900);
@@ -1086,6 +1085,14 @@
         cursor: pointer;
         padding: 0.5rem;
         z-index: 50;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .admin-mobile-nav {
         display: none;
@@ -1143,11 +1150,11 @@
           grid-template-columns: 1fr;
         }
         .admin-mobile-toggle {
-          display: block;
+          display: flex !important;
         }
         .admin-header {
           position: relative;
-          padding-left: 2.5rem;
+          padding-left: 3rem;
         }
       }
 
@@ -2661,7 +2668,55 @@
               </button>
             </div>
             <nav class="admin-nav" id="mobileAdminNav">
-              <!-- Populated by JavaScript -->
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  class="active"
+                  onclick="showAdminTab('dashboard', this)"
+                  >Tableau de Bord</a
+                >
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onclick="showAdminTab('orders', this)"
+                  >Commandes</a
+                >
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onclick="showAdminTab('products', this)"
+                  >Produits</a
+                >
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onclick="showAdminTab('shipping', this)"
+                  >Livraison</a
+                >
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onclick="showAdminTab('finance', this)"
+                  >Finances</a
+                >
+              </li>
+              <li>
+                <a href="#" onclick="showPage('home')" style="margin-top: 2rem"
+                  >← Retour à la Boutique</a
+                >
+              </li>
+              <li>
+                <a
+                  href="javascript:void(0)"
+                  onclick="logout()"
+                  style="color: #ff6b6b; margin-top: 0.5rem"
+                  >Se Déconnecter</a
+                >
+              </li>
             </nav>
           </div>
         </div>
@@ -7576,54 +7631,41 @@
       }
 
       // ── MOBILE ADMIN MENU HANDLER ────────────────────────────────────────────
-      document.addEventListener("DOMContentLoaded", function () {
-        const adminMobileToggle = document.getElementById("adminMobileToggle");
-        const adminMobileNav = document.getElementById("adminMobileNav");
-        const adminMobileClose = document.getElementById("adminMobileClose");
-        const mobileAdminNav = document.getElementById("mobileAdminNav");
-        const adminNav = document.querySelector(".admin-nav");
+      const adminMobileToggle = document.getElementById("adminMobileToggle");
+      const adminMobileNav = document.getElementById("adminMobileNav");
+      const adminMobileClose = document.getElementById("adminMobileClose");
+      const mobileAdminNav = document.getElementById("mobileAdminNav");
 
-        // Toggle menu open/close
-        function toggleMobileMenu() {
+      if (adminMobileToggle && adminMobileNav) {
+        // Toggle menu
+        adminMobileToggle.addEventListener("click", function (e) {
+          e.stopPropagation();
           adminMobileNav.classList.toggle("open");
-        }
+        });
 
-        function closeMobileMenu() {
-          adminMobileNav.classList.remove("open");
-        }
-
-        // Copy menu items to mobile nav
-        if (adminNav && mobileAdminNav) {
-          const navItems = adminNav.innerHTML;
-          mobileAdminNav.innerHTML = navItems;
-        }
-
-        // Event listeners
-        if (adminMobileToggle) {
-          adminMobileToggle.addEventListener("click", toggleMobileMenu);
-        }
-
+        // Close menu button
         if (adminMobileClose) {
-          adminMobileClose.addEventListener("click", closeMobileMenu);
-        }
-
-        // Close menu when clicking overlay
-        if (adminMobileNav) {
-          adminMobileNav.addEventListener("click", function (e) {
-            if (e.target === this) {
-              closeMobileMenu();
-            }
+          adminMobileClose.addEventListener("click", function (e) {
+            e.stopPropagation();
+            adminMobileNav.classList.remove("open");
           });
         }
 
-        // Close menu when clicking a link
-        const mobileNavLinks = mobileAdminNav.querySelectorAll("a");
-        mobileNavLinks.forEach((link) => {
+        // Close when clicking overlay
+        adminMobileNav.addEventListener("click", function (e) {
+          if (e.target === this) {
+            adminMobileNav.classList.remove("open");
+          }
+        });
+
+        // Close when clicking a menu link
+        const mobileLinks = mobileAdminNav.querySelectorAll("a");
+        mobileLinks.forEach((link) => {
           link.addEventListener("click", function () {
-            closeMobileMenu();
+            adminMobileNav.classList.remove("open");
           });
         });
-      });
+      }
     </script>
   </body>
 </html>
