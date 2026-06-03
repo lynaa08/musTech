@@ -6,6 +6,10 @@
     <title>Mus Tech – Pièces PC & Cosmétiques PC</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="api.js"></script>
+    <!-- Export libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap");
@@ -2541,7 +2545,9 @@
           <div id="admin-orders" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Gestion des Commandes</h1>
-              <button class="btn btn-primary">Exporter PDF</button>
+              <button class="btn btn-primary" onclick="exportPDF()">
+                Exporter PDF
+              </button>
             </div>
             <div class="admin-table-card">
               <div class="filter-bar">
@@ -2629,7 +2635,9 @@
           <div id="admin-finance" class="admin-tab" style="display: none">
             <div class="admin-header">
               <h1>Aperçu Financier</h1>
-              <button class="btn btn-primary">Exporter Excel</button>
+              <button class="btn btn-primary" onclick="exportExcel()">
+                Exporter Excel
+              </button>
             </div>
             <div class="stats-grid">
               <div class="stat-card">
@@ -4281,6 +4289,24 @@
       let ORDERS = [];
       let PRODUCT_DESCS = {};
 
+      // SLUG HELPER
+      function slugify(str) {
+        return str
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+      }
+      function productURL(p) {
+        return (
+          "product.html?id=" +
+          p.id +
+          "&name=" +
+          encodeURIComponent(slugify(p.name))
+        );
+      }
+
       // RENDER PRODUCTS
       function renderProductCard(p) {
         const pricesArr = p.variantPrices;
@@ -4300,7 +4326,7 @@
           ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="${p.name}">`
           : `<span style="font-size:3.5rem">${p.icon}</span>`;
         return `
-  <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer;">
+  <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='${productURL(p)}'" style="cursor:pointer;">
     <div class="product-img" id="card-img-${p.id}">
       ${badgeHTML}
       <button class="product-wishlist" title="Favoris" id="wish-${p.id}" onclick="event.stopPropagation();toggleFavorite(${p.id},this)">
@@ -6449,7 +6475,7 @@
     `;
           card.addEventListener(
             "click",
-            () => (window.location.href = "product.html?id=" + item.id),
+            () => (window.location.href = productURL(item)),
           );
           wrapper.insertBefore(card, progressEl);
         });
@@ -6618,6 +6644,296 @@
         document.addEventListener("DOMContentLoaded", handleSessionRedirect);
       } else {
         setTimeout(handleSessionRedirect, 300);
+      }
+
+      // ── EXPORT PDF ──────────────────────────────────────────────
+      function exportPDF() {
+        if (!ORDERS || ORDERS.length === 0) {
+          showToast("Aucune commande à exporter.");
+          return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4",
+        });
+
+        // Header bar
+        doc.setFillColor(17, 17, 24);
+        doc.rect(0, 0, 297, 22, "F");
+        doc.setFontSize(16);
+        doc.setTextColor(62, 207, 110);
+        doc.setFont("helvetica", "bold");
+        doc.text("Mus Tech", 14, 14);
+        doc.setFontSize(10);
+        doc.setTextColor(200, 200, 200);
+        doc.setFont("helvetica", "normal");
+        doc.text("Rapport des Commandes", 58, 14);
+        const now = new Date();
+        const dateStr =
+          now.toLocaleDateString("fr-DZ") +
+          " " +
+          now.toLocaleTimeString("fr-DZ", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        doc.text("Généré le : " + dateStr, 195, 14);
+
+        // Quick stats
+        const totalRevenue = ORDERS.reduce((s, o) => s + (o.total || 0), 0);
+        const delivered = ORDERS.filter((o) => o.status === "delivered").length;
+        const pending = ORDERS.filter((o) => o.status === "pending").length;
+        const shipped = ORDERS.filter((o) => o.status === "shipped").length;
+        doc.setFontSize(9);
+        doc.setTextColor(80, 80, 80);
+        doc.text("Total commandes: " + ORDERS.length, 14, 30);
+        doc.text(
+          "Chiffre d'affaires: " + totalRevenue.toLocaleString() + " DA",
+          75,
+          30,
+        );
+        doc.text("Livrées: " + delivered, 175, 30);
+        doc.text("En attente: " + pending, 215, 30);
+        doc.text("Expédiées: " + shipped, 255, 30);
+        doc.setDrawColor(62, 207, 110);
+        doc.setLineWidth(0.5);
+        doc.line(14, 33, 283, 33);
+
+        // Table
+        const statusMap = {
+          pending: "En attente",
+          shipped: "Expédié",
+          delivered: "Livré",
+          cancelled: "Annulé",
+        };
+        const rows = ORDERS.map((o) => [
+          o.order_ref || "#MT-" + o.id,
+          o.customer || "—",
+          o.phone || "—",
+          o.wilaya || "—",
+          Array.isArray(o.items) ? o.items.length : o.items || 0,
+          (o.total || 0).toLocaleString() + " DA",
+          statusMap[o.status] || o.status,
+          o.created_at
+            ? new Date(o.created_at).toLocaleDateString("fr-DZ")
+            : "—",
+        ]);
+
+        doc.autoTable({
+          startY: 37,
+          head: [
+            [
+              "N° Commande",
+              "Client",
+              "Téléphone",
+              "Wilaya",
+              "Articles",
+              "Total",
+              "Statut",
+              "Date",
+            ],
+          ],
+          body: rows,
+          styles: {
+            font: "helvetica",
+            fontSize: 8,
+            cellPadding: 3,
+            textColor: [40, 40, 40],
+          },
+          headStyles: {
+            fillColor: [17, 17, 24],
+            textColor: [62, 207, 110],
+            fontStyle: "bold",
+            fontSize: 8.5,
+          },
+          alternateRowStyles: { fillColor: [248, 253, 249] },
+          columnStyles: {
+            0: { cellWidth: 28, fontStyle: "bold" },
+            1: { cellWidth: 35 },
+            2: { cellWidth: 28 },
+            3: { cellWidth: 30 },
+            4: { cellWidth: 18, halign: "center" },
+            5: {
+              cellWidth: 30,
+              halign: "right",
+              fontStyle: "bold",
+              textColor: [31, 173, 82],
+            },
+            6: { cellWidth: 24, halign: "center" },
+            7: { cellWidth: 24, halign: "center" },
+          },
+          didParseCell: function (data) {
+            if (data.column.index === 6 && data.section === "body") {
+              const v = data.cell.raw;
+              if (v === "Livré") data.cell.styles.textColor = [21, 128, 61];
+              else if (v === "Expédié")
+                data.cell.styles.textColor = [3, 105, 161];
+              else if (v === "Annulé")
+                data.cell.styles.textColor = [220, 38, 38];
+              else data.cell.styles.textColor = [217, 119, 6];
+            }
+          },
+          margin: { left: 14, right: 14 },
+        });
+
+        // Footer pages
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setFontSize(7.5);
+          doc.setTextColor(150, 150, 150);
+          doc.text(
+            "© 2025 Mus Tech — Alger, Algérie",
+            14,
+            doc.internal.pageSize.height - 6,
+          );
+          doc.text(
+            "Page " + i + " / " + pageCount,
+            doc.internal.pageSize.width - 28,
+            doc.internal.pageSize.height - 6,
+          );
+        }
+
+        doc.save(
+          "mustech_commandes_" + now.toISOString().slice(0, 10) + ".pdf",
+        );
+        showToast("📄 PDF exporté avec succès !");
+      }
+
+      // ── EXPORT EXCEL ────────────────────────────────────────────
+      function exportExcel() {
+        if (!ORDERS || ORDERS.length === 0) {
+          showToast("Aucune donnée à exporter.");
+          return;
+        }
+        const wb = XLSX.utils.book_new();
+        const now = new Date();
+        const statusMap = {
+          pending: "En attente",
+          shipped: "Expédié",
+          delivered: "Livré",
+          cancelled: "Annulé",
+        };
+
+        // Sheet 1 – All orders
+        const ordersData = [
+          [
+            "N° Commande",
+            "Client",
+            "Téléphone",
+            "Wilaya",
+            "Nb Articles",
+            "Total (DA)",
+            "Statut",
+            "Date",
+          ],
+        ];
+        ORDERS.forEach((o) => {
+          ordersData.push([
+            o.order_ref || "#MT-" + o.id,
+            o.customer || "—",
+            o.phone || "—",
+            o.wilaya || "—",
+            Array.isArray(o.items) ? o.items.length : o.items || 0,
+            o.total || 0,
+            statusMap[o.status] || o.status,
+            o.created_at
+              ? new Date(o.created_at).toLocaleDateString("fr-DZ")
+              : "—",
+          ]);
+        });
+        const wsOrders = XLSX.utils.aoa_to_sheet(ordersData);
+        wsOrders["!cols"] = [
+          { wch: 16 },
+          { wch: 22 },
+          { wch: 14 },
+          { wch: 18 },
+          { wch: 12 },
+          { wch: 14 },
+          { wch: 14 },
+          { wch: 14 },
+        ];
+        XLSX.utils.book_append_sheet(wb, wsOrders, "Commandes");
+
+        // Sheet 2 – Financial summary
+        const totalRevenue = ORDERS.reduce((s, o) => s + (o.total || 0), 0);
+        const deliveredRevenue = ORDERS.filter(
+          (o) => o.status === "delivered",
+        ).reduce((s, o) => s + (o.total || 0), 0);
+        const pendingRevenue = ORDERS.filter(
+          (o) => o.status === "pending",
+        ).reduce((s, o) => s + (o.total || 0), 0);
+        const wilayaMap = {};
+        ORDERS.forEach((o) => {
+          if (!o.wilaya) return;
+          if (!wilayaMap[o.wilaya])
+            wilayaMap[o.wilaya] = { count: 0, revenue: 0 };
+          wilayaMap[o.wilaya].count++;
+          wilayaMap[o.wilaya].revenue += o.total || 0;
+        });
+        const financeData = [
+          ["RÉSUMÉ FINANCIER — MUS TECH", ""],
+          [
+            "Généré le",
+            now.toLocaleDateString("fr-DZ") +
+              " " +
+              now.toLocaleTimeString("fr-DZ"),
+          ],
+          ["", ""],
+          ["INDICATEUR", "VALEUR"],
+          ["Total Commandes", ORDERS.length],
+          ["Chiffre d'Affaires Total (DA)", totalRevenue],
+          ["Revenus Livrés (DA)", deliveredRevenue],
+          ["Revenus En Attente (DA)", pendingRevenue],
+          ["", ""],
+          ["Livrées", ORDERS.filter((o) => o.status === "delivered").length],
+          ["En Attente", ORDERS.filter((o) => o.status === "pending").length],
+          ["Expédiées", ORDERS.filter((o) => o.status === "shipped").length],
+          ["Annulées", ORDERS.filter((o) => o.status === "cancelled").length],
+          ["", ""],
+          ["WILAYA", "COMMANDES — REVENUS (DA)"],
+          ...Object.entries(wilayaMap)
+            .sort((a, b) => b[1].revenue - a[1].revenue)
+            .map(([w, v]) => [
+              w,
+              v.count + " cmd — " + v.revenue.toLocaleString() + " DA",
+            ]),
+        ];
+        const wsFinance = XLSX.utils.aoa_to_sheet(financeData);
+        wsFinance["!cols"] = [{ wch: 30 }, { wch: 30 }];
+        XLSX.utils.book_append_sheet(wb, wsFinance, "Résumé Financier");
+
+        // Sheet 3 – Products
+        if (PRODUCTS && PRODUCTS.length > 0) {
+          const productsData = [
+            ["Produit", "Catégorie", "Prix (DA)", "Stock", "Statut"],
+          ];
+          PRODUCTS.forEach((p) => {
+            productsData.push([
+              p.name,
+              p.cat,
+              p.price,
+              p.stock,
+              p.stock > 0 ? "En Stock" : "Rupture",
+            ]);
+          });
+          const wsProducts = XLSX.utils.aoa_to_sheet(productsData);
+          wsProducts["!cols"] = [
+            { wch: 30 },
+            { wch: 20 },
+            { wch: 12 },
+            { wch: 10 },
+            { wch: 14 },
+          ];
+          XLSX.utils.book_append_sheet(wb, wsProducts, "Produits");
+        }
+
+        XLSX.writeFile(
+          wb,
+          "mustech_finances_" + now.toISOString().slice(0, 10) + ".xlsx",
+        );
+        showToast("📊 Excel exporté avec succès !");
       }
     </script>
   </body>

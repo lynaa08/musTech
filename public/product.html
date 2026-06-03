@@ -1119,9 +1119,30 @@
         }
       }
 
+      function slugify(str) {
+        return str
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+      }
+
       function renderProduct() {
         if (!product) return;
         document.title = product.name + " — Mus Tech";
+
+        // Update URL to include product name slug (clean SEO-friendly URL)
+        const slug = slugify(product.name);
+        const newURL =
+          "product.html?id=" + product.id + "&name=" + encodeURIComponent(slug);
+        if (
+          window.location.search !==
+          "?id=" + product.id + "&name=" + encodeURIComponent(slug)
+        ) {
+          history.replaceState(null, document.title, newURL);
+        }
+
         document.getElementById("product-category").textContent =
           product.cat || "Catégorie";
         document.getElementById("product-name").textContent = product.name;
