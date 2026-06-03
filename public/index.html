@@ -2840,14 +2840,7 @@
                       text-decoration: line-through;
                       display: none;
                     "></span>
-                  <span
-                    id="pm-stock"
-                    style="
-                      font-size: 0.78rem;
-                      font-weight: 600;
-                      color: var(--green-dark);
-                      margin-left: 0.25rem;
-                    "></span>
+                  <span id="pm-stock" style="display: none"></span>
                 </div>
 
                 <!-- QTY -->
@@ -3262,28 +3255,49 @@
               <div
                 id="pm-success"
                 style="display: none; text-align: center; padding: 1.5rem 0">
-                <div style="font-size: 2.5rem; margin-bottom: 0.5rem">✅</div>
+                <div style="font-size: 3rem; margin-bottom: 0.75rem">🎉</div>
                 <div
                   style="
-                    font-weight: 800;
-                    font-size: 1.1rem;
+                    font-weight: 900;
+                    font-size: 1.3rem;
                     color: var(--green-dark);
-                    margin-bottom: 0.3rem;
+                    margin-bottom: 0.4rem;
                   ">
-                  Commande confirmée !
+                  Commande Confirmée ✅
+                </div>
+                <div
+                  style="
+                    font-size: 0.9rem;
+                    color: var(--gray-500);
+                    margin-bottom: 0.6rem;
+                  ">
+                  Votre commande a bien été enregistrée.
                 </div>
                 <div
                   id="pm-success-ref"
                   style="
                     font-size: 0.85rem;
+                    font-weight: 700;
+                    color: var(--gray-700);
+                    background: var(--green-light);
+                    border-radius: 8px;
+                    padding: 0.5rem 1rem;
+                    display: inline-block;
+                    margin-bottom: 0.75rem;
+                  "></div>
+                <div
+                  style="
+                    font-size: 0.8rem;
                     color: var(--gray-500);
                     margin-bottom: 1rem;
-                  "></div>
+                  ">
+                  Nous vous contacterons bientôt pour la livraison.
+                </div>
                 <button
-                  class="btn btn-ghost"
-                  style="font-size: 0.85rem"
+                  class="btn btn-primary"
+                  style="font-size: 0.9rem"
                   onclick="closeModal('product-modal')">
-                  Fermer
+                  Continuer mes achats →
                 </button>
               </div>
             </div>
@@ -4150,7 +4164,7 @@
           ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="${p.name}">`
           : `<span style="font-size:3.5rem">${p.icon}</span>`;
         return `
-  <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer;">
+  <div class="product-card" data-cat="${p.cat}" onclick="openProductModal(${p.id})" style="cursor:pointer;">
     <div class="product-img" id="card-img-${p.id}">
       ${badgeHTML}
       <button class="product-wishlist" title="Wishlist" onclick="event.stopPropagation()">♡</button>
@@ -4670,19 +4684,88 @@
         reader.readAsDataURL(file);
       }
 
-      // WILAYAS
+      // WILAYAS - 58 wilayas algériennes
+      const WILAYAS_FALLBACK = [
+        "01 - Adrar",
+        "02 - Chlef",
+        "03 - Laghouat",
+        "04 - Oum El Bouaghi",
+        "05 - Batna",
+        "06 - Béjaïa",
+        "07 - Biskra",
+        "08 - Béchar",
+        "09 - Blida",
+        "10 - Bouira",
+        "11 - Tamanrasset",
+        "12 - Tébessa",
+        "13 - Tlemcen",
+        "14 - Tiaret",
+        "15 - Tizi Ouzou",
+        "16 - Alger",
+        "17 - Djelfa",
+        "18 - Jijel",
+        "19 - Sétif",
+        "20 - Saïda",
+        "21 - Skikda",
+        "22 - Sidi Bel Abbès",
+        "23 - Annaba",
+        "24 - Guelma",
+        "25 - Constantine",
+        "26 - Médéa",
+        "27 - Mostaganem",
+        "28 - M'Sila",
+        "29 - Mascara",
+        "30 - Ouargla",
+        "31 - Oran",
+        "32 - El Bayadh",
+        "33 - Illizi",
+        "34 - Bordj Bou Arréridj",
+        "35 - Boumerdès",
+        "36 - El Tarf",
+        "37 - Tindouf",
+        "38 - Tissemsilt",
+        "39 - El Oued",
+        "40 - Khenchela",
+        "41 - Souk Ahras",
+        "42 - Tipaza",
+        "43 - Mila",
+        "44 - Aïn Defla",
+        "45 - Naâma",
+        "46 - Aïn Témouchent",
+        "47 - Ghardaïa",
+        "48 - Relizane",
+        "49 - El M'Ghair",
+        "50 - El Meniaa",
+        "51 - Ouled Djellal",
+        "52 - Bordj Baddji Mokhtar",
+        "53 - Béni Abbès",
+        "54 - Timimoun",
+        "55 - Touggourt",
+        "56 - Djanet",
+        "57 - In Salah",
+        "58 - In Guezzam",
+      ];
+
       function populateWilayas() {
         const sel = document.getElementById("wilaya-select");
         if (sel) {
-          // Always rebuild with latest WILAYAS data
           while (sel.options.length > 1) sel.remove(1);
-          WILAYAS.forEach((w) => {
-            const o = document.createElement("option");
-            const price = w.shipping_price ?? w.price ?? 0;
-            o.value = price;
-            o.textContent = `${w.name} — ${price} DA`;
-            sel.appendChild(o);
-          });
+          if (WILAYAS && WILAYAS.length > 0) {
+            WILAYAS.forEach((w) => {
+              const o = document.createElement("option");
+              const price = w.shipping_price ?? w.price ?? 0;
+              o.value = price;
+              o.textContent = `${w.name} — ${price} DA`;
+              sel.appendChild(o);
+            });
+          } else {
+            WILAYAS_FALLBACK.forEach((name) => {
+              const o = document.createElement("option");
+              o.value = 0;
+              o.textContent = name;
+              sel.appendChild(o);
+            });
+          }
         }
         const mgr = document.getElementById("wilaya-manager");
         if (mgr) {
@@ -5394,14 +5477,24 @@
         const pmWil = document.getElementById("pm-wilaya");
         if (pmWil) {
           while (pmWil.options.length > 1) pmWil.remove(1);
-          WILAYAS.forEach((w) => {
-            const o = document.createElement("option");
-            const price = w.shipping_price ?? w.price ?? 0;
-            o.value = price;
-            o.dataset.name = w.name;
-            o.textContent = w.name + " — " + price + " DA";
-            pmWil.appendChild(o);
-          });
+          if (WILAYAS && WILAYAS.length > 0) {
+            WILAYAS.forEach((w) => {
+              const o = document.createElement("option");
+              const price = w.shipping_price ?? w.price ?? 0;
+              o.value = price;
+              o.dataset.name = w.name;
+              o.textContent = w.name + " — " + price + " DA";
+              pmWil.appendChild(o);
+            });
+          } else {
+            WILAYAS_FALLBACK.forEach((name) => {
+              const o = document.createElement("option");
+              o.value = 0;
+              o.dataset.name = name;
+              o.textContent = name;
+              pmWil.appendChild(o);
+            });
+          }
         }
         // Reset form fields
         ["pm-name", "pm-phone", "pm-address"].forEach((id) => {
