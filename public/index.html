@@ -1015,6 +1015,8 @@
         display: grid;
         grid-template-columns: 240px 1fr;
         min-height: 100vh;
+        max-width: 100vw;
+        overflow-x: hidden;
       }
       .admin-sidebar {
         background: var(--gray-900);
@@ -1075,6 +1077,8 @@
       .admin-content {
         background: var(--gray-50);
         padding: 2rem;
+        min-width: 0;
+        overflow-x: hidden;
       }
       /* MOBILE ADMIN MENU */
       .admin-mobile-toggle {
@@ -3086,14 +3090,98 @@
           <!-- PRODUCTS TAB -->
           <div id="admin-products" class="admin-tab" style="display: none">
             <div class="admin-header">
-              <h1>Produits</h1>
+              <h1>Gestion des Produits</h1>
               <button
                 class="btn btn-primary"
                 onclick="openModal('add-product-modal')">
                 + Ajouter un Produit
               </button>
             </div>
+            <!-- Stats produits -->
+            <div
+              class="stats-grid"
+              style="
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                margin-bottom: 1.25rem;
+              ">
+              <div class="stat-card">
+                <div class="label">Total Produits</div>
+                <div class="value" id="prod-stat-total">0</div>
+                <div class="change">En catalogue</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">En Stock</div>
+                <div
+                  class="value"
+                  id="prod-stat-instock"
+                  style="color: var(--green-dark)">
+                  0
+                </div>
+                <div class="change">Stock > 0</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Rupture de Stock</div>
+                <div
+                  class="value"
+                  id="prod-stat-outstock"
+                  style="color: #dc2626">
+                  0
+                </div>
+                <div class="change">Stock = 0</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Stock Faible</div>
+                <div
+                  class="value"
+                  id="prod-stat-lowstock"
+                  style="color: #d97706">
+                  0
+                </div>
+                <div class="change">Stock &lt; 15</div>
+              </div>
+            </div>
             <div class="admin-table-card">
+              <!-- Barre de filtres -->
+              <div
+                class="filter-bar"
+                style="gap: 0.75rem; align-items: center; flex-wrap: wrap">
+                <input
+                  type="text"
+                  id="prod-search"
+                  class="filter-select"
+                  placeholder="🔍 Rechercher un produit..."
+                  oninput="filterAdminProducts()"
+                  style="flex: 1; min-width: 180px" />
+                <select
+                  id="prod-filter-cat"
+                  class="filter-select"
+                  onchange="filterAdminProducts()">
+                  <option value="">Toutes les catégories</option>
+                  <option value="PC">PC</option>
+                  <option value="GPU">GPU</option>
+                  <option value="RAM">RAM</option>
+                  <option value="SSD">SSD</option>
+                  <option value="CPU">CPU</option>
+                  <option value="Cooling">Cooling</option>
+                  <option value="Cosmétique">Cosmétique</option>
+                  <option value="Accessoire">Accessoire</option>
+                </select>
+                <select
+                  id="prod-filter-stock"
+                  class="filter-select"
+                  onchange="filterAdminProducts()">
+                  <option value="">Tous les statuts</option>
+                  <option value="instock">En Stock</option>
+                  <option value="lowstock">Stock Faible</option>
+                  <option value="outstock">Rupture</option>
+                </select>
+                <button
+                  class="btn btn-ghost"
+                  style="font-size: 0.8rem; padding: 0.4rem 0.9rem"
+                  onclick="resetProductFilters()">
+                  Réinitialiser
+                </button>
+              </div>
               <div style="overflow-x: auto">
                 <table>
                   <thead>
@@ -3108,6 +3196,17 @@
                   </thead>
                   <tbody id="admin-products-list"></tbody>
                 </table>
+              </div>
+              <div
+                id="prod-empty"
+                style="
+                  display: none;
+                  text-align: center;
+                  padding: 2rem;
+                  color: var(--gray-400);
+                  font-size: 0.9rem;
+                ">
+                Aucun produit trouvé.
               </div>
             </div>
           </div>
@@ -5149,6 +5248,25 @@
                 () => (ov.style.opacity = "0"),
               );
             });
+
+            // Update product stats counters
+            const setP = (id, val) => {
+              const el = document.getElementById(id);
+              if (el) el.textContent = val;
+            };
+            setP("prod-stat-total", PRODUCTS.length);
+            setP(
+              "prod-stat-instock",
+              PRODUCTS.filter((p) => p.stock > 0).length,
+            );
+            setP(
+              "prod-stat-outstock",
+              PRODUCTS.filter((p) => p.stock <= 0).length,
+            );
+            setP(
+              "prod-stat-lowstock",
+              PRODUCTS.filter((p) => p.stock > 0 && p.stock < 15).length,
+            );
           }
         } catch (e) {
           console.error("Tables load error:", e);
@@ -7628,6 +7746,52 @@
           "mustech_finances_" + now.toISOString().slice(0, 10) + ".xlsx",
         );
         showToast("📊 Excel exporté avec succès !");
+      }
+
+      // ── FILTER ADMIN PRODUCTS ────────────────────────────────────────────
+      function filterAdminProducts() {
+        const search = (
+          document.getElementById("prod-search")?.value || ""
+        ).toLowerCase();
+        const cat = document.getElementById("prod-filter-cat")?.value || "";
+        const stockFilter =
+          document.getElementById("prod-filter-stock")?.value || "";
+        const tbody = document.getElementById("admin-products-list");
+        const emptyEl = document.getElementById("prod-empty");
+        if (!tbody) return;
+        const rows = tbody.querySelectorAll("tr");
+        let visible = 0;
+        rows.forEach((row) => {
+          const name =
+            row.querySelector("td:nth-child(1)")?.textContent?.toLowerCase() ||
+            "";
+          const rowCat =
+            row.querySelector("td:nth-child(2)")?.textContent?.trim() || "";
+          const stockTxt =
+            row.querySelector("td:nth-child(4)")?.textContent?.trim() || "";
+          const stock = parseInt(stockTxt) || 0;
+          const matchSearch = !search || name.includes(search);
+          const matchCat = !cat || rowCat === cat;
+          let matchStock = true;
+          if (stockFilter === "instock") matchStock = stock > 0;
+          else if (stockFilter === "outstock") matchStock = stock <= 0;
+          else if (stockFilter === "lowstock")
+            matchStock = stock > 0 && stock < 15;
+          const show = matchSearch && matchCat && matchStock;
+          row.style.display = show ? "" : "none";
+          if (show) visible++;
+        });
+        if (emptyEl) emptyEl.style.display = visible === 0 ? "block" : "none";
+      }
+
+      function resetProductFilters() {
+        const s = document.getElementById("prod-search");
+        const c = document.getElementById("prod-filter-cat");
+        const f = document.getElementById("prod-filter-stock");
+        if (s) s.value = "";
+        if (c) c.value = "";
+        if (f) f.value = "";
+        filterAdminProducts();
       }
 
       // ── MOBILE ADMIN MENU HANDLER ────────────────────────────────────────────
