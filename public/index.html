@@ -295,7 +295,7 @@
         margin-bottom: 1.5rem;
       }
       .hero-badge::before {
-        content: "✦";
+        content: "◆";
         font-size: 0.7rem;
       }
       .hero h1 {
@@ -650,17 +650,24 @@
         justify-content: center;
         box-shadow: var(--shadow-sm);
         cursor: pointer;
-        font-size: 0.9rem;
         transition: all var(--transition);
         border: none;
         opacity: 0;
+        color: var(--gray-400);
       }
       .product-card:hover .product-wishlist {
         opacity: 1;
       }
-      .product-wishlist:hover {
-        background: var(--green-light);
+      .product-wishlist:hover,
+      .product-wishlist.favorited {
+        background: #ffe0e6;
+        color: #ff4b6e;
         transform: scale(1.1);
+      }
+      @media (max-width: 768px) {
+        .product-wishlist {
+          opacity: 1;
+        }
       }
       .product-body {
         padding: 1.1rem 1.25rem 1.25rem;
@@ -2054,35 +2061,112 @@
         <li>
           <a href="#" onclick="showSection('cosmétiques')">Cosmétiques PC</a>
         </li>
-        <li><a href="#" onclick="showPage('favorites')">❤️ Favoris</a></li>
+        <li>
+          <a
+            href="#"
+            onclick="showPage('favorites')"
+            style="display: flex; align-items: center; gap: 0.4rem">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            Favoris
+          </a>
+        </li>
+        <li id="user-nav-item" style="display: none">
+          <a
+            href="javascript:void(0)"
+            onclick="openMyOrders()"
+            style="display: flex; align-items: center; gap: 0.4rem">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            <span id="user-nav-label">Mes Commandes</span>
+          </a>
+        </li>
         <li id="admin-nav-link" style="display: none">
-          <a href="#" onclick="showPage('admin')">Admin ⚙️</a>
+          <a
+            href="#"
+            onclick="showPage('admin')"
+            style="display: flex; align-items: center; gap: 0.4rem">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+            </svg>
+            Admin
+          </a>
         </li>
       </ul>
       <div class="nav-actions">
         <a
           href="javascript:void(0)"
           class="btn btn-ghost"
-          id="my-orders-btn"
-          onclick="openMyOrders()"
-          style="display: none"
-          >📦 Mes commandes</a
-        >
-        <a
-          href="javascript:void(0)"
-          class="btn btn-ghost"
           id="auth-btn"
           onclick="openModal('login-modal')"
-          >Connexion</a
-        >
+          style="display: flex; align-items: center; gap: 0.4rem">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Connexion
+        </a>
         <button class="cart-btn" onclick="openModal('cart-modal')">
-          🛒 Panier
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path
+              d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
+          Panier
           <span class="cart-badge" id="cart-count" style="display: none"
             >0</span
           >
         </button>
       </div>
-      <div class="hamburger" onclick="toggleMobileMenu()">
+      <div class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
         <span></span><span></span><span></span>
       </div>
     </nav>
@@ -2139,25 +2223,21 @@
       <div class="categories-bar">
         <div class="categories-inner">
           <div class="cat-chip active" onclick="filterCat(this, 'all')">
-            ✨ Tous les Produits
+            Tous les Produits
           </div>
 
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">
-            💻 Pièces PC
+          <div class="cat-chip" onclick="filterCat(this, 'pc')">Pièces PC</div>
+          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
+            Cosmétiques PC
+          </div>
+          <div class="cat-chip" onclick="filterCat(this, 'pc')">Écrans</div>
+          <div class="cat-chip" onclick="filterCat(this, 'pc')">Claviers</div>
+          <div class="cat-chip" onclick="filterCat(this, 'pc')">Souris</div>
+          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
+            Pâte Thermique
           </div>
           <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            🎨 Cosmétiques PC
-          </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">🖥️ Écrans</div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">
-            ⌨️ Claviers
-          </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">🖱️ Souris</div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            🧪 Pâte Thermique
-          </div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            🖥️ Boîtiers
+            Boîtiers
           </div>
         </div>
       </div>
@@ -2202,7 +2282,7 @@
               color: var(--gray-500);
             ">
             <p style="font-size: 1.1rem; margin-bottom: 1rem">
-              ❤️ Aucun produit favori
+              Aucun produit favori
             </p>
             <p>Ajoutez vos produits préférés en cliquant sur le cœur</p>
             <button
@@ -2290,35 +2370,35 @@
                 href="javascript:void(0)"
                 class="active"
                 onclick="showAdminTab('dashboard', this)"
-                >📊 Tableau de Bord</a
+                >Tableau de Bord</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('orders', this)"
-                >📦 Commandes</a
+                >Commandes</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('products', this)"
-                >🛍️ Produits</a
+                >Produits</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('shipping', this)"
-                >🚚 Livraison</a
+                >Livraison</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
                 onclick="showAdminTab('finance', this)"
-                >💰 Finances</a
+                >Finances</a
               >
             </li>
             <li>
@@ -2331,7 +2411,7 @@
                 href="javascript:void(0)"
                 onclick="logout()"
                 style="color: #ff6b6b; margin-top: 0.5rem"
-                >🚪 Se Déconnecter</a
+                >Se Déconnecter</a
               >
             </li>
           </ul>
@@ -2676,7 +2756,7 @@
           <div class="footer-col">
             <h4>Contact</h4>
             <ul>
-              <li><a href="#">📍 Alger, Algérie</a></li>
+              <li><a href="#">Alger, Algérie</a></li>
               <li><a href="#">📞 0558210430</a></li>
               <li><a href="#">✉️ mus.softwares@gmail.com</a></li>
               <li><a href="#">🕐 9h – 20h Tous les jours</a></li>
@@ -3245,7 +3325,7 @@
                     padding: 0.75rem;
                   "
                   onclick="pmPlaceOrder()">
-                  ✅ Confirmer la Commande
+                  Confirmer la Commande
                 </button>
                 <button
                   class="btn btn-ghost"
@@ -3255,14 +3335,36 @@
                     font-size: 0.85rem;
                   "
                   onclick="pmAddToCart()">
-                  🛒 Ajouter au Panier
+                  Ajouter au Panier
                 </button>
               </div>
               <!-- SUCCESS inside modal -->
               <div
                 id="pm-success"
                 style="display: none; text-align: center; padding: 1.5rem 0">
-                <div style="font-size: 2.5rem; margin-bottom: 0.5rem">✅</div>
+                <div
+                  style="
+                    width: 52px;
+                    height: 52px;
+                    background: var(--green);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 0.75rem;
+                  ">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
                 <div
                   style="
                     font-weight: 800;
@@ -3296,7 +3398,7 @@
     <div class="modal-overlay" id="cart-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3 id="cart-modal-title">🛒 Votre Panier (0 article)</h3>
+          <h3 id="cart-modal-title">Votre Panier (0 article)</h3>
           <button class="modal-close" onclick="closeModal('cart-modal')">
             ✕
           </button>
@@ -3420,7 +3522,7 @@
     <div class="modal-overlay" id="login-modal">
       <div class="modal" style="max-width: 420px">
         <div class="modal-header">
-          <h3 id="auth-modal-title">👤 Connexion</h3>
+          <h3 id="auth-modal-title">Connexion</h3>
           <button class="modal-close" onclick="closeModal('login-modal')">
             ✕
           </button>
@@ -3555,7 +3657,7 @@
     <div class="modal-overlay" id="my-orders-modal">
       <div class="modal" style="max-width: 580px">
         <div class="modal-header">
-          <h3>📦 Mes Commandes</h3>
+          <h3>Mes Commandes</h3>
           <button class="modal-close" onclick="closeModal('my-orders-modal')">
             ✕
           </button>
@@ -3665,7 +3767,7 @@
             class="btn btn-primary"
             style="width: 100%"
             onclick="saveNewProduct()">
-            ✅ Enregistrer le Produit
+            Enregistrer le Produit
           </button>
         </div>
       </div>
@@ -3675,13 +3777,12 @@
     <div class="modal-overlay" id="confirm-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>✅ Commande Confirmée !</h3>
+          <h3>Commande Confirmée</h3>
           <button class="modal-close" onclick="closeModal('confirm-modal')">
             ✕
           </button>
         </div>
         <div class="modal-body" style="text-align: center; padding: 2rem">
-          <div style="font-size: 4rem; margin-bottom: 1rem">🎉</div>
           <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem">
             Merci pour votre commande !
           </h2>
@@ -3724,7 +3825,7 @@
     <div class="modal-overlay" id="rating-modal">
       <div class="modal" style="max-width: 420px">
         <div class="modal-header">
-          <h3>⭐ Évaluez votre expérience</h3>
+          <h3>Évaluez votre expérience</h3>
           <button class="modal-close" onclick="closeModal('rating-modal')">
             ✕
           </button>
@@ -3831,7 +3932,7 @@
     <div class="modal-overlay" id="edit-product-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>✏️ Modifier le Produit</h3>
+          <h3>Modifier le Produit</h3>
           <button
             class="modal-close"
             onclick="closeModal('edit-product-modal')">
@@ -4037,7 +4138,7 @@
             class="btn btn-primary"
             style="width: 100%"
             onclick="saveEditProduct()">
-            💾 Enregistrer les Modifications
+            Enregistrer les Modifications
           </button>
         </div>
       </div>
@@ -4047,7 +4148,7 @@
     <div class="modal-overlay" id="view-order-modal">
       <div class="modal">
         <div class="modal-header">
-          <h3>📦 Détails de la Commande</h3>
+          <h3>Détails de la Commande</h3>
           <button class="modal-close" onclick="closeModal('view-order-modal')">
             ✕
           </button>
@@ -4060,19 +4161,19 @@
             class="btn btn-primary"
             style="flex: 1"
             onclick="changeOrderStatus('shipped')">
-            🚚 Marquer Expédié
+            Marquer Expédié
           </button>
           <button
             class="btn btn-ghost"
             style="flex: 1"
             onclick="changeOrderStatus('delivered')">
-            ✅ Marquer Livré
+            Marquer Livré
           </button>
           <button
             class="btn"
             style="flex: 1; background: #fee2e2; color: #dc2626"
             onclick="changeOrderStatus('cancelled')">
-            ❌ Annuler
+            Annuler
           </button>
         </div>
       </div>
@@ -4153,7 +4254,9 @@
   <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='product.html?id=${p.id}'" style="cursor:pointer;">
     <div class="product-img" id="card-img-${p.id}">
       ${badgeHTML}
-      <button class="product-wishlist" title="Wishlist" onclick="event.stopPropagation()">♡</button>
+      <button class="product-wishlist" title="Favoris" id="wish-${p.id}" onclick="event.stopPropagation();toggleFavorite(${p.id},this)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
       ${imgContent}
     </div>
     <div class="product-body">
@@ -4165,10 +4268,43 @@
           <span class="price-main" id="price-${p.id}">${p.variantPrices[0].toLocaleString()} DA</span>
           ${oldPriceHTML}
         </div>
-        <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier">🛒</button>
+        <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </button>
       </div>
     </div>
   </div>`;
+      }
+
+      function toggleFavorite(id, btn) {
+        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+        const p = PRODUCTS.find((x) => x.id === id);
+        const idx = favs.findIndex((f) => f.id === id);
+        if (idx >= 0) {
+          favs.splice(idx, 1);
+          btn.classList.remove("favorited");
+          btn.querySelector("svg").setAttribute("fill", "none");
+          showToast(p ? p.name + " retiré des favoris" : "Retiré des favoris");
+        } else {
+          favs.push({ id });
+          btn.classList.add("favorited");
+          btn.querySelector("svg").setAttribute("fill", "#ff4b6e");
+          btn.querySelector("svg").setAttribute("stroke", "#ff4b6e");
+          showToast(p ? p.name + " ajouté aux favoris" : "Ajouté aux favoris");
+        }
+        localStorage.setItem("mt_favorites", JSON.stringify(favs));
+      }
+
+      function initFavoriteButtons() {
+        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+        favs.forEach((fav) => {
+          const btn = document.getElementById("wish-" + fav.id);
+          if (btn) {
+            btn.classList.add("favorited");
+            btn.querySelector("svg").setAttribute("fill", "#ff4b6e");
+            btn.querySelector("svg").setAttribute("stroke", "#ff4b6e");
+          }
+        });
       }
 
       function populateProducts() {
@@ -4182,6 +4318,7 @@
         const countEl = document.getElementById("products-count");
         if (countEl) countEl.textContent = PRODUCTS.length;
         buildCarousel();
+        initFavoriteButtons();
       }
 
       // ADMIN TABLES
@@ -4408,9 +4545,9 @@
           closeModal("edit-product-modal");
           await populateAdminTables();
           populateProducts();
-          showToast(`✅ Produit modifié !`);
+          showToast(`Produit modifié !`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4480,7 +4617,7 @@
           populateProducts();
           showToast(`🗑️ Produit supprimé.`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4521,9 +4658,9 @@
         try {
           await OrdersAPI.updateStatus(id, status);
           await populateAdminTables();
-          showToast(`✅ Commande ${id} → ${statusLabel(status)}`);
+          showToast(`Commande ${id} → ${statusLabel(status)}`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4534,7 +4671,7 @@
           await populateAdminTables();
           showToast(`🗑️ Commande ${id} supprimée.`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4643,9 +4780,9 @@
           document.getElementById("ap-imgs").value = "";
 
           closeModal("add-product-modal");
-          showToast(`✅ "${name}" ajouté avec succès !`);
+          showToast(`"${name}" ajouté avec succès !`);
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -4665,7 +4802,7 @@
           // Refresh admin table and product grid
           populateAdminTables();
           populateProducts();
-          showToast(`✅ Image mise à jour pour ${p.name}`);
+          showToast(`Image mise à jour pour ${p.name}`);
         };
         reader.readAsDataURL(file);
       }
@@ -4695,7 +4832,7 @@
         <input class="wilaya-price-input" type="number" value="${price}" min="0" data-id="${w.id}">
         <span class="wilaya-toggle" title="Activer/Désactiver" data-id="${w.id}" data-active="${active ? 1 : 0}"
           onclick="toggleWilaya(this)"
-          style="cursor:pointer;font-size:1.1rem;">${active ? "✅" : "❌"}</span>
+          style="cursor:pointer;font-size:1.1rem;">${active ? "●" : "○"}</span>
       </div>`;
           }).join("");
         }
@@ -4704,7 +4841,7 @@
       function toggleWilaya(el) {
         const newActive = el.dataset.active === "1" ? 0 : 1;
         el.dataset.active = newActive;
-        el.textContent = newActive ? "✅" : "❌";
+        el.textContent = newActive ? "●" : "○";
       }
 
       async function saveWilayas() {
@@ -4713,7 +4850,7 @@
         );
         const toggles = document.querySelectorAll(".wilaya-toggle[data-id]");
         if (!inputs.length) {
-          showToast("⚠️ Aucun prix à enregistrer.");
+          showToast("Aucun prix à enregistrer.");
           return;
         }
 
@@ -4750,9 +4887,9 @@
               sel.appendChild(o);
             });
           }
-          showToast("✅ Prix de livraison enregistrés !");
+          showToast("Prix de livraison enregistrés !");
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         } finally {
           if (btn) {
             btn.textContent = "Enregistrer les Modifications";
@@ -4908,7 +5045,7 @@
           page === "admin" &&
           (!currentUser || currentUser.role !== "admin")
         ) {
-          showToast("🔒 Accès réservé à l'administrateur.");
+          showToast("Accès réservé à l'administrateur");
           return;
         }
         document
@@ -4989,11 +5126,11 @@
 
         const count = checkoutCart.reduce((s, i) => s + i.qty, 0);
         if (titleEl)
-          titleEl.textContent = `🛒 Votre Panier (${count} article${count !== 1 ? "s" : ""})`;
+          titleEl.textContent = `Votre Panier (${count} article${count !== 1 ? "s" : ""})`;
 
         if (checkoutCart.length === 0) {
           container.innerHTML =
-            '<div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:0.9rem;">🛒 Votre panier est vide.</div>';
+            '<div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:0.9rem;">Votre panier est vide.</div>';
           if (summary) summary.style.display = "none";
           return;
         }
@@ -5053,7 +5190,7 @@
         }
         updateCartBadge();
         const p = PRODUCTS.find((x) => x.id === id);
-        showToast(`✅ ${p ? p.name : "Produit"} ajouté au panier !`);
+        showToast(`${p ? p.name : "Produit"} ajouté au panier`);
       }
 
       function selectVariant(el, pid, variantIndex, prices) {
@@ -5106,7 +5243,7 @@
       }
 
       // ── EMAIL (EmailJS) ───────────────────────────────────────
-      // ⚠️  Fill in your EmailJS public key, service ID and template ID below
+      //  Fill in your EmailJS public key, service ID and template ID below
       // Sign up free at https://www.emailjs.com → get these 3 values
       const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // e.g. 'abc123XYZ'
       const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID"; // e.g. 'service_xxxx'
@@ -5155,7 +5292,7 @@
             total: order.total,
             date: new Date().toLocaleString("fr-DZ"),
           })
-          .then(() => console.log("Email envoyé ✅"))
+          .then(() => console.log("Email envoyé"))
           .catch((e) => console.error("Email error:", e));
       }
 
@@ -5183,7 +5320,7 @@
 
       function submitRating() {
         if (!_currentRating) {
-          showToast("⚠️ Veuillez choisir une note !");
+          showToast("Veuillez choisir une note");
           return;
         }
         const comment = document.getElementById("rating-comment").value.trim();
@@ -5203,7 +5340,7 @@
         document.getElementById("rating-comment").value = "";
         document.getElementById("rating-label").textContent = "";
         updateDashboardStats();
-        showToast("⭐ Merci pour votre avis !");
+        showToast("Merci pour votre avis");
       }
 
       // ── DASHBOARD STATS ───────────────────────────────────────
@@ -5225,7 +5362,7 @@
         )[1];
 
         if (!wilEl.value) {
-          showToast("⚠️ Veuillez sélectionner votre Wilaya !");
+          showToast("Veuillez sélectionner votre Wilaya");
           return;
         }
 
@@ -5271,7 +5408,7 @@
           closeModal("checkout-modal");
           openModal("confirm-modal");
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -5419,7 +5556,7 @@
         const btn = document.getElementById("pm-confirm-btn");
         if (btn) {
           btn.disabled = false;
-          btn.textContent = "✅ Confirmer la Commande";
+          btn.textContent = "Confirmer la Commande";
         }
         // Pre-fill if user logged in
         if (currentUser) {
@@ -5800,12 +5937,12 @@
         const phone = document.getElementById("pm-phone")?.value.trim();
         const wilEl = document.getElementById("pm-wilaya");
         if (!phone) {
-          showToast("⚠️ Entrez votre numéro de téléphone !");
+          showToast("Entrez votre numéro de téléphone !");
           document.getElementById("pm-phone")?.focus();
           return;
         }
         if (!wilEl?.value) {
-          showToast("⚠️ Sélectionnez votre Wilaya !");
+          showToast("Sélectionnez votre Wilaya !");
           return;
         }
 
@@ -5819,7 +5956,7 @@
             companyEl?.options[companyEl.selectedIndex]?.text || "";
           const office = officeEl?.value || "";
           if (!company || !office) {
-            showToast("⚠️ Choisissez la société et le bureau !");
+            showToast("Choisissez la société et le bureau !");
             return;
           }
           addressStr = "Bureau — " + company + " — " + office;
@@ -5889,10 +6026,10 @@
             " DA";
           suc.style.display = "block";
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
           if (btn) {
             btn.disabled = false;
-            btn.textContent = "✅ Confirmer la Commande";
+            btn.textContent = "Confirmer la Commande";
           }
         }
       }
@@ -5916,7 +6053,7 @@
         const names = pmSelectedVariants
           .map((i) => pmCurrentProduct.variants[i])
           .join(", ");
-        showToast(`✅ ${pmCurrentProduct.name} (${names}) ajouté au panier !`);
+        showToast(`${pmCurrentProduct.name} (${names}) ajouté au panier !`);
       }
 
       // AUTH
@@ -5957,7 +6094,7 @@
 
         if (!name || !email || pass.length < 6) {
           err.textContent =
-            "⚠️ Veuillez remplir tous les champs (mot de passe min. 6 caractères).";
+            "Veuillez remplir tous les champs (mot de passe min. 6 caractères).";
           err.style.display = "block";
           return;
         }
@@ -5967,9 +6104,9 @@
           err.style.display = "none";
           closeModal("login-modal");
           loginUser(user);
-          showToast(`🎉 Bienvenue, ${user.name} !`);
+          showToast(`Bienvenue, ${user.name} !`);
         } catch (e) {
-          err.textContent = "⚠️ " + e.message;
+          err.textContent = "" + e.message;
           err.style.display = "block";
         }
       }
@@ -5987,10 +6124,10 @@
           err.style.display = "none";
           closeModal("login-modal");
           loginUser(user);
-          if (user.role === "admin") showToast("✅ Bienvenue, Admin !");
-          else showToast(`✅ Bienvenue, ${user.name} !`);
+          if (user.role === "admin") showToast("Bienvenue, Admin !");
+          else showToast(`Bienvenue, ${user.name} !`);
         } catch (e) {
-          err.textContent = "⚠️ " + e.message;
+          err.textContent = "" + e.message;
           err.style.display = "block";
         }
       }
@@ -5998,16 +6135,18 @@
       function loginUser(user) {
         currentUser = user;
         const authBtn = document.getElementById("auth-btn");
-        const myOrdersBtn = document.getElementById("my-orders-btn");
+        const userNavItem = document.getElementById("user-nav-item");
+        const userNavLabel = document.getElementById("user-nav-label");
 
         if (user.role === "admin") {
-          authBtn.textContent = "⚙️ Admin";
+          authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg> Admin`;
           document.getElementById("admin-nav-link").style.display = "";
-          if (myOrdersBtn) myOrdersBtn.style.display = "none";
+          if (userNavItem) userNavItem.style.display = "none";
         } else {
-          authBtn.textContent = "👤 " + user.name;
+          authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ${user.name}`;
           document.getElementById("admin-nav-link").style.display = "none";
-          if (myOrdersBtn) myOrdersBtn.style.display = "";
+          if (userNavItem) userNavItem.style.display = "";
+          if (userNavLabel) userNavLabel.textContent = "Mes Commandes";
         }
         authBtn.onclick = showUserMenu;
 
@@ -6038,8 +6177,8 @@
         menu.style.cssText =
           "position:fixed;top:64px;right:1.5rem;background:#fff;border:1.5px solid var(--gray-100);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;min-width:180px;overflow:hidden;";
         menu.innerHTML = `
-    <button onclick="closeMenu();openMyOrders();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;border-bottom:1px solid var(--gray-50);">📦 Mes commandes</button>
-    <button onclick="closeMenu();logout();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;color:#dc2626;">🚪 Se déconnecter</button>
+    <button onclick="closeMenu();openMyOrders();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;border-bottom:1px solid var(--gray-50);">Mes commandes</button>
+    <button onclick="closeMenu();logout();" style="display:block;width:100%;text-align:left;padding:0.85rem 1.1rem;border:none;background:none;cursor:pointer;font-size:0.9rem;font-weight:600;color:#dc2626;">Se déconnecter</button>
   `;
         document.body.appendChild(menu);
         setTimeout(
@@ -6060,14 +6199,14 @@
         AuthAPI.logout();
         currentUser = null;
         document.getElementById("admin-nav-link").style.display = "none";
-        const myOrdersBtn = document.getElementById("my-orders-btn");
-        if (myOrdersBtn) myOrdersBtn.style.display = "none";
+        const userNavItem = document.getElementById("user-nav-item");
+        if (userNavItem) userNavItem.style.display = "none";
         const authBtn = document.getElementById("auth-btn");
-        authBtn.textContent = "Connexion";
+        authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Connexion`;
         authBtn.onclick = () => openModal("login-modal");
         if (document.getElementById("admin-page")?.classList.contains("active"))
           showPage("home");
-        showToast("👋 Déconnecté avec succès.");
+        showToast("Déconnecté avec succès.");
       }
 
       async function openMyOrders() {
@@ -6083,7 +6222,7 @@
 
           if (orders.length === 0) {
             body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
-        <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+        <div style="font-size:3rem;margin-bottom:1rem;"></div>
         <p>Vous n'avez pas encore de commandes.</p>
         <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats →</button>
       </div>`;
@@ -6099,8 +6238,8 @@
             <span style="font-weight:800;color:var(--green-dark)">${o.order_ref || "#MT-" + o.id}</span>
             <span class="status-badge status-${o.status}">${statusLabel(o.status)}</span>
           </div>
-          <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.4rem;">📅 ${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
-          <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.4rem;">📍 ${o.wilaya}</div>
+          <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.4rem;">${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
+          <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.4rem;">${o.wilaya}</div>
           <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;">${itemNames}</div>
           <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">${o.total.toLocaleString()} DA</div>
         </div>`;
@@ -6109,7 +6248,7 @@
           }
           openModal("my-orders-modal");
         } catch (e) {
-          showToast("⚠️ Erreur: " + e.message);
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -6165,7 +6304,7 @@
           // Show empty state
           const empty = document.createElement("div");
           empty.className = "hero-carousel-card active";
-          empty.innerHTML = `<div class="hero-carousel-bg"></div><div class="hc-icon">🛍️</div><div class="hc-badge">Boutique</div><h4>Aucun produit</h4><p>Ajoutez des produits depuis l'admin</p>`;
+          empty.innerHTML = `<div class="hero-carousel-bg"></div><div class="hc-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div><div class="hc-badge">Boutique</div><h4>Aucun produit</h4><p>Ajoutez des produits depuis l'admin</p>`;
           wrapper.insertBefore(empty, progressEl);
           return;
         }
