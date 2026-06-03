@@ -1162,7 +1162,7 @@
         }
         .admin-header {
           position: relative;
-          padding-left: 3rem;
+          padding-left: 0;
         }
         /* Make admin-content have no horizontal padding so nav goes edge-to-edge */
         .admin-content {
@@ -1197,7 +1197,7 @@
           flex-wrap: wrap;
           gap: 0.5rem;
           margin-bottom: 1rem;
-          padding-left: 2.5rem;
+          padding-left: 0;
         }
         .admin-header h1 {
           font-size: 1.2rem;
@@ -7559,38 +7559,12 @@
       }
 
       // ── MOBILE ADMIN MENU HANDLER ────────────────────────────────────────────
-      const adminMobileToggle = document.getElementById("adminMobileToggle");
-      const adminMobileNav = document.getElementById("adminMobileNav");
-      const adminMobileClose = document.getElementById("adminMobileClose");
-      const mobileAdminNav = document.getElementById("mobileAdminNav");
-
-      if (adminMobileToggle && adminMobileNav) {
-        // Toggle menu
-        adminMobileToggle.addEventListener("click", function (e) {
-          e.stopPropagation();
-          adminMobileNav.classList.toggle("open");
-        });
-
-        // Close menu button
-        if (adminMobileClose) {
-          adminMobileClose.addEventListener("click", function (e) {
-            e.stopPropagation();
-            adminMobileNav.classList.remove("open");
-          });
-        }
-
-        // Close when clicking overlay
-        adminMobileNav.addEventListener("click", function (e) {
-          if (e.target === this) {
-            adminMobileNav.classList.remove("open");
-          }
-        });
-
-        // Close when clicking a menu link
-        const mobileLinks = mobileAdminNav.querySelectorAll("a");
-        mobileLinks.forEach((link) => {
+      // Uses the correct IDs from the HTML (admin-mobile-nav)
+      const _adminMobileNav = document.getElementById("admin-mobile-nav");
+      if (_adminMobileNav) {
+        _adminMobileNav.querySelectorAll("a").forEach((link) => {
           link.addEventListener("click", function () {
-            adminMobileNav.classList.remove("open");
+            // nothing to close — bottom tab bar stays visible
           });
         });
       }
