@@ -2273,24 +2273,11 @@
 
       <!-- CATEGORIES -->
       <div class="categories-bar">
-        <div class="categories-inner">
+        <div class="categories-inner" id="categories-inner">
           <div class="cat-chip active" onclick="filterCat(this, 'all')">
             Tous les Produits
           </div>
-
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">Pièces PC</div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            Cosmétiques PC
-          </div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">Écrans</div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">Claviers</div>
-          <div class="cat-chip" onclick="filterCat(this, 'pc')">Souris</div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            Pâte Thermique
-          </div>
-          <div class="cat-chip" onclick="filterCat(this, 'cosmétiques')">
-            Boîtiers
-          </div>
+          <!-- chips injected dynamically by buildCategoryChips() -->
         </div>
       </div>
 
@@ -2813,10 +2800,85 @@
           <div class="footer-col">
             <h4>Contact</h4>
             <ul>
-              <li><a href="#">Alger, Algérie</a></li>
-              <li><a href="#">📞 0558210430</a></li>
-              <li><a href="#">✉️ mus.softwares@gmail.com</a></li>
-              <li><a href="#">🕐 9h – 20h Tous les jours</a></li>
+              <li>
+                <a
+                  href="https://www.google.com/maps/search/Alger,+Algérie"
+                  target="_blank"
+                  rel="noopener"
+                  style="display: flex; align-items: center; gap: 0.5rem"
+                  ><svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  Alger, Algérie</a
+                >
+              </li>
+              <li>
+                <a
+                  href="tel:+213558210430"
+                  style="display: flex; align-items: center; gap: 0.5rem"
+                  ><svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.4a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l1.27-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.42z" />
+                  </svg>
+                  0558210430</a
+                >
+              </li>
+              <li>
+                <a
+                  href="mailto:mus.softwares@gmail.com"
+                  style="display: flex; align-items: center; gap: 0.5rem"
+                  ><svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                  mus.softwares@gmail.com</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  style="display: flex; align-items: center; gap: 0.5rem"
+                  ><svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  9h – 20h Tous les jours</a
+                >
+              </li>
             </ul>
           </div>
         </div>
@@ -3768,6 +3830,23 @@
               <select id="ap-cat">
                 <option value="PC Parts">Pièces PC</option>
                 <option value="Cosmétiques PC">Cosmétiques PC</option>
+                <option value="Écrans">Écrans</option>
+                <option value="Claviers">Claviers</option>
+                <option value="Souris">Souris</option>
+                <option value="Pâte Thermique">Pâte Thermique</option>
+                <option value="Boîtiers">Boîtiers</option>
+                <option value="Processeurs">Processeurs</option>
+                <option value="Cartes Graphiques">Cartes Graphiques</option>
+                <option value="RAM">RAM</option>
+                <option value="Stockage">Stockage</option>
+                <option value="Alimentations">Alimentations</option>
+                <option value="Refroidissement">Refroidissement</option>
+                <option value="Cartes Mères">Cartes Mères</option>
+                <option value="Câbles & Accessoires">
+                  Câbles & Accessoires
+                </option>
+                <option value="Audio">Audio</option>
+                <option value="Sièges & Bureau">Sièges & Bureau</option>
               </select>
             </div>
             <div class="form-group">
@@ -3776,13 +3855,273 @@
             </div>
           </div>
           <div class="form-group">
-            <label>Emoji Icône</label
-            ><input
-              type="text"
-              id="ap-icon"
-              placeholder="ex. 🖥️"
-              maxlength="4"
-              style="font-size: 1.5rem; width: 80px" />
+            <label>Icône du Produit</label>
+            <div
+              id="ap-icon-picker"
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+                margin-top: 0.4rem;
+              ">
+              <button
+                type="button"
+                class="icon-pick-btn active"
+                data-icon="🖥️"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--green);
+                  background: var(--green-light);
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🖥️
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="💻"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                💻
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🖱️"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🖱️
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="⌨️"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                ⌨️
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🖨️"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🖨️
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="📱"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                📱
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🎮"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🎮
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🔧"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🔧
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="💾"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                💾
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="📡"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                📡
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🔋"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🔋
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="💡"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                💡
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🎧"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🎧
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="📷"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                📷
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="🖲️"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                🖲️
+              </button>
+              <button
+                type="button"
+                class="icon-pick-btn"
+                data-icon="📦"
+                onclick="selectApIcon(this)"
+                style="
+                  font-size: 1.4rem;
+                  padding: 0.4rem 0.55rem;
+                  border-radius: 8px;
+                  border: 2px solid var(--gray-100);
+                  background: #fff;
+                  cursor: pointer;
+                  transition: all 0.2s;
+                ">
+                📦
+              </button>
+            </div>
+            <input type="hidden" id="ap-icon" value="🖥️" />
           </div>
           <div class="form-group">
             <label>Variantes (séparées par des virgules)</label
@@ -4019,6 +4358,23 @@
               <select id="ep-cat">
                 <option value="PC Parts">Pièces PC</option>
                 <option value="Cosmétiques PC">Cosmétiques PC</option>
+                <option value="Écrans">Écrans</option>
+                <option value="Claviers">Claviers</option>
+                <option value="Souris">Souris</option>
+                <option value="Pâte Thermique">Pâte Thermique</option>
+                <option value="Boîtiers">Boîtiers</option>
+                <option value="Processeurs">Processeurs</option>
+                <option value="Cartes Graphiques">Cartes Graphiques</option>
+                <option value="RAM">RAM</option>
+                <option value="Stockage">Stockage</option>
+                <option value="Alimentations">Alimentations</option>
+                <option value="Refroidissement">Refroidissement</option>
+                <option value="Cartes Mères">Cartes Mères</option>
+                <option value="Câbles & Accessoires">
+                  Câbles & Accessoires
+                </option>
+                <option value="Audio">Audio</option>
+                <option value="Sièges & Bureau">Sièges & Bureau</option>
               </select>
             </div>
             <div class="form-group">
@@ -4256,6 +4612,7 @@
           populateWilayas();
           renderCheckoutItems();
         }
+        if (id === "add-product-modal") resetApIconPicker();
       }
       function closeModal(id) {
         document.getElementById(id).classList.remove("open");
@@ -4415,6 +4772,7 @@
         const countEl = document.getElementById("products-count");
         if (countEl) countEl.textContent = PRODUCTS.length;
         buildCarousel();
+        buildCategoryChips();
         initFavoriteButtons();
       }
 
@@ -4816,6 +5174,31 @@
         }
       });
 
+      // ── ICON PICKER ───────────────────────────────────────────
+      function selectApIcon(btn) {
+        document
+          .querySelectorAll("#ap-icon-picker .icon-pick-btn")
+          .forEach((b) => {
+            b.style.border = "2px solid var(--gray-100)";
+            b.style.background = "#fff";
+          });
+        btn.style.border = "2px solid var(--green)";
+        btn.style.background = "var(--green-light)";
+        document.getElementById("ap-icon").value = btn.dataset.icon;
+      }
+
+      function resetApIconPicker() {
+        const btns = document.querySelectorAll(
+          "#ap-icon-picker .icon-pick-btn",
+        );
+        btns.forEach((b, i) => {
+          b.style.border =
+            i === 0 ? "2px solid var(--green)" : "2px solid var(--gray-100)";
+          b.style.background = i === 0 ? "var(--green-light)" : "#fff";
+        });
+        document.getElementById("ap-icon").value = "🖥️";
+      }
+
       async function saveNewProduct() {
         const name = document.getElementById("ap-name").value.trim();
         const price = parseInt(document.getElementById("ap-price").value);
@@ -4887,7 +5270,6 @@
             "ap-price",
             "ap-old-price",
             "ap-stock",
-            "ap-icon",
             "ap-variants",
             "ap-variant-prices",
             "ap-desc",
@@ -4895,6 +5277,7 @@
             const el = document.getElementById(id);
             if (el) el.value = "";
           });
+          resetApIconPicker();
           document.getElementById("ap-imgs-preview").style.display = "none";
           document.getElementById("ap-imgs-preview").innerHTML = "";
           document.getElementById("ap-imgs").value = "";
@@ -5346,6 +5729,30 @@
       }
 
       // FILTER CATEGORIES
+      // ── CATEGORY FILTER ──────────────────────────────────────
+      function buildCategoryChips() {
+        const inner = document.getElementById("categories-inner");
+        if (!inner) return;
+
+        // Remove old dynamic chips (keep "Tous les Produits" = first child)
+        while (inner.children.length > 1) inner.removeChild(inner.lastChild);
+
+        // Collect unique categories from loaded products
+        const cats = [
+          ...new Set(PRODUCTS.map((p) => p.cat).filter(Boolean)),
+        ].sort();
+
+        cats.forEach((cat) => {
+          const chip = document.createElement("div");
+          chip.className = "cat-chip";
+          chip.textContent = cat;
+          chip.onclick = function () {
+            filterCat(this, cat);
+          };
+          inner.appendChild(chip);
+        });
+      }
+
       function filterCat(el, cat) {
         document
           .querySelectorAll(".cat-chip")
@@ -5353,10 +5760,11 @@
         el.classList.add("active");
         const cards = document.querySelectorAll("#featured-grid .product-card");
         cards.forEach((card) => {
-          if (cat === "all") card.style.display = "";
-          else {
-            const c = card.dataset.cat.toLowerCase();
-            card.style.display = c.includes(cat.toLowerCase()) ? "" : "none";
+          if (cat === "all") {
+            card.style.display = "";
+          } else {
+            // Exact match against data-cat attribute
+            card.style.display = card.dataset.cat === cat ? "" : "none";
           }
         });
       }
