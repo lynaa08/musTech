@@ -746,7 +746,8 @@
       </a>
       <div class="nav-center">
         <a
-          href="#connexion"
+          href="index.html"
+          onclick="sessionStorage.setItem('openModal', 'login-modal')"
           style="
             font-size: 0.9rem;
             color: var(--gray-700);
@@ -756,7 +757,8 @@
           >Connexion</a
         >
         <a
-          href="#mes-commandes"
+          href="index.html"
+          onclick="sessionStorage.setItem('openModal', 'my-orders')"
           style="
             font-size: 0.9rem;
             color: var(--gray-700);
@@ -766,14 +768,15 @@
           >Mes Commandes</a
         >
         <a
-          href="#favoris"
+          href="index.html"
+          onclick="sessionStorage.setItem('goPage', 'favorites')"
           style="
             font-size: 0.9rem;
             color: var(--gray-700);
             text-decoration: none;
             font-weight: 500;
           "
-          >Favoris</a
+          >❤️ Favoris</a
         >
       </div>
       <div class="nav-actions">
@@ -783,7 +786,7 @@
               d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
-        <button class="back-btn" onclick="history.back()">
+        <button class="back-btn" onclick="window.location.href = 'index.html'">
           <svg
             width="14"
             height="14"
@@ -1165,12 +1168,12 @@
               <div class="shipping-options">
                 <button
                   class="shipping-option active"
-                  onclick="setDeliveryType('home')">
+                  onclick="setDeliveryType('home', this)">
                   À Domicile
                 </button>
                 <button
                   class="shipping-option"
-                  onclick="setDeliveryType('bureau')">
+                  onclick="setDeliveryType('bureau', this)">
                   Au Bureau
                 </button>
               </div>
@@ -1233,18 +1236,18 @@
     <div class="toast" id="toast-msg"></div>
 
     <script>
-            let product = null;
-            let currentVariant = 0;
-            let currentQty = 1;
-            let cart = [];
-            let variantQtys = [];
-            let deliveryType = "home";
-            let favoriteProducts = JSON.parse(
-              localStorage.getItem("mt_favorites") || "[]",
-            );
+      let product = null;
+      let currentVariant = 0;
+      let currentQty = 1;
+      let cart = [];
+      let variantQtys = [];
+      let deliveryType = "home";
+      let favoriteProducts = JSON.parse(
+        localStorage.getItem("mt_favorites") || "[]",
+      );
 
-            // Load product from URL
-          async function loadProduct() {
+      // Load product from URL
+      async function loadProduct() {
         const params = new URLSearchParams(window.location.search);
         const id = parseInt(params.get("id"));
         if (!id) return;
@@ -1253,14 +1256,46 @@
           const products = await ProductsAPI.getAll();
           const wilayas = await WilayasAPI.getAll();
 
-          product = products.find(p => p.id === id);
-          if (!product) { showToast("Produit introuvable"); return; }
+          const raw = products.find((p) => p.id === id);
+          if (!raw) {
+            showToast("Produit introuvable");
+            return;
+          }
+
+          // Normalize: handle both camelCase (API normalized) and snake_case (raw DB)
+          product = {
+            ...raw,
+            cat: raw.cat || raw.category || "",
+            desc: raw.desc || raw.description || "",
+            img: raw.img || raw.image || "",
+            images:
+              raw.images ||
+              (raw.img ? [raw.img] : raw.image ? [raw.image] : []),
+            variants: raw.variants || ["Standard"],
+            variantPrices: raw.variantPrices ||
+              raw.variant_prices || [raw.price || 0],
+          };
+          // Ensure variantPrices is always an array of numbers
+          if (typeof product.variantPrices === "string") {
+            try {
+              product.variantPrices = JSON.parse(product.variantPrices);
+            } catch (e) {
+              product.variantPrices = [product.price || 0];
+            }
+          }
+          if (typeof product.variants === "string") {
+            try {
+              product.variants = JSON.parse(product.variants);
+            } catch (e) {
+              product.variants = ["Standard"];
+            }
+          }
 
           // Build wilaya select from real API data
           const sel = document.getElementById("co-wilaya");
           if (sel) {
             sel.innerHTML = '<option value="">Sélectionnez une wilaya</option>';
-            wilayas.forEach(w => {
+            wilayas.forEach((w) => {
               const price = w.shipping_price ?? w.price ?? 0;
               const o = document.createElement("option");
               o.value = price;
@@ -1280,52 +1315,45 @@
           showToast("Erreur de chargement du produit");
         }
       }
-              const params = new URLSearchParams(window.location.search);
-              const id = params.get("id");
-              if (!id) return;
 
-              try {
-                const res = await fetch(`api.js?action=getProduct&id=${id}`);
-                const data = await res.json();
-                product = data;
-                renderProduct();
-                updateFavBtn();
-                // Show form immediately
-                updateOrderSummaryFromCart();
-                updateDeliveryDetails();
+      function renderProduct() {
+        if (!product) return;
 
-                // Add event listener to wilaya select
-                setTimeout(() => {
-                  const wilayaSelect = document.getElementById("co-wilaya");
-                  if (wilayaSelect) {
-                    wilayaSelect.addEventListener("change", () => {
-                      updateOrderSummaryFromCart();
-                    });
-                  }
-                }, 500);
-              } catch (e) {
-                showToast("Erreur de chargement du produit");
-              }
+        document.getElementById("product-category").textContent =
+          product.cat || "Catégorie";
+        document.getElementById("product-name").textContent = product.name;
+        document.getElementById("product-desc").textContent =
+          product.desc || product.description || "";
 
+        // Support both single img and images array
+        const mainImgEl = document.getElementById("main-img");
+        const firstImg =
+          product.images && product.images.length > 0
+            ? product.images[0]
+            : product.img || "";
+        if (firstImg) {
+          mainImgEl.src = firstImg;
+          mainImgEl.style.display = "";
+        } else {
+          mainImgEl.style.display = "none";
+          // Show emoji icon as fallback
+          const imgWrap = mainImgEl.closest(".img-wrap");
+          if (imgWrap && product.icon) {
+            const iconSpan = document.createElement("span");
+            iconSpan.textContent = product.icon;
+            iconSpan.style.fontSize = "7rem";
+            imgWrap.appendChild(iconSpan);
+          }
+        }
 
-            function renderProduct() {
-              if (!product) return;
+        // Render variants as rows with prices
+        const varContainer = document.getElementById("variants-rows-container");
+        variantQtys = new Array(product.variants.length).fill(0);
 
-              document.getElementById("product-category").textContent =
-                product.category || "Catégorie";
-              document.getElementById("product-name").textContent = product.name;
-              document.getElementById("product-desc").textContent =
-                product.description;
-              document.getElementById("main-img").src = product.image || "";
-
-              // Render variants as rows with prices
-              const varContainer = document.getElementById("variants-rows-container");
-              variantQtys = new Array(product.variants.length).fill(0);
-
-              varContainer.innerHTML = product.variants
-                .map((v, i) => {
-                  const price = product.variantPrices[i] ?? product.variantPrices[0];
-                  return `
+        varContainer.innerHTML = product.variants
+          .map((v, i) => {
+            const price = product.variantPrices[i] ?? product.variantPrices[0];
+            return `
                   <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem;border:1px solid var(--gray-100);border-radius:12px;margin-bottom:0.8rem;flex-wrap:wrap;gap:0.8rem;">
                     <div style="flex:1;min-width:120px;">
                       <div style="font-weight:700;color:var(--gray-900);margin-bottom:0.4rem;">${v}</div>
@@ -1343,148 +1371,162 @@
                     </div>
                   </div>
                 `;
-                })
-                .join("");
+          })
+          .join("");
 
-              updateTotalPrice();
+        updateTotalPrice();
 
-              // Thumbnails
-              const thumbsContainer = document.getElementById("thumbs-container");
-              thumbsContainer.innerHTML = product.images
-                ? product.images
-                    .map(
-                      (img, i) =>
-                        `<img class="thumb ${i === 0 ? "active" : ""}" src="${img}" onclick="changeImage(${i})">`,
-                    )
-                    .join("")
-                : "";
-            }
+        // Thumbnails
+        const thumbsContainer = document.getElementById("thumbs-container");
+        const allImages =
+          product.images && product.images.length > 0
+            ? product.images
+            : product.img
+              ? [product.img]
+              : [];
+        thumbsContainer.innerHTML =
+          allImages.length > 1
+            ? allImages
+                .map(
+                  (img, i) =>
+                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${img}" onclick="changeImage(${i})">`,
+                )
+                .join("")
+            : "";
+      }
 
-            function selectVariant(idx) {
-              currentVariant = idx;
-              document.querySelectorAll(".vchip").forEach((el, i) => {
-                el.classList.toggle("active", i === idx);
-              });
-              updatePrice();
-            }
+      function selectVariant(idx) {
+        currentVariant = idx;
+        document.querySelectorAll(".vchip").forEach((el, i) => {
+          el.classList.toggle("active", i === idx);
+        });
+        updatePrice();
+      }
 
-            function changeVariantQty(idx, delta) {
-              variantQtys[idx] = Math.max(0, variantQtys[idx] + delta);
-              document.querySelector(`input[data-variant="${idx}"]`).value =
-                variantQtys[idx];
-              updateTotalPrice();
-            }
+      function changeVariantQty(idx, delta) {
+        variantQtys[idx] = Math.max(0, variantQtys[idx] + delta);
+        document.querySelector(`input[data-variant="${idx}"]`).value =
+          variantQtys[idx];
+        updateTotalPrice();
+      }
 
-            function updateTotalPrice() {
-              let total = 0;
-              product.variants.forEach((v, i) => {
-                const price = product.variantPrices[i] ?? product.variantPrices[0];
-                total += price * variantQtys[i];
-              });
+      function updateTotalPrice() {
+        let total = 0;
+        product.variants.forEach((v, i) => {
+          const price = product.variantPrices[i] ?? product.variantPrices[0];
+          total += price * variantQtys[i];
+        });
 
-              const priceEl = document.getElementById("product-price");
-              if (total > 0) {
-                priceEl.textContent = total.toLocaleString() + " DA";
-              } else {
-                priceEl.textContent =
-                  product.variantPrices[0].toLocaleString() + " DA";
-              }
-              updateOrderSummaryFromCart();
-            }
+        const priceEl = document.getElementById("product-price");
+        if (total > 0) {
+          priceEl.textContent = total.toLocaleString() + " DA";
+        } else {
+          priceEl.textContent =
+            product.variantPrices[0].toLocaleString() + " DA";
+        }
+        updateOrderSummaryFromCart();
+      }
 
-            function updatePrice() {
-              if (!product) return;
-              const price =
-                product.variantPrices[currentVariant] ?? product.variantPrices[0];
-              document.getElementById("product-price").textContent =
-                price.toLocaleString() + " DA";
-            }
+      function updatePrice() {
+        if (!product) return;
+        const price =
+          product.variantPrices[currentVariant] ?? product.variantPrices[0];
+        document.getElementById("product-price").textContent =
+          price.toLocaleString() + " DA";
+      }
 
-            function changeImage(idx) {
-              if (product.images) {
-                document.getElementById("main-img").src = product.images[idx];
-                document.querySelectorAll(".thumb").forEach((el, i) => {
-                  el.classList.toggle("active", i === idx);
-                });
-              }
-            }
+      function changeImage(idx) {
+        const allImages =
+          product.images && product.images.length > 0
+            ? product.images
+            : product.img
+              ? [product.img]
+              : [];
+        if (allImages.length > 0) {
+          document.getElementById("main-img").src =
+            allImages[idx] || allImages[0];
+          document.querySelectorAll(".thumb").forEach((el, i) => {
+            el.classList.toggle("active", i === idx);
+          });
+        }
+      }
 
-            function qtyInc() {
-              currentQty++;
-              document.getElementById("qty-input").value = currentQty;
-            }
+      function qtyInc() {
+        currentQty++;
+        document.getElementById("qty-input").value = currentQty;
+      }
 
-            function qtyDec() {
-              if (currentQty > 1) {
-                currentQty--;
-                document.getElementById("qty-input").value = currentQty;
-              }
-            }
+      function qtyDec() {
+        if (currentQty > 1) {
+          currentQty--;
+          document.getElementById("qty-input").value = currentQty;
+        }
+      }
 
-            // FAVORITES
-            function toggleFavorite() {
-              if (!product) return;
-              const idx = favoriteProducts.findIndex((p) => p.id === product.id);
-              if (idx >= 0) {
-                favoriteProducts.splice(idx, 1);
-              } else {
-                favoriteProducts.push({
-                  id: product.id,
-                  name: product.name,
-                  image: product.image,
-                });
-              }
-              localStorage.setItem("mt_favorites", JSON.stringify(favoriteProducts));
-              updateFavBtn();
-              showToast(idx >= 0 ? "Supprimé des favoris" : "Ajouté aux favoris");
-            }
+      // FAVORITES
+      function toggleFavorite() {
+        if (!product) return;
+        const idx = favoriteProducts.findIndex((p) => p.id === product.id);
+        if (idx >= 0) {
+          favoriteProducts.splice(idx, 1);
+        } else {
+          favoriteProducts.push({
+            id: product.id,
+            name: product.name,
+            image: product.img || product.image || "",
+          });
+        }
+        localStorage.setItem("mt_favorites", JSON.stringify(favoriteProducts));
+        updateFavBtn();
+        showToast(idx >= 0 ? "Supprimé des favoris" : "Ajouté aux favoris");
+      }
 
-            function updateFavBtn() {
-              const btn = document.getElementById("fav-btn");
-              const isFav = favoriteProducts.some((p) => p.id === product?.id);
-              btn.classList.toggle("favorited", isFav);
-              btn.onclick = toggleFavorite;
-            }
+      function updateFavBtn() {
+        const btn = document.getElementById("fav-btn");
+        const isFav = favoriteProducts.some((p) => p.id === product?.id);
+        btn.classList.toggle("favorited", isFav);
+        btn.onclick = toggleFavorite;
+      }
 
-            function showCheckoutForm() {
-              document.getElementById("checkout-form").style.display = "block";
-              updateOrderSummaryFromCart();
-              updateDeliveryDetails();
-              document
-                .getElementById("checkout-form")
-                .scrollIntoView({ behavior: "smooth", block: "start" });
-            }
+      function showCheckoutForm() {
+        document.getElementById("checkout-form").style.display = "block";
+        updateOrderSummaryFromCart();
+        updateDeliveryDetails();
+        document
+          .getElementById("checkout-form")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
 
-            function addCurrentToCart() {
-              if (!product) return;
-              cart.push({
-                productData: product,
-                variantIndex: currentVariant,
-                qty: currentQty,
-              });
-              updateCartUI();
-              showToast(`${product.name} ajouté au panier`);
-              openCart();
-            }
+      function addCurrentToCart() {
+        if (!product) return;
+        cart.push({
+          productData: product,
+          variantIndex: currentVariant,
+          qty: currentQty,
+        });
+        updateCartUI();
+        showToast(`${product.name} ajouté au panier`);
+        openCart();
+      }
 
-            function updateCartUI() {
-              const list = document.getElementById("cart-items-list");
-              const footer = document.getElementById("cart-footer");
+      function updateCartUI() {
+        const list = document.getElementById("cart-items-list");
+        const footer = document.getElementById("cart-footer");
 
-              if (cart.length === 0) {
-                list.innerHTML =
-                  '<p style="color:var(--gray-500);text-align:center;padding:2rem 1rem;">Votre panier est vide</p>';
-                footer.style.display = "none";
-                return;
-              }
+        if (cart.length === 0) {
+          list.innerHTML =
+            '<p style="color:var(--gray-500);text-align:center;padding:2rem 1rem;">Votre panier est vide</p>';
+          footer.style.display = "none";
+          return;
+        }
 
-              list.innerHTML = cart
-                .map((item, idx) => {
-                  const p = item.productData;
-                  const price =
-                    (p.variantPrices[item.variantIndex] ?? p.variantPrices[0]) *
-                    item.qty;
-                  return `
+        list.innerHTML = cart
+          .map((item, idx) => {
+            const p = item.productData;
+            const price =
+              (p.variantPrices[item.variantIndex] ?? p.variantPrices[0]) *
+              item.qty;
+            return `
                     <div class="cart-item">
                       <div style="display:flex;justify-content:space-between;margin-bottom:0.6rem;">
                         <strong>${p.name}</strong>
@@ -1503,207 +1545,370 @@
                       </div>
                     </div>
                   `;
-                })
-                .join("");
+          })
+          .join("");
 
-              document.getElementById("cp-totals").innerHTML = `
+        document.getElementById("cp-totals").innerHTML = `
                 <div class="orow"><span>Sous-total</span><span>${cartTotal().toLocaleString()} DA</span></div>
                 <div class="orow" style="font-size:0.75rem;color:var(--gray-500);"><span>Livraison calculée à l'étape suivante</span></div>`;
-              footer.style.display = "";
-            }
+        footer.style.display = "";
+      }
 
-            function cartTotal() {
-              return cart.reduce((sum, item) => {
-                const price =
-                  item.productData.variantPrices[item.variantIndex] ??
-                  item.productData.variantPrices[0];
-                return sum + price * item.qty;
-              }, 0);
-            }
+      function cartTotal() {
+        return cart.reduce((sum, item) => {
+          const price =
+            item.productData.variantPrices[item.variantIndex] ??
+            item.productData.variantPrices[0];
+          return sum + price * item.qty;
+        }, 0);
+      }
 
-            function cartChangeQty(idx, delta) {
-              cart[idx].qty = Math.max(1, cart[idx].qty + delta);
-              updateCartUI();
-            }
+      function cartChangeQty(idx, delta) {
+        cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+        updateCartUI();
+      }
 
-            function cartRemove(idx) {
-              cart.splice(idx, 1);
-              updateCartUI();
-            }
+      function cartRemove(idx) {
+        cart.splice(idx, 1);
+        updateCartUI();
+      }
 
-            function openCart() {
-              document.getElementById("cart-overlay").classList.add("open");
-              document.getElementById("cart-panel").classList.add("open");
-              document.body.style.overflow = "hidden";
-            }
+      function openCart() {
+        document.getElementById("cart-overlay").classList.add("open");
+        document.getElementById("cart-panel").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
 
-            function closeCart() {
-              document.getElementById("cart-overlay").classList.remove("open");
-              document.getElementById("cart-panel").classList.remove("open");
-              document.body.style.overflow = "";
-            }
+      function closeCart() {
+        document.getElementById("cart-overlay").classList.remove("open");
+        document.getElementById("cart-panel").classList.remove("open");
+        document.body.style.overflow = "";
+      }
 
-            function setDeliveryType(type) {
-              deliveryType = type;
-              document.querySelectorAll(".shipping-option").forEach((btn) => {
-                btn.classList.remove("active");
-              });
-              event.target.classList.add("active");
-              updateDeliveryDetails();
-              updateOrderSummaryFromCart();
-            }
+      function setDeliveryType(type, el) {
+        deliveryType = type;
+        document.querySelectorAll(".shipping-option").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        if (el) el.classList.add("active");
+        updateDeliveryDetails();
+        updateOrderSummaryFromCart();
+      }
 
-            function updateDeliveryDetails() {
-              const details = document.getElementById("delivery-details");
-              if (deliveryType === "home") {
-                details.innerHTML = `
+      function updateDeliveryDetails() {
+        const details = document.getElementById("delivery-details");
+        if (deliveryType === "home") {
+          details.innerHTML = `
                   <div class="form-group">
                     <label class="form-label">Adresse de Livraison</label>
                     <input type="text" id="co-address" class="form-input" placeholder="Rue, Quartier...">
                   </div>
                 `;
-              } else {
-                details.innerHTML = `
+        } else {
+          details.innerHTML = `
                   <div class="form-group">
-                    <label class="form-label">Société</label>
-                    <select id="co-company" class="form-select">
+                    <label class="form-label">Société de livraison</label>
+                    <select id="co-company" class="form-select" onchange="loadBureauOffices()">
                       <option value="">Sélectionnez une société</option>
-                      <option value="1">Société 1</option>
-                      <option value="2">Société 2</option>
+                      <option value="yalidine">Yalidine Express</option>
+                      <option value="zaki">Zaki Express</option>
+                      <option value="procolis">Procolis</option>
+                      <option value="noest">Noest Express</option>
+                      <option value="eship">eShip</option>
+                      <option value="maystro">Maystro Delivery</option>
+                      <option value="dhlex">DHlex</option>
+                      <option value="guepex">Guepex</option>
                     </select>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label">Bureau</label>
-                    <input type="text" id="co-office" class="form-input" placeholder="Adresse du bureau">
+                  <div class="form-group" id="bureau-office-group" style="display:none">
+                    <label class="form-label">Bureau de retrait</label>
+                    <select id="co-office" class="form-select">
+                      <option value="">Sélectionnez un bureau</option>
+                    </select>
                   </div>
                 `;
-              }
+        }
+      }
+
+      // Bureau offices data
+      const BUREAU_OFFICES = {
+        yalidine: [
+          "Alger - Hussein Dey",
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Alger - Rouiba",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Boumerdès - Boumerdès Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "Ouargla - Ouargla Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Msila - Msila Centre",
+          "Bordj Bou Arréridj - BBA Centre",
+          "Mila - Mila Centre",
+          "Mostaganem - Mostaganem Centre",
+          "Tiaret - Tiaret Centre",
+          "Sidi Bel Abbès - SBA Centre",
+        ],
+        zaki: [
+          "Alger - Kouba",
+          "Alger - Bab El Oued",
+          "Alger - El Harrach",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Skikda - Skikda Centre",
+          "Biskra - Biskra Centre",
+          "El Oued - El Oued Centre",
+          "Ouargla - Ouargla Centre",
+        ],
+        procolis: [
+          "Alger - Bachdjarrah",
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Ouargla - Ouargla Centre",
+        ],
+        noest: [
+          "Alger - Hussein Dey",
+          "Alger - Bab Ezzouar",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Skikda - Skikda Centre",
+        ],
+        eship: [
+          "Alger - Bab Ezzouar",
+          "Alger - Dar El Beida",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Béjaïa - Béjaïa Centre",
+        ],
+        maystro: [
+          "Alger - Kouba",
+          "Alger - Hussein Dey",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+        ],
+        dhlex: [
+          "Alger - El Harrach",
+          "Alger - Bab Ezzouar",
+          "Oran - Oran Centre",
+          "Constantine - Constantine Centre",
+          "Sétif - Sétif Centre",
+          "Béjaïa - Béjaïa Centre",
+        ],
+        guepex: [
+          "Alger - Bachdjarrah",
+          "Alger - Bab Ezzouar",
+          "Alger - El Harrach",
+          "Oran - Oran Centre",
+          "Oran - Bir El Djir",
+          "Constantine - Constantine Centre",
+          "Annaba - Annaba Centre",
+          "Blida - Blida Centre",
+          "Sétif - Sétif Centre",
+          "Batna - Batna Centre",
+          "Tlemcen - Tlemcen Centre",
+          "Béjaïa - Béjaïa Centre",
+          "Tizi Ouzou - Tizi Ouzou Centre",
+          "Ghardaïa - Ghardaïa Centre",
+          "El Oued - El Oued Centre",
+          "Ouargla - Ouargla Centre",
+        ],
+      };
+
+      function loadBureauOffices() {
+        const company = document.getElementById("co-company")?.value;
+        const group = document.getElementById("bureau-office-group");
+        const officeSelect = document.getElementById("co-office");
+        if (!company || !group || !officeSelect) return;
+        if (!company) {
+          group.style.display = "none";
+          return;
+        }
+        group.style.display = "block";
+        officeSelect.innerHTML =
+          '<option value="">Sélectionnez un bureau</option>';
+        (BUREAU_OFFICES[company] || []).forEach((office) => {
+          const o = document.createElement("option");
+          o.value = office;
+          o.textContent = office;
+          officeSelect.appendChild(o);
+        });
+      }
+
+      function proceedToCheckout() {
+        closeCart();
+        document.getElementById("checkout-form").style.display = "block";
+        updateOrderSummaryFromCart();
+        updateDeliveryDetails();
+        document
+          .getElementById("checkout-form")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function updateOrderSummaryFromCart() {
+        const summary = document.getElementById("order-summary-mini");
+        const sel = document.getElementById("co-wilaya");
+        const shipping = sel ? parseInt(sel.value) || 0 : 0;
+        const wilayaName =
+          sel && sel.selectedIndex > 0
+            ? sel.options[sel.selectedIndex].dataset.name
+            : "—";
+        const typeLabel =
+          deliveryType === "bureau" ? "Au Bureau" : "À Domicile";
+
+        // Build items from selected variants
+        let itemsHtml = "";
+        let subtotal = 0;
+
+        if (product && variantQtys) {
+          product.variants.forEach((variant, idx) => {
+            const qty = variantQtys[idx];
+            if (qty > 0) {
+              const price =
+                product.variantPrices[idx] ?? product.variantPrices[0];
+              const itemTotal = price * qty;
+              subtotal += itemTotal;
+              itemsHtml += `<div class="orow"><span>${product.name} (${variant}) ×${qty}</span><span>${itemTotal.toLocaleString()} DA</span></div>`;
             }
+          });
+        }
 
-            function proceedToCheckout() {
-              closeCart();
-              document.getElementById("checkout-form").style.display = "block";
-              updateOrderSummaryFromCart();
-              updateDeliveryDetails();
-              document
-                .getElementById("checkout-form")
-                .scrollIntoView({ behavior: "smooth", block: "start" });
-            }
+        if (itemsHtml === "") {
+          itemsHtml = `<div class="orow" style="color:var(--gray-500);"><span>Aucun produit sélectionné</span></div>`;
+        }
 
-            function updateOrderSummaryFromCart() {
-              const summary = document.getElementById("order-summary-mini");
-              const sel = document.getElementById("co-wilaya");
-              const shipping = sel ? parseInt(sel.value) || 0 : 0;
-              const wilayaName =
-                sel && sel.selectedIndex > 0
-                  ? sel.options[sel.selectedIndex].dataset.name
-                  : "—";
-              const typeLabel =
-                deliveryType === "bureau" ? "Au Bureau" : "À Domicile";
-
-              // Build items from selected variants
-              let itemsHtml = "";
-              let subtotal = 0;
-
-              if (product && variantQtys) {
-                product.variants.forEach((variant, idx) => {
-                  const qty = variantQtys[idx];
-                  if (qty > 0) {
-                    const price =
-                      product.variantPrices[idx] ?? product.variantPrices[0];
-                    const itemTotal = price * qty;
-                    subtotal += itemTotal;
-                    itemsHtml += `<div class="orow"><span>${product.name} (${variant}) ×${qty}</span><span>${itemTotal.toLocaleString()} DA</span></div>`;
-                  }
-                });
-              }
-
-              if (itemsHtml === "") {
-                itemsHtml = `<div class="orow" style="color:var(--gray-500);"><span>Aucun produit sélectionné</span></div>`;
-              }
-
-              summary.innerHTML =
-                itemsHtml +
-                `<div class="orow"><span>Livraison ${typeLabel} (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
+        summary.innerHTML =
+          itemsHtml +
+          `<div class="orow"><span>Livraison ${typeLabel} (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
                  <div class="orow total"><span>Total</span><span>${(subtotal + shipping).toLocaleString()} DA</span></div>`;
 
-              // Show livraison section if wilaya is selected
-              const livraisonSection = document.getElementById("livraison-section");
-              if (shipping > 0) {
-                livraisonSection.style.display = "block";
-                document.getElementById("livraison-prix-display").textContent =
-                  shipping.toLocaleString() + " DA";
-              }
-            }
+        // Show livraison section if wilaya is selected
+        const livraisonSection = document.getElementById("livraison-section");
+        if (shipping > 0) {
+          livraisonSection.style.display = "block";
+          document.getElementById("livraison-prix-display").textContent =
+            shipping.toLocaleString() + " DA";
+        }
+      }
 
-            function showToast(msg) {
-              const toast = document.getElementById("toast-msg");
-              toast.textContent = msg;
-              toast.classList.add("show");
-              setTimeout(() => toast.classList.remove("show"), 3000);
-            }
+      function showToast(msg) {
+        const toast = document.getElementById("toast-msg");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
+      }
 
-            async function placeOrder() {
-              const name = document.getElementById("co-name").value.trim();
-              const phone = document.getElementById("co-phone").value.trim();
-              const wilEl = document.getElementById("co-wilaya");
-              const wilaya = wilEl.options[wilEl.selectedIndex]?.dataset.name || "";
+      async function placeOrder() {
+        const name = document.getElementById("co-name").value.trim();
+        const phone = document.getElementById("co-phone").value.trim();
+        const wilEl = document.getElementById("co-wilaya");
+        const wilaya = wilEl.options[wilEl.selectedIndex]?.dataset.name || "";
 
-              if (!phone || !wilaya) {
-                showToast("Téléphone et Wilaya sont obligatoires");
-                return;
-              }
+        if (!phone || !wilaya) {
+          showToast("Téléphone et Wilaya sont obligatoires");
+          return;
+        }
 
-              let address = "";
-              if (deliveryType === "bureau") {
-                const compEl = document.getElementById("co-company");
-                const offEl = document.getElementById("co-office");
-                const company = compEl?.options[compEl.selectedIndex]?.text || "";
-                const office = offEl?.value || "";
-                if (!company || !office) {
-                  showToast("Choisissez la société et le bureau");
-                  return;
-                }
-                address = "Bureau — " + company + " — " + office;
-              } else {
-                address =
-                  "Domicile — " +
-                  (document.getElementById("co-address").value.trim() || "—");
-              }
+        let address = "";
+        if (deliveryType === "bureau") {
+          const compEl = document.getElementById("co-company");
+          const offEl = document.getElementById("co-office");
+          const company = compEl?.options[compEl.selectedIndex]?.text || "";
+          const office = offEl?.value || "";
+          if (!company || !office) {
+            showToast("Choisissez la société et le bureau");
+            return;
+          }
+          address = "Bureau — " + company + " — " + office;
+        } else {
+          address =
+            "Domicile — " +
+            (document.getElementById("co-address").value.trim() || "—");
+        }
 
-              let itemsToOrder;
-              if (cart.length > 0) {
-                itemsToOrder = cart.map((i) => ({
-                  id: i.productData.id,
-                  variant: i.variantIndex,
-                  qty: i.qty,
-                }));
-              } else {
-                itemsToOrder = [
-                  { id: product.id, variant: currentVariant, qty: currentQty },
-                ];
-              }
+        let itemsToOrder;
+        // Use variantQtys if any are > 0, otherwise fallback to currentVariant
+        const hasSelectedVariants =
+          variantQtys && variantQtys.some((q) => q > 0);
+        if (hasSelectedVariants) {
+          itemsToOrder = variantQtys
+            .map((qty, i) => ({ id: product.id, variant: i, qty }))
+            .filter((item) => item.qty > 0);
+        } else if (cart.length > 0) {
+          itemsToOrder = cart.map((i) => ({
+            id: i.productData.id,
+            variant: i.variantIndex,
+            qty: i.qty,
+          }));
+        } else {
+          itemsToOrder = [
+            {
+              id: product.id,
+              variant: currentVariant,
+              qty: Math.max(1, currentQty),
+            },
+          ];
+        }
 
-              const orderData = {
-                customer: name || phone,
-                phone,
-                wilaya,
-                address,
-                note: document.getElementById("co-note").value.trim(),
-                items: itemsToOrder,
-              };
+        const orderData = {
+          customer: name || phone,
+          phone,
+          wilaya,
+          address,
+          note: document.getElementById("co-note").value.trim(),
+          items: itemsToOrder,
+        };
 
-              const btn = document.getElementById("confirm-btn");
-              btn.disabled = true;
-              btn.innerHTML =
-                '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> En cours...';
+        const btn = document.getElementById("confirm-btn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> En cours...';
 
-              try {
-                const result = await OrdersAPI.place(orderData);
+        try {
+          const result = await OrdersAPI.place(orderData);
 
-                document.getElementById("checkout-form").style.display = "none";
-                const box = document.getElementById("success-box");
-                box.innerHTML = `
+          document.getElementById("checkout-form").style.display = "none";
+          const box = document.getElementById("success-box");
+          box.innerHTML = `
                   <div style="color:var(--green-dark);margin-bottom:0.75rem;"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
                   <h2 style="color:var(--green-dark);margin-bottom:0.4rem;font-size:1.2rem;">Commande confirmée !</h2>
                   <p style="color:var(--gray-700);font-size:0.9rem;margin-bottom:0.3rem;">Merci <strong>${orderData.customer}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
@@ -1711,19 +1916,19 @@
                   <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1rem;">${address}</p>
                   <a href="/" style="display:inline-block;padding:0.65rem 1.75rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;font-size:0.9rem;">Retour à la boutique</a>
                 `;
-                box.classList.add("show");
-                box.scrollIntoView({ behavior: "smooth", block: "center" });
-                cart = [];
-                updateCartUI();
-              } catch (e) {
-                showToast("Erreur : " + e.message);
-                btn.disabled = false;
-                btn.innerHTML =
-                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmer la Commande';
-              }
-            }
+          box.classList.add("show");
+          box.scrollIntoView({ behavior: "smooth", block: "center" });
+          cart = [];
+          updateCartUI();
+        } catch (e) {
+          showToast("Erreur : " + e.message);
+          btn.disabled = false;
+          btn.innerHTML =
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmer la Commande';
+        }
+      }
 
-            loadProduct();
+      loadProduct();
     </script>
   </body>
 </html>

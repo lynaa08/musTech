@@ -6330,6 +6330,27 @@
       } else {
         initAll();
       }
+
+      // Handle redirects from product.html via sessionStorage
+      async function handleSessionRedirect() {
+        const modal = sessionStorage.getItem("openModal");
+        const page = sessionStorage.getItem("goPage");
+        sessionStorage.removeItem("openModal");
+        sessionStorage.removeItem("goPage");
+        if (modal === "login-modal") {
+          openModal("login-modal");
+        } else if (modal === "my-orders") {
+          openMyOrders();
+        }
+        if (page === "favorites") {
+          showPage("favorites");
+        }
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", handleSessionRedirect);
+      } else {
+        setTimeout(handleSessionRedirect, 300);
+      }
     </script>
   </body>
 </html>
