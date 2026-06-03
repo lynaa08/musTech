@@ -4741,7 +4741,9 @@
         fd.append("variant_prices", JSON.stringify(variantPrices));
         fd.append("description", desc);
         if (imgInput && imgInput.files.length > 0) {
-          fd.append("images", imgInput.files[0]);
+          for (const file of imgInput.files) {
+            fd.append("images", file);
+          }
         }
 
         try {
