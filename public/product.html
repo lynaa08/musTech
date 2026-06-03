@@ -18,6 +18,7 @@
         --gray-700: #2e2e38;
         --gray-900: #111118;
         --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.09);
+        --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
         --radius: 14px;
         --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -35,6 +36,7 @@
         min-height: 100vh;
       }
 
+      /* NAV */
       nav {
         position: sticky;
         top: 0;
@@ -84,34 +86,36 @@
       }
 
       .page {
-        max-width: 1140px;
+        max-width: 1100px;
         margin: 2.5rem auto;
         padding: 0 1.25rem;
       }
 
-      /* TWO COLUMN LAYOUT */
+      /* CARD */
       .card {
         background: #fff;
         border-radius: 20px;
         box-shadow: var(--shadow-md);
+        overflow: visible;
         display: grid;
-        grid-template-columns: 420px 1fr;
-        overflow: hidden;
+        grid-template-columns: 460px 1fr;
       }
 
-      /* LEFT IMAGE */
+      /* LEFT: IMAGE */
       .img-section {
         background: linear-gradient(135deg, var(--gray-50), var(--green-light));
         position: relative;
-        padding: 1.5rem 1.5rem 1.25rem;
+        padding: 1.5rem 1.75rem 1.25rem;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: flex-start;
         border-right: 1px solid var(--gray-100);
+        border-radius: 20px 0 0 20px;
       }
       .img-wrap {
         width: 100%;
-        max-width: 380px;
+        max-width: 400px;
         aspect-ratio: 1/1;
         display: flex;
         align-items: center;
@@ -149,26 +153,30 @@
         flex-wrap: wrap;
         margin-top: 0.85rem;
         justify-content: center;
+        align-items: center;
       }
       .thumb {
-        width: 56px;
-        height: 56px;
+        width: 64px;
+        height: 64px;
         object-fit: cover;
         border-radius: 10px;
         cursor: pointer;
         border: 2px solid transparent;
         transition: 0.2s;
         background: #fff;
+        flex-shrink: 0;
+        display: block;
       }
       .thumb.active {
         border-color: var(--green);
       }
 
-      /* RIGHT INFO + FORM */
+      /* RIGHT: INFO */
       .info {
-        padding: 1.75rem 1.75rem 1.75rem;
+        padding: 2rem 2rem 2rem;
         display: flex;
         flex-direction: column;
+        gap: 0;
         overflow-y: auto;
       }
       .cat {
@@ -180,40 +188,44 @@
         margin-bottom: 0.3rem;
       }
       .pname {
-        font-size: 1.55rem;
+        font-size: 1.65rem;
         font-weight: 900;
         line-height: 1.2;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
       }
       .desc {
         font-size: 0.88rem;
         color: var(--gray-500);
-        line-height: 1.65;
-        margin-bottom: 0.9rem;
+        line-height: 1.7;
+        margin-bottom: 1rem;
       }
 
-      /* VARIANTS + STOCK */
+      /* VARIANTS + STOCK ROW */
       .variants-stock-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
-        margin-bottom: 0.9rem;
+        margin-bottom: 1.1rem;
         flex-wrap: wrap;
+      }
+      .variants-left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
       }
       .vlabel {
         font-size: 0.78rem;
         font-weight: 700;
         color: var(--gray-700);
-        margin-bottom: 0.35rem;
       }
       .variants {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.45rem;
         flex-wrap: wrap;
       }
       .vchip {
-        padding: 0.35rem 0.85rem;
+        padding: 0.38rem 0.9rem;
         border-radius: 50px;
         border: 2px solid var(--gray-100);
         background: #fff;
@@ -228,21 +240,23 @@
         border-color: var(--green);
         color: #fff;
       }
+
+      /* STOCK ICON BADGE */
       .stock-icon-badge {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.4rem 0.8rem;
+        padding: 0.45rem 0.85rem;
         border-radius: 50px;
-        font-size: 0.76rem;
+        font-size: 0.78rem;
         font-weight: 700;
         flex-shrink: 0;
         border: 2px solid;
         white-space: nowrap;
       }
       .stock-icon-badge svg {
-        width: 13px;
-        height: 13px;
+        width: 14px;
+        height: 14px;
         flex-shrink: 0;
       }
       .stock-in {
@@ -261,36 +275,38 @@
         border-color: #fca5a5;
       }
 
-      /* PRICE + QTY */
+      /* PRICE */
       .price-row {
         display: flex;
         align-items: baseline;
         gap: 0.55rem;
-        margin-bottom: 0.9rem;
+        margin-bottom: 1.1rem;
       }
       .pmain {
-        font-size: 1.9rem;
+        font-size: 2rem;
         font-weight: 900;
         color: var(--gray-900);
       }
       .pold {
-        font-size: 0.92rem;
+        font-size: 0.95rem;
         color: var(--gray-300);
         text-decoration: line-through;
       }
       .pdiscount {
-        font-size: 0.76rem;
+        font-size: 0.78rem;
         font-weight: 700;
         color: #ff4b6e;
         background: #fee2e2;
-        padding: 0.2rem 0.55rem;
+        padding: 0.2rem 0.6rem;
         border-radius: 50px;
       }
+
+      /* QTY */
       .qty-row {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.1rem;
       }
       .qlabel {
         font-size: 0.8rem;
@@ -306,11 +322,11 @@
         background: #fff;
       }
       .qbtn {
-        width: 34px;
-        height: 34px;
+        width: 36px;
+        height: 36px;
         border: none;
         background: transparent;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         cursor: pointer;
         color: var(--gray-700);
         transition: background 0.15s;
@@ -319,10 +335,10 @@
         background: var(--gray-50);
       }
       .qval {
-        width: 32px;
+        width: 34px;
         text-align: center;
         font-weight: 700;
-        font-size: 0.92rem;
+        font-size: 0.95rem;
       }
       .qtotal {
         font-size: 0.88rem;
@@ -330,49 +346,63 @@
         color: var(--green-dark);
       }
 
-      /* DIVIDER */
-      .divider {
-        height: 1px;
-        background: var(--gray-100);
-        margin: 0.85rem 0;
+      /* CHECKOUT FORM */
+      .checkout-form {
+        background: var(--gray-50);
+        border-radius: 14px;
+        padding: 1.25rem;
+        margin-bottom: 0;
       }
-
-      /* FORM SECTION */
-      .form-section {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-      .form-title {
-        font-size: 0.78rem;
+      .checkout-form h4 {
+        font-size: 0.95rem;
         font-weight: 800;
+        margin-bottom: 0.85rem;
+        color: var(--gray-900);
+      }
+      .order-summary-mini {
+        background: #fff;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.85rem;
+        border: 1px solid var(--gray-100);
+      }
+      .orow {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        padding: 0.18rem 0;
         color: var(--gray-700);
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        margin-bottom: 0.1rem;
+      }
+      .orow.total {
+        font-weight: 800;
+        border-top: 1px solid var(--gray-100);
+        margin-top: 0.4rem;
+        padding-top: 0.55rem;
+        color: var(--gray-900);
       }
       .frow {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.6rem;
+        gap: 0.65rem;
+        margin-bottom: 0.65rem;
       }
       .fgroup {
         display: flex;
         flex-direction: column;
-        gap: 0.28rem;
+        gap: 0.3rem;
       }
       .fgroup label {
-        font-size: 0.75rem;
+        font-size: 0.78rem;
         font-weight: 700;
         color: var(--gray-700);
       }
       .fgroup input,
       .fgroup select,
       .fgroup textarea {
-        padding: 0.52rem 0.8rem;
+        padding: 0.55rem 0.8rem;
         border: 1.5px solid var(--gray-100);
         border-radius: 10px;
-        font-size: 0.87rem;
+        font-size: 0.88rem;
         font-family: inherit;
         width: 100%;
         outline: none;
@@ -383,73 +413,6 @@
       .fgroup select:focus,
       .fgroup textarea:focus {
         border-color: var(--green);
-        box-shadow: 0 0 0 3px rgba(62, 207, 110, 0.1);
-      }
-
-      /* DELIVERY TYPE TOGGLE */
-      .delivery-toggle {
-        display: flex;
-        gap: 0.5rem;
-      }
-      .del-option {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-        padding: 0.7rem 0.85rem;
-        border-radius: 12px;
-        cursor: pointer;
-        border: 2px solid var(--gray-100);
-        background: #fff;
-        transition: all 0.2s;
-      }
-      .del-option.active {
-        border-color: var(--green);
-        background: var(--green-light);
-      }
-      .del-option svg {
-        width: 18px;
-        height: 18px;
-        flex-shrink: 0;
-        transition: stroke 0.2s;
-      }
-      .del-option .del-title {
-        font-size: 0.84rem;
-        font-weight: 700;
-        color: var(--gray-700);
-        transition: color 0.2s;
-      }
-      .del-option .del-sub {
-        font-size: 0.7rem;
-        color: var(--gray-500);
-      }
-      .del-option.active .del-title {
-        color: var(--green-dark);
-      }
-      .del-option.active svg {
-        stroke: var(--green-dark);
-      }
-
-      /* ORDER SUMMARY */
-      .order-summary-mini {
-        background: #fff;
-        border-radius: 10px;
-        padding: 0.7rem 0.9rem;
-        border: 1px solid var(--gray-100);
-      }
-      .orow {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.84rem;
-        padding: 0.15rem 0;
-        color: var(--gray-700);
-      }
-      .orow.total {
-        font-weight: 800;
-        border-top: 1px solid var(--gray-100);
-        margin-top: 0.35rem;
-        padding-top: 0.5rem;
-        color: var(--gray-900);
       }
 
       /* BUTTONS */
@@ -472,6 +435,7 @@
         background: var(--green-dark);
         color: #fff;
         box-shadow: 0 4px 14px rgba(31, 173, 82, 0.3);
+        margin-bottom: 0.6rem;
       }
       .btn-confirm:hover {
         background: #178a3f;
@@ -482,6 +446,8 @@
         cursor: not-allowed;
         transform: none !important;
       }
+
+      /* SHARE ROW — icon buttons */
       .share-row {
         display: flex;
         gap: 0.5rem;
@@ -495,7 +461,7 @@
         background: var(--gray-50);
         border: 1.5px solid var(--gray-100);
         border-radius: 50px;
-        padding: 0.52rem 0.9rem;
+        padding: 0.55rem 0.9rem;
         font-size: 0.82rem;
         font-weight: 600;
         color: var(--gray-700);
@@ -505,10 +471,11 @@
       }
       .share-icon-btn:hover {
         background: var(--gray-100);
+        border-color: var(--gray-300);
       }
       .share-icon-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 15px;
+        height: 15px;
         flex-shrink: 0;
       }
 
@@ -518,6 +485,7 @@
         padding: 2rem;
         background: var(--green-light);
         border-radius: 14px;
+        margin-top: 1rem;
         display: none;
       }
       .success-box.show {
@@ -544,6 +512,7 @@
           transform: rotate(360deg);
         }
       }
+
       .toast {
         position: fixed;
         bottom: 2rem;
@@ -564,355 +533,35 @@
         opacity: 1;
       }
 
-      /* ── VARIANT QTY GRID ── */
-      .vqty-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-        margin-top: 0.4rem;
-      }
-      .vqty-row {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.45rem 0.7rem;
-        border-radius: 10px;
-        border: 1.5px solid var(--gray-100);
-        background: #fff;
-        transition:
-          border-color 0.2s,
-          background 0.2s;
-      }
-      .vqty-row.has-qty {
-        border-color: var(--green);
-        background: var(--green-light);
-      }
-      .vqty-label {
-        flex: 1;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--gray-700);
-      }
-      .vqty-price {
-        font-size: 0.78rem;
-        color: var(--gray-500);
-        min-width: 70px;
-        text-align: right;
-      }
-      .vqty-ctrl {
-        display: flex;
-        align-items: center;
-        border: 1.5px solid var(--gray-100);
-        border-radius: 50px;
-        overflow: hidden;
-        background: #fff;
-      }
-      .vqty-row.has-qty .vqty-ctrl {
-        border-color: var(--green);
-      }
-      .vqty-ctrl button {
-        width: 30px;
-        height: 30px;
-        border: none;
-        background: transparent;
-        font-size: 1rem;
-        cursor: pointer;
-        color: var(--gray-700);
-        transition: background 0.15s;
-      }
-      .vqty-ctrl button:hover {
-        background: var(--gray-50);
-      }
-      .vqty-ctrl span {
-        width: 28px;
-        text-align: center;
-        font-weight: 700;
-        font-size: 0.85rem;
-      }
-
-      /* ── ICON ALIGNMENT ── */
-      .btn-icon {
-        display: inline-flex;
-        align-items: center;
-        flex-shrink: 0;
-      }
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.45rem;
-      }
-      .btn svg,
-      .btn-icon svg {
-        flex-shrink: 0;
-      }
-      .back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-      }
-      .cart-fab {
-        display: none;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .cart-fab svg {
-        flex-shrink: 0;
-      }
-      .cart-panel-header h3 {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .form-title {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-      }
-
-      /* ── CART BUTTON ── */
-      .btn-add-cart {
-        background: #fff;
-        color: var(--green-dark);
-        border: 2px solid var(--green);
-        box-shadow: none;
-      }
-      .btn-add-cart:hover {
-        background: var(--green-light);
-        transform: translateY(-1px);
-      }
-      .btn-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      .btn-row .btn {
-        flex: 1;
-      }
-
-      /* ── CART PANEL (floating sidebar) ── */
-      .cart-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.35);
-        z-index: 200;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.25s;
-      }
-      .cart-overlay.open {
-        opacity: 1;
-        pointer-events: all;
-      }
-      .cart-panel {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: min(420px, 100vw);
-        background: #fff;
-        z-index: 201;
-        display: flex;
-        flex-direction: column;
-        box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12);
-        transform: translateX(100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .cart-panel.open {
-        transform: translateX(0);
-      }
-      .cart-panel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1.1rem 1.25rem;
-        border-bottom: 1px solid var(--gray-100);
-        flex-shrink: 0;
-      }
-      .cart-panel-header h3 {
-        font-size: 1rem;
-        font-weight: 800;
-      }
-      .cart-close {
-        background: var(--gray-50);
-        border: none;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        font-size: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--gray-700);
-      }
-      .cart-close:hover {
+      /* DIVIDER */
+      .divider {
+        height: 1px;
         background: var(--gray-100);
-      }
-      .cart-panel-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 0.75rem 1.25rem;
-      }
-      .cart-item-row {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.7rem 0;
-        border-bottom: 1px solid var(--gray-100);
-      }
-      .cart-item-icon {
-        width: 46px;
-        height: 46px;
-        background: var(--green-light);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        flex-shrink: 0;
-        overflow: hidden;
-      }
-      .cart-item-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        padding: 4px;
-      }
-      .cart-item-info {
-        flex: 1;
-        min-width: 0;
-      }
-      .cart-item-name {
-        font-weight: 700;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .cart-item-sub {
-        font-size: 0.73rem;
-        color: var(--gray-500);
-      }
-      .cart-item-qctrl {
-        display: flex;
-        align-items: center;
-        border: 1.5px solid var(--gray-100);
-        border-radius: 50px;
-        overflow: hidden;
-      }
-      .cart-item-qctrl button {
-        width: 28px;
-        height: 28px;
-        border: none;
-        background: transparent;
-        font-size: 1rem;
-        cursor: pointer;
-        color: var(--gray-700);
-      }
-      .cart-item-qctrl button:hover {
-        background: var(--gray-50);
-      }
-      .cart-item-qctrl span {
-        width: 24px;
-        text-align: center;
-        font-size: 0.82rem;
-        font-weight: 700;
-      }
-      .cart-item-price {
-        font-weight: 700;
-        color: var(--green-dark);
-        font-size: 0.87rem;
-        white-space: nowrap;
-      }
-      .cart-item-del {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--gray-300);
-        font-size: 1rem;
-        padding: 0 0.2rem;
-      }
-      .cart-item-del:hover {
-        color: #ff4b6e;
-      }
-      .cart-empty-msg {
-        text-align: center;
-        padding: 2.5rem 1rem;
-        color: var(--gray-500);
-        font-size: 0.9rem;
-      }
-      .cart-panel-footer {
-        padding: 1rem 1.25rem;
-        border-top: 1px solid var(--gray-100);
-        flex-shrink: 0;
-      }
-      .cart-totals {
-        margin-bottom: 0.75rem;
-      }
-      .cart-totals .orow {
-        padding: 0.2rem 0;
+        margin: 1rem 0;
       }
 
-      /* floating cart button in nav area */
-      .cart-fab {
-        position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
-        z-index: 150;
-        background: var(--green-dark);
-        color: #fff;
-        border: none;
-        border-radius: 50px;
-        padding: 0.7rem 1.2rem;
-        font-size: 0.92rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: none;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 6px 20px rgba(31, 173, 82, 0.35);
-        font-family: inherit;
-        transition: all 0.25s;
-      }
-      .cart-fab:hover {
-        background: #178a3f;
-        transform: translateY(-2px);
-      }
-      .cart-fab.visible {
-        display: flex;
-      }
-      .cart-fab-badge {
-        background: #fff;
-        color: var(--green-dark);
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 800;
-        padding: 0 0.45rem;
-        min-width: 20px;
-        text-align: center;
-      }
-
-      @media (max-width: 860px) {
+      @media (max-width: 820px) {
         .card {
           grid-template-columns: 1fr;
         }
         .img-section {
           border-right: none;
           border-bottom: 1px solid var(--gray-100);
+          border-radius: 20px 20px 0 0;
+          padding: 1.25rem;
         }
         .img-wrap {
-          max-width: 260px;
+          max-width: 280px;
           font-size: 6rem;
         }
         .info {
-          padding: 1.25rem;
+          padding: 1.25rem 1.25rem 1.5rem;
         }
         .pname {
-          font-size: 1.3rem;
+          font-size: 1.35rem;
         }
         .pmain {
-          font-size: 1.6rem;
+          font-size: 1.75rem;
         }
         .frow {
           grid-template-columns: 1fr;
@@ -936,21 +585,20 @@
         >M<span class="dot"></span>T &nbsp;Mus Tech</a
       >
       <a href="/" class="back-btn"
-        ><span style="display: inline-flex; align-items: center; gap: 0.3rem"
-          ><svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-          Retour</span
-        ></a
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Retour</a
       >
     </nav>
 
@@ -968,230 +616,7 @@
       let currentVariant = 0;
       let currentQty = 1;
       let WILAYAS = [];
-      let deliveryType = "domicile";
-
-      const BUREAU_OFFICES = {
-        yalidine: [
-          "Alger - Hussein Dey",
-          "Alger - Bab Ezzouar",
-          "Alger - Dar El Beida",
-          "Alger - Rouiba",
-          "Alger - Birtouta",
-          "Oran - Oran Centre",
-          "Oran - Es Senia",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Tlemcen - Tlemcen Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Boumerdès - Boumerdès Centre",
-          "Tipaza - Tipaza Centre",
-          "Médéa - Médéa Centre",
-          "Chlef - Chlef Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Ouargla - Ouargla Centre",
-          "Ghardaïa - Ghardaïa Centre",
-          "El Oued - El Oued Centre",
-          "Msila - Msila Centre",
-          "Bordj Bou Arréridj - BBA Centre",
-          "Mila - Mila Centre",
-          "Djelfa - Djelfa Centre",
-          "Laghouat - Laghouat Centre",
-          "Tébessa - Tébessa Centre",
-          "Souk Ahras - Souk Ahras Centre",
-          "Adrar - Adrar Centre",
-          "Tamanrasset - Tamanrasset Centre",
-          "In Salah - In Salah Centre",
-          "Djanet - Djanet Centre",
-          "Illizi - Illizi Centre",
-          "Touggourt - Touggourt Centre",
-          "Mostaganem - Mostaganem Centre",
-          "Tiaret - Tiaret Centre",
-          "Sidi Bel Abbès - SBA Centre",
-          "Mascara - Mascara Centre",
-          "Aïn Defla - Aïn Defla Centre",
-          "Aïn Témouchent - Aïn Témouchent Centre",
-        ],
-        zaki: [
-          "Alger - Kouba",
-          "Alger - Bab El Oued",
-          "Alger - El Harrach",
-          "Alger - Hydra",
-          "Oran - Oran Centre",
-          "Oran - Bir El Djir",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Tlemcen - Tlemcen Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Msila - Msila Centre",
-          "Bordj Bou Arréridj - BBA Centre",
-          "Mila - Mila Centre",
-          "Chlef - Chlef Centre",
-          "Mostaganem - Mostaganem Centre",
-          "Sidi Bel Abbès - SBA Centre",
-          "El Oued - El Oued Centre",
-          "Laghouat - Laghouat Centre",
-          "Tébessa - Tébessa Centre",
-          "Souk Ahras - Souk Ahras Centre",
-        ],
-        procolis: [
-          "Alger - Bachdjarrah",
-          "Alger - Bab Ezzouar",
-          "Alger - Dar El Beida",
-          "Alger - Birtouta",
-          "Oran - Oran Centre",
-          "Oran - Es Senia",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Tlemcen - Tlemcen Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Boumerdès - Boumerdès Centre",
-          "Tipaza - Tipaza Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Msila - Msila Centre",
-          "Bordj Bou Arréridj - BBA Centre",
-          "Mila - Mila Centre",
-          "Ghardaïa - Ghardaïa Centre",
-          "El Oued - El Oued Centre",
-          "Laghouat - Laghouat Centre",
-          "Tébessa - Tébessa Centre",
-          "Guelma - Guelma Centre",
-        ],
-        noest: [
-          "Alger - Hussein Dey",
-          "Alger - Bab Ezzouar",
-          "Alger - El Harrach",
-          "Oran - Oran Centre",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Boumerdès - Boumerdès Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Msila - Msila Centre",
-          "Bordj Bou Arréridj - BBA Centre",
-          "Mila - Mila Centre",
-          "Chlef - Chlef Centre",
-          "Mostaganem - Mostaganem Centre",
-          "Tiaret - Tiaret Centre",
-          "Tlemcen - Tlemcen Centre",
-          "Sidi Bel Abbès - SBA Centre",
-        ],
-        eship: [
-          "Alger - Bab Ezzouar",
-          "Alger - Dar El Beida",
-          "Alger - Rouiba",
-          "Oran - Oran Centre",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Ouargla - Ouargla Centre",
-          "Ghardaïa - Ghardaïa Centre",
-          "El Oued - El Oued Centre",
-          "Msila - Msila Centre",
-        ],
-        maystro: [
-          "Alger - Kouba",
-          "Alger - Bab El Oued",
-          "Alger - Hussein Dey",
-          "Alger - Bab Ezzouar",
-          "Oran - Oran Centre",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Tlemcen - Tlemcen Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Boumerdès - Boumerdès Centre",
-          "Chlef - Chlef Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Msila - Msila Centre",
-          "Ghardaïa - Ghardaïa Centre",
-          "El Oued - El Oued Centre",
-          "Ouargla - Ouargla Centre",
-        ],
-        dhlex: [
-          "Alger - El Harrach",
-          "Alger - Bab Ezzouar",
-          "Alger - Dar El Beida",
-          "Oran - Oran Centre",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Msila - Msila Centre",
-        ],
-        guepex: [
-          "Alger - Bachdjarrah",
-          "Alger - Bab Ezzouar",
-          "Alger - Hussein Dey",
-          "Alger - El Harrach",
-          "Oran - Oran Centre",
-          "Oran - Bir El Djir",
-          "Constantine - Constantine Centre",
-          "Annaba - Annaba Centre",
-          "Blida - Blida Centre",
-          "Sétif - Sétif Centre",
-          "Batna - Batna Centre",
-          "Tlemcen - Tlemcen Centre",
-          "Béjaïa - Béjaïa Centre",
-          "Tizi Ouzou - Tizi Ouzou Centre",
-          "Boumerdès - Boumerdès Centre",
-          "Chlef - Chlef Centre",
-          "Skikda - Skikda Centre",
-          "Biskra - Biskra Centre",
-          "Djelfa - Djelfa Centre",
-          "Msila - Msila Centre",
-          "Bordj Bou Arréridj - BBA Centre",
-          "Mila - Mila Centre",
-          "Ghardaïa - Ghardaïa Centre",
-          "El Oued - El Oued Centre",
-          "Ouargla - Ouargla Centre",
-          "Laghouat - Laghouat Centre",
-          "Tébessa - Tébessa Centre",
-          "Souk Ahras - Souk Ahras Centre",
-          "Guelma - Guelma Centre",
-          "Mostaganem - Mostaganem Centre",
-          "Tiaret - Tiaret Centre",
-          "Sidi Bel Abbès - SBA Centre",
-          "Mascara - Mascara Centre",
-          "Aïn Defla - Aïn Defla Centre",
-          "Aïn Témouchent - Aïn Témouchent Centre",
-        ],
-      };
+      let cart = JSON.parse(localStorage.getItem("mt_cart") || "[]");
 
       function showToast(msg) {
         const t = document.getElementById("toast");
@@ -1208,77 +633,18 @@
         el.classList.add("active");
       }
 
-      // variantQtys[variantIndex] = qty (0 = not selected)
-      let variantQtys = [];
-
-      function renderVariantQtyList() {
-        if (!product) return;
-        const container = document.getElementById("variant-qty-list");
-        if (!container) return;
-        container.innerHTML =
-          '<div class="vqty-list">' +
-          product.variants
-            .map((v, i) => {
-              const price =
-                product.variantPrices[i] ?? product.variantPrices[0];
-              const qty = variantQtys[i] || 0;
-              return `<div class="vqty-row ${qty > 0 ? "has-qty" : ""}" id="vqrow-${i}">
-              <span class="vqty-label">${v}</span>
-              <span class="vqty-price">${price.toLocaleString()} DA</span>
-              <div class="vqty-ctrl">
-                <button onclick="changeVariantQty(${i},-1)">−</button>
-                <span id="vq-${i}">${qty}</span>
-                <button onclick="changeVariantQty(${i},1)">+</button>
-              </div>
-            </div>`;
-            })
-            .join("") +
-          "</div>";
-      }
-
-      function changeVariantQty(index, delta) {
-        variantQtys[index] = Math.max(0, (variantQtys[index] || 0) + delta);
-        const qty = variantQtys[index];
-        const span = document.getElementById("vq-" + index);
-        const row = document.getElementById("vqrow-" + index);
-        if (span) span.textContent = qty;
-        if (row) row.classList.toggle("has-qty", qty > 0);
-
-        // Update price display to show first selected, or first variant
-        const firstSelected = variantQtys.findIndex((q) => q > 0);
-        const showIdx = firstSelected >= 0 ? firstSelected : 0;
-        currentVariant = showIdx;
-        currentQty = variantQtys[showIdx] || 1;
-        updatePrice();
-        updateSelectionSummary();
-        updateOrderSummary();
-      }
-
-      function updateSelectionSummary() {
-        const bar = document.getElementById("cart-selection-summary");
-        if (!bar) return;
-        const selected = variantQtys
-          .map((q, i) => ({ q, i }))
-          .filter((x) => x.q > 0);
-        if (selected.length === 0) {
-          bar.style.display = "none";
-          return;
-        }
-        bar.style.display = "";
-        bar.textContent =
-          "Sélection : " +
-          selected.map((x) => `${product.variants[x.i]} ×${x.q}`).join(" + ");
-      }
-
-      // Keep backward compat
       function selectVariant(index) {
         currentVariant = index;
+        document
+          .querySelectorAll(".vchip")
+          .forEach((c, i) => c.classList.toggle("active", i === index));
         updatePrice();
         updateOrderSummary();
       }
 
       function changeQty(delta) {
         currentQty = Math.max(1, currentQty + delta);
+        document.getElementById("qval").textContent = currentQty;
         updatePrice();
         updateOrderSummary();
       }
@@ -1289,26 +655,14 @@
           product.variantPrices[currentVariant] ?? product.variantPrices[0];
         document.getElementById("price-main").textContent =
           price.toLocaleString() + " DA";
-        // Show total of all selected variants
-        const totalAll = variantQtys.reduce(
-          (s, q, i) =>
-            s + q * (product.variantPrices[i] ?? product.variantPrices[0]),
-          0,
-        );
-        const label = document.getElementById("selected-total-label");
-        if (label) {
-          const count = variantQtys.reduce((s, q) => s + q, 0);
-          label.textContent =
-            count > 0
-              ? `Total sélection : ${totalAll.toLocaleString()} DA`
-              : "";
-        }
+        document.getElementById("qtotal").textContent =
+          (price * currentQty).toLocaleString() + " DA";
       }
 
       function copyLink() {
         navigator.clipboard
           .writeText(window.location.href)
-          .then(() => showToast("Lien copié"))
+          .then(() => showToast("Lien copié !"))
           .catch(() => prompt("Copiez ce lien:", window.location.href));
       }
 
@@ -1318,48 +672,7 @@
         else copyLink();
       }
 
-      // ── DELIVERY TYPE ─────────────────────────────────────────
-      function setDelivery(type) {
-        deliveryType = type;
-        const domEl = document.getElementById("del-domicile");
-        const burEl = document.getElementById("del-bureau");
-        const bureauFields = document.getElementById("bureau-fields");
-        const domFields = document.getElementById("domicile-fields");
-
-        if (type === "domicile") {
-          domEl.classList.add("active");
-          burEl.classList.remove("active");
-          bureauFields.style.display = "none";
-          domFields.style.display = "flex";
-        } else {
-          burEl.classList.add("active");
-          domEl.classList.remove("active");
-          bureauFields.style.display = "flex";
-          domFields.style.display = "none";
-        }
-        updateOrderSummary();
-      }
-
-      function updateBureauOffices() {
-        const company = document.getElementById("co-company")?.value;
-        const officeSelect = document.getElementById("co-office");
-        if (!officeSelect) return;
-        officeSelect.innerHTML =
-          '<option value="">-- Choisir le bureau --</option>';
-        if (company && BUREAU_OFFICES[company]) {
-          BUREAU_OFFICES[company].forEach((office) => {
-            const o = document.createElement("option");
-            o.value = office;
-            o.textContent = office;
-            officeSelect.appendChild(o);
-          });
-          officeSelect.style.display = "block";
-        } else {
-          officeSelect.style.display = "none";
-        }
-      }
-
-      // ── WILAYA + SUMMARY ──────────────────────────────────────
+      // ── CHECKOUT ─────────────────────────────────────────────
       function populateWilayas() {
         const sel = document.getElementById("co-wilaya");
         if (!sel || sel.options.length > 1) return;
@@ -1385,187 +698,155 @@
 
       function updateOrderSummary() {
         if (!product) return;
+        const price =
+          product.variantPrices[currentVariant] ?? product.variantPrices[0];
+        const variant = product.variants[currentVariant] || "Standard";
+        const subtotal = price * currentQty;
         const sel = document.getElementById("co-wilaya");
         const shipping = sel ? parseInt(sel.value) || 0 : 0;
         const wilayaName =
           sel && sel.selectedIndex > 0
             ? sel.options[sel.selectedIndex].dataset.name
             : "—";
-        const typeLabel =
-          deliveryType === "bureau" ? "Au Bureau" : "À Domicile";
         const summary = document.getElementById("order-summary-mini");
-        if (!summary) return;
-
-        // Use full cart if it has items; otherwise just the current product
-        const itemsSource =
-          typeof cart !== "undefined" && cart.length > 0
-            ? cart
-            : [
-                {
-                  productData: product,
-                  variantIndex: currentVariant,
-                  qty: currentQty,
-                },
-              ];
-
-        const itemsHtml = itemsSource
-          .map((item) => {
-            const p = item.productData;
-            const price =
-              (p.variantPrices[item.variantIndex] ?? p.variantPrices[0]) *
-              item.qty;
-            return `<div class="orow"><span>${p.name} (${p.variants[item.variantIndex] || "Standard"}) ×${item.qty}</span><span>${price.toLocaleString()} DA</span></div>`;
-          })
-          .join("");
-
-        const subtotal = itemsSource.reduce((s, item) => {
-          const p = item.productData;
-          return (
-            s +
-            (p.variantPrices[item.variantIndex] ?? p.variantPrices[0]) *
-              item.qty
-          );
-        }, 0);
-
-        summary.innerHTML =
-          itemsHtml +
-          `<div class="orow"><span>Livraison ${typeLabel} (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
-           <div class="orow total"><span>Total</span><span>${(subtotal + shipping).toLocaleString()} DA</span></div>`;
+        if (summary)
+          summary.innerHTML = `
+          <div class="orow"><span>${product.name} (${variant}) ×${currentQty}</span><span>${subtotal.toLocaleString()} DA</span></div>
+          <div class="orow"><span>Livraison (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
+          <div class="orow total"><span>Total</span><span>${(subtotal + shipping).toLocaleString()} DA</span></div>`;
       }
 
-      // ── PLACE ORDER ───────────────────────────────────────────
       async function placeOrder() {
         const name = document.getElementById("co-name").value.trim();
         const phone = document.getElementById("co-phone").value.trim();
-        const wilEl = document.getElementById("co-wilaya");
-        const wilaya = wilEl.options[wilEl.selectedIndex]?.dataset.name || "";
+        const wilayaEl = document.getElementById("co-wilaya");
+        const wilaya =
+          wilayaEl.options[wilayaEl.selectedIndex]?.dataset.name || "";
+        const address = document.getElementById("co-address").value.trim();
         const note = document.getElementById("co-note").value.trim();
-
-        if (!phone || !wilaya) {
-          showToast("Téléphone et Wilaya sont obligatoires");
+        if (!name || !phone || !wilaya || !address) {
+          showToast("Veuillez remplir tous les champs *");
           return;
         }
-
-        let address = "";
-        if (deliveryType === "bureau") {
-          const compEl = document.getElementById("co-company");
-          const offEl = document.getElementById("co-office");
-          const company = compEl?.options[compEl.selectedIndex]?.text || "";
-          const office = offEl?.value || "";
-          if (!company || !office) {
-            showToast("Choisissez la société et le bureau");
-            return;
-          }
-          address = "Bureau — " + company + " — " + office;
-        } else {
-          address =
-            "Domicile — " +
-            (document.getElementById("co-address").value.trim() || "—");
-        }
-
         const orderData = {
-          customer: name || phone,
+          customer: name,
           phone,
           wilaya,
           address,
           note,
           items: [{ id: product.id, variant: currentVariant, qty: currentQty }],
         };
-
         const btn = document.getElementById("confirm-btn");
         btn.disabled = true;
-        btn.innerHTML =
-          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> En cours...';
-
+        btn.textContent = "En cours...";
         try {
           const res = await OrdersAPI.place(orderData);
-          // save guest order
+          // Save order ref locally so user can track without account
           try {
             const saved = JSON.parse(
               localStorage.getItem("mt_guest_orders") || "[]",
             );
             saved.unshift({
-              id: res.id,
               order_ref: res.order_ref || "#MT-" + res.id,
-              customer: orderData.customer,
+              id: res.id,
+              status: res.status || "pending",
+              created_at: res.created_at || new Date().toISOString(),
+              wilaya: orderData.wilaya,
+              total: res.total,
+              items: res.items || orderData.items,
+              customer: name,
               phone,
-              wilaya,
-              items: [{ name: product.name, qty: currentQty }],
-              total: res.total || 0,
-              status: "pending",
-              created_at: new Date().toISOString(),
             });
             localStorage.setItem(
               "mt_guest_orders",
-              JSON.stringify(saved.slice(0, 20)),
+              JSON.stringify(saved.slice(0, 50)),
             );
           } catch (e) {}
-
           document.getElementById("checkout-form").style.display = "none";
           document.getElementById("share-actions").style.display = "none";
           const box = document.getElementById("success-box");
           box.innerHTML = `
-            <div style="color:var(--green-dark);margin-bottom:0.75rem;"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
-            <h2 style="color:var(--green-dark);margin-bottom:0.4rem;font-size:1.2rem;">Commande confirmée !</h2>
-            <p style="color:var(--gray-700);font-size:0.9rem;margin-bottom:0.3rem;">Merci <strong>${orderData.customer}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
-            <p style="color:var(--green-dark);font-weight:800;font-size:1.05rem;margin:0.6rem 0;">${res.order_ref || "#MT-" + res.id}</p>
-            <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1rem;">${address}</p>
-            <a href="/" style="display:inline-block;padding:0.65rem 1.75rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;font-size:0.9rem;"><span style="display:inline-flex;align-items:center;gap:0.4rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Retour à la boutique</span></a>`;
+            <div style="margin-bottom:1rem;"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-dark)"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
+            <h2 style="color:var(--green-dark);margin-bottom:0.5rem;">Commande confirmée !</h2>
+            <p style="color:var(--gray-700);margin-bottom:0.25rem;">Merci <strong>${name}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
+            <p style="color:var(--green-dark);font-weight:700;font-size:1.1rem;margin:0.75rem 0;">${res.order_ref || "#MT-" + res.id}</p>
+            <a href="/" style="display:inline-block;margin-top:1rem;padding:0.75rem 2rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Retour à la boutique</a>`;
           box.classList.add("show");
           box.scrollIntoView({ behavior: "smooth", block: "center" });
         } catch (e) {
-          showToast("Erreur : " + e.message);
+          showToast("Erreur: " + e.message);
           btn.disabled = false;
-          btn.innerHTML =
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmer la Commande';
+          btn.textContent = "Confirmer la Commande";
         }
       }
 
-      // ── STOCK BADGE ───────────────────────────────────────────
-      function stockBadge(stock) {
+      // ── RENDER ───────────────────────────────────────────────
+      function stockIconBadge(stock) {
         if (stock > 10)
-          return `<span class="stock-icon-badge stock-in"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4L6 11l-3-3"/></svg>En stock (${stock})</span>`;
+          return `
+          <span class="stock-icon-badge stock-in">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 4L6 11l-3-3"/>
+            </svg>
+            En stock (${stock})
+          </span>`;
         if (stock > 0)
-          return `<span class="stock-icon-badge stock-low"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v5M8 11v1"/></svg>Stock limité (${stock})</span>`;
-        return `<span class="stock-icon-badge stock-out"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>Rupture</span>`;
+          return `
+          <span class="stock-icon-badge stock-low">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3v5M8 11v1"/>
+            </svg>
+            Stock limité (${stock})
+          </span>`;
+        return `
+          <span class="stock-icon-badge stock-out">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4l8 8M12 4l-8 8"/>
+            </svg>
+            Rupture
+          </span>`;
       }
 
-      // ── RENDER ────────────────────────────────────────────────
       function renderProduct(p) {
-        const images = p.images?.length ? p.images : p.img ? [p.img] : [];
-        const mainImg = images.length
-          ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1rem;"/>`
-          : `<span>${p.icon || ""}</span>`;
-        const thumbs =
+        const images =
+          p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
+        const mainImgHTML =
+          images.length > 0
+            ? `<img src="${images[0]}" id="main-img" style="width:100%;height:100%;object-fit:contain;padding:1rem;"/>`
+            : `<span>${p.icon || "🎮"}</span>`;
+        const thumbsHTML =
           images.length > 1
             ? images
                 .map(
-                  (s, i) =>
-                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${s}" onclick="switchImage(this,'${s}')"/>`,
+                  (src, i) =>
+                    `<img class="thumb ${i === 0 ? "active" : ""}" src="${src}" onclick="switchImage(this,'${src}')"/>`,
                 )
                 .join("")
             : "";
         const badgeHTML = p.badge
           ? `<div class="badge ${p.badge === "Sale" ? "sale" : ""}">${p.badge}</div>`
           : "";
-        const variantsHTML = p.variants
-          .map(
-            (v, i) =>
-              `<button class="vchip ${i === 0 ? "active" : ""}" onclick="selectVariant(${i})">${v}</button>`,
-          )
-          .join("");
-        const oldHTML = p.oldPrice
+        const variantsHTML =
+          p.variants.length > 0
+            ? p.variants
+                .map(
+                  (v, i) =>
+                    `<button class="vchip ${i === 0 ? "active" : ""}" onclick="selectVariant(${i})">${v}</button>`,
+                )
+                .join("")
+            : "";
+        const oldPriceHTML = p.oldPrice
           ? `<span class="pold">${p.oldPrice.toLocaleString()} DA</span>`
           : "";
-        const discHTML = p.oldPrice
+        const discountHTML = p.oldPrice
           ? `<span class="pdiscount">-${Math.round((1 - p.variantPrices[0] / p.oldPrice) * 100)}%</span>`
           : "";
 
-        document.title = p.name + " — Mus Tech";
         const slug = p.name
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/(^-|-$)/g, "");
+        document.title = p.name + " — Mus Tech";
         window.history.replaceState(
           {},
           "",
@@ -1574,152 +855,94 @@
 
         document.getElementById("page").innerHTML = `
         <div class="card">
-          <!-- LEFT IMAGE -->
+          <!-- LEFT: IMAGE -->
           <div class="img-section">
             ${badgeHTML}
-            <div class="img-wrap">${mainImg}</div>
-            <div class="thumbs">${thumbs}</div>
+            <div class="img-wrap">${mainImgHTML}</div>
+            <div class="thumbs">${thumbsHTML}</div>
           </div>
 
-          <!-- RIGHT -->
+          <!-- RIGHT: INFO -->
           <div class="info">
             <div class="cat">${p.cat}</div>
             <div class="pname">${p.name}</div>
             ${p.description ? `<div class="desc">${p.description}</div>` : ""}
 
+            <!-- VARIANTS + STOCK SIDE BY SIDE -->
             <div class="variants-stock-row">
-              <div style="flex:1">
-                <div class="vlabel">Choisir les options & quantités</div>
-                <div id="variant-qty-list"></div>
+              <div class="variants-left">
+                <div class="vlabel">Options</div>
+                <div class="variants">${variantsHTML}</div>
               </div>
-              ${stockBadge(p.stock)}
+              ${stockIconBadge(p.stock)}
             </div>
 
+            <!-- PRICE -->
             <div class="price-row">
               <span class="pmain" id="price-main">${p.variantPrices[0].toLocaleString()} DA</span>
-              ${oldHTML}${discHTML}
-              <span id="selected-total-label" style="font-size:0.8rem;color:var(--gray-500);margin-left:0.5rem;"></span>
+              ${oldPriceHTML}${discountHTML}
             </div>
 
-            <div id="cart-selection-summary" style="display:none;background:var(--green-light);border-radius:10px;padding:0.6rem 0.9rem;margin-bottom:0.5rem;font-size:0.82rem;color:var(--green-dark);font-weight:700;"></div>
-
-            <div class="divider"></div>
-
-            <!-- FORM -->
-            <div class="checkout-form" id="checkout-form">
-              <div class="form-section">
-                <div class="form-title"><span style="display:inline-flex;align-items:center;gap:0.4rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg> Informations de livraison</span></div>
-
-                <!-- SUMMARY -->
-                <div class="order-summary-mini" id="order-summary-mini"></div>
-
-                <!-- NOM + TEL -->
-                <div class="frow">
-                  <div class="fgroup">
-                    <label>Nom <span style="font-weight:400;color:var(--gray-400)">(facultatif)</span></label>
-                    <input id="co-name" placeholder="Ahmed Benali"/>
-                  </div>
-                  <div class="fgroup">
-                    <label>Téléphone *</label>
-                    <input id="co-phone" type="tel" placeholder="06xxxxxxxx"/>
-                  </div>
-                </div>
-
-                <!-- WILAYA -->
-                <div class="fgroup">
-                  <label>Wilaya *</label>
-                  <select id="co-wilaya"><option value="">-- Choisir votre Wilaya --</option></select>
-                </div>
-
-                <!-- DELIVERY TYPE -->
-                <div class="fgroup">
-                  <label>Type de livraison</label>
-                  <div class="delivery-toggle">
-                    <div class="del-option active" id="del-domicile" onclick="setDelivery('domicile')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                      <div>
-                        <div class="del-title">À Domicile</div>
-                        <div class="del-sub">Livré chez vous</div>
-                      </div>
-                    </div>
-                    <div class="del-option" id="del-bureau" onclick="setDelivery('bureau')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-                      <div>
-                        <div class="del-title">Au Bureau</div>
-                        <div class="del-sub">Point de retrait</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- DOMICILE FIELDS -->
-                <div id="domicile-fields" style="display:flex;flex-direction:column;gap:0.6rem;">
-                  <div class="fgroup">
-                    <label>Adresse <span style="font-weight:400;color:var(--gray-400)">(facultatif)</span></label>
-                    <input id="co-address" placeholder="Rue, quartier, commune..."/>
-                  </div>
-                </div>
-
-                <!-- BUREAU FIELDS -->
-                <div id="bureau-fields" style="display:none;flex-direction:column;gap:0.6rem;">
-                  <div class="fgroup">
-                    <label>Société de livraison *</label>
-                    <select id="co-company" onchange="updateBureauOffices()">
-                      <option value="">-- Choisir la société --</option>
-                      <option value="yalidine">Yalidine Express</option>
-                      <option value="zaki">Zaki Express</option>
-                      <option value="procolis">Procolis</option>
-                      <option value="noest">Noest Express</option>
-                      <option value="eship">eShip</option>
-                      <option value="maystro">Maystro Delivery</option>
-                      <option value="dhlex">DHlex</option>
-                      <option value="guepex">Guepex</option>
-                    </select>
-                  </div>
-                  <div class="fgroup">
-                    <label>Bureau de dépôt *</label>
-                    <select id="co-office" style="display:none">
-                      <option value="">-- Choisir le bureau --</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- NOTE -->
-                <div class="fgroup">
-                  <label>Note <span style="font-weight:400;color:var(--gray-400)">(optionnel)</span></label>
-                  <textarea id="co-note" rows="2" placeholder="Instructions spéciales..."></textarea>
-                </div>
-
-                <!-- CONFIRM -->
-                <div class="btn-row">
-                  <button class="btn btn-add-cart" onclick="addCurrentToCart()"><span class="btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></span> Ajouter au panier</button>
-                  <button class="btn btn-confirm" id="confirm-btn" onclick="placeOrder()"><span class="btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Commander</button>
-                </div>
+            <!-- QTY -->
+            <div class="qty-row">
+              <span class="qlabel">Quantité</span>
+              <div class="qctrl">
+                <button class="qbtn" onclick="changeQty(-1)">−</button>
+                <span class="qval" id="qval">1</span>
+                <button class="qbtn" onclick="changeQty(1)">+</button>
               </div>
+              <span class="qtotal" id="qtotal">${p.variantPrices[0].toLocaleString()} DA</span>
             </div>
 
-            <!-- SHARE -->
+            <!-- CHECKOUT FORM -->
+            <div class="checkout-form" id="checkout-form">
+              <h4><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Informations de livraison</h4>
+              <div class="order-summary-mini" id="order-summary-mini"></div>
+              <div class="frow">
+                <div class="fgroup"><label>Nom complet *</label><input id="co-name" placeholder="Votre nom"/></div>
+                <div class="fgroup"><label>Téléphone *</label><input id="co-phone" placeholder="06xxxxxxxx"/></div>
+              </div>
+              <div class="fgroup" style="margin-bottom:0.65rem;">
+                <label>Wilaya *</label>
+                <select id="co-wilaya"><option value="">-- Choisir --</option></select>
+              </div>
+              <div class="fgroup" style="margin-bottom:0.65rem;">
+                <label>Adresse *</label><input id="co-address" placeholder="Rue, quartier..."/>
+              </div>
+              <div class="fgroup" style="margin-bottom:0.9rem;">
+                <label>Note (optionnel)</label><textarea id="co-note" rows="2" placeholder="Instructions spéciales..."></textarea>
+              </div>
+              <button class="btn btn-confirm" id="confirm-btn" onclick="placeOrder()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmer la Commande</button>
+            </div>
+
+            <!-- SHARE BUTTONS — after confirm -->
             <div class="share-row" id="share-actions" style="margin-top:0.6rem;">
               <button class="share-icon-btn" onclick="copyLink()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
                 Copier le lien
               </button>
               <button class="share-icon-btn" onclick="shareProduct()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
                 Partager
               </button>
             </div>
 
-            <!-- SUCCESS -->
+            <!-- SUCCESS BOX -->
             <div class="success-box" id="success-box"></div>
           </div>
         </div>`;
       }
 
       async function init() {
-        const id = parseInt(
-          new URLSearchParams(window.location.search).get("id"),
-        );
+        const params = new URLSearchParams(window.location.search);
+        const id = parseInt(params.get("id"));
         if (!id) {
           document.getElementById("page").innerHTML =
             '<div class="loading">Produit introuvable. <a href="/">Retour</a></div>';
@@ -1732,8 +955,9 @@
           ]);
           WILAYAS = wilayas;
           product = p;
-          if (!product.variants?.length) product.variants = ["Standard"];
-          if (!product.variantPrices?.length)
+          if (!product.variants || !product.variants.length)
+            product.variants = ["Standard"];
+          if (!product.variantPrices || !product.variantPrices.length)
             product.variantPrices = [product.price];
           if (typeof product.variants === "string")
             product.variants = JSON.parse(product.variants);
@@ -1741,9 +965,7 @@
             product.variantPrices = JSON.parse(product.variantPrices);
           if (typeof product.images === "string")
             product.images = JSON.parse(product.images);
-          variantQtys = new Array(product.variants.length).fill(0);
           renderProduct(product);
-          renderVariantQtyList();
           populateWilayas();
         } catch (e) {
           document.getElementById("page").innerHTML =
@@ -1751,370 +973,164 @@
         }
       }
       init();
-    </script>
 
-    <!-- ── CART PANEL ── -->
-    <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
-    <div class="cart-panel" id="cart-panel">
-      <div class="cart-panel-header">
-        <h3>
-          Mon Panier (<span id="cp-count">0</span> article<span
-            id="cp-plural"></span
-          >)
-        </h3>
-        <button class="cart-close" onclick="closeCart()">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="cart-panel-body" id="cp-body">
-        <div class="cart-empty-msg">Votre panier est vide.</div>
-      </div>
-      <div class="cart-panel-footer" id="cp-footer" style="display: none">
-        <div class="cart-totals" id="cp-totals"></div>
-        <button class="btn btn-confirm" onclick="proceedToCheckout()">
-          <span class="btn-icon"
-            ><svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12" /></svg
-          ></span>
-          Passer la commande
-        </button>
-      </div>
-    </div>
-
-    <!-- ── FLOATING CART BUTTON ── -->
-    <button class="cart-fab" id="cart-fab" onclick="openCart()">
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round">
-        <circle cx="9" cy="21" r="1" />
-        <circle cx="20" cy="21" r="1" />
-        <path
-          d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-      </svg>
-      Panier <span class="cart-fab-badge" id="fab-badge">0</span>
-    </button>
-
-    <script>
-      // ── MULTI-PRODUCT CART ─────────────────────────────────────
-      // cart = [{ productData, variantIndex, qty }]
-      let cart = [];
-
-      function cartTotal() {
-        return cart.reduce((s, item) => {
-          return (
-            s +
-            (item.productData.variantPrices[item.variantIndex] ??
-              item.productData.variantPrices[0]) *
-              item.qty
-          );
-        }, 0);
-      }
-
-      function updateCartUI() {
-        const count = cart.reduce((s, i) => s + i.qty, 0);
-        document.getElementById("cp-count").textContent = count;
-        document.getElementById("cp-plural").textContent = count > 1 ? "s" : "";
-        const fab = document.getElementById("cart-fab");
-        const badge = document.getElementById("fab-badge");
-        badge.textContent = count;
-        fab.classList.toggle("visible", count > 0);
-
-        const body = document.getElementById("cp-body");
-        const footer = document.getElementById("cp-footer");
-
-        if (cart.length === 0) {
-          body.innerHTML =
-            '<div class="cart-empty-msg">Votre panier est vide.</div>';
-          footer.style.display = "none";
-          return;
-        }
-
-        body.innerHTML = cart
-          .map((item, idx) => {
-            const p = item.productData;
-            const price =
-              (p.variantPrices[item.variantIndex] ?? p.variantPrices[0]) *
-              item.qty;
-            const images = Array.isArray(p.images)
-              ? p.images
-              : p.img
-                ? [p.img]
-                : [];
-            const iconHtml = images[0]
-              ? `<img src="${images[0]}" alt="${p.name}">`
-              : p.icon || "";
-            return `
-          <div class="cart-item-row">
-            <div class="cart-item-icon">${images[0] ? `<img src="${images[0]}" alt="">` : p.icon || ""}</div>
-            <div class="cart-item-info">
-              <div class="cart-item-name">${p.name}</div>
-              <div class="cart-item-sub">${p.variants[item.variantIndex] || "Standard"}</div>
-            </div>
-            <div class="cart-item-qctrl">
-              <button onclick="cartChangeQty(${idx},-1)">−</button>
-              <span>${item.qty}</span>
-              <button onclick="cartChangeQty(${idx},1)">+</button>
-            </div>
-            <div class="cart-item-price">${price.toLocaleString()} DA</div>
-            <button class="cart-item-del" onclick="cartRemove(${idx})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-          </div>`;
-          })
-          .join("");
-
-        document.getElementById("cp-totals").innerHTML = `
-          <div class="orow"><span>Sous-total</span><span>${cartTotal().toLocaleString()} DA</span></div>
-          <div class="orow" style="font-size:0.75rem;color:var(--gray-500);"><span>Livraison calculée à l'étape suivante</span></div>`;
-        footer.style.display = "";
-      }
-
-      function cartChangeQty(idx, delta) {
-        cart[idx].qty = Math.max(1, cart[idx].qty + delta);
-        updateCartUI();
-      }
-
-      function cartRemove(idx) {
-        cart.splice(idx, 1);
-        updateCartUI();
-      }
-
-      function openCart() {
-        document.getElementById("cart-overlay").classList.add("open");
-        document.getElementById("cart-panel").classList.add("open");
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeCart() {
-        document.getElementById("cart-overlay").classList.remove("open");
-        document.getElementById("cart-panel").classList.remove("open");
-        document.body.style.overflow = "";
-      }
-
-      // Called by "Ajouter au panier" button
-      function addCurrentToCart() {
-        if (!product) return;
-        const selectedVariants = variantQtys
-          .map((q, i) => ({ q, i }))
-          .filter((x) => x.q > 0);
-        if (selectedVariants.length === 0) {
-          showToast("Choisissez au moins une option et une quantité");
-          return;
-        }
-        let addedCount = 0;
-        selectedVariants.forEach(({ q, i }) => {
-          const existing = cart.find(
-            (c) => c.productData.id === product.id && c.variantIndex === i,
-          );
-          if (existing) {
-            existing.qty += q;
-          } else {
-            cart.push({ productData: product, variantIndex: i, qty: q });
-          }
-          addedCount += q;
-        });
-        updateCartUI();
-        const varNames = selectedVariants
-          .map((x) => `${product.variants[x.i]} ×${x.q}`)
-          .join(", ");
-        showToast(`Ajouté au panier : ${varNames}`);
-        openCart();
-      }
-
-      // Replace the checkout form items with full cart contents
-      function proceedToCheckout() {
-        closeCart();
-        // Update the summary in the checkout form with all cart items
-        updateOrderSummaryFromCart();
-        document
-          .getElementById("checkout-form")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-
-      function updateOrderSummaryFromCart() {
-        const summary = document.getElementById("order-summary-mini");
-        if (!summary) return;
-        const sel = document.getElementById("co-wilaya");
-        const shipping = sel ? parseInt(sel.value) || 0 : 0;
-        const wilayaName =
-          sel && sel.selectedIndex > 0
-            ? sel.options[sel.selectedIndex].dataset.name
-            : "—";
-        const typeLabel =
-          deliveryType === "bureau" ? "Au Bureau" : "À Domicile";
-
-        const itemsHtml = (
-          cart.length > 0
-            ? cart
-            : [
-                {
-                  productData: product,
-                  variantIndex: currentVariant,
-                  qty: currentQty,
-                },
-              ]
-        )
-          .map((item) => {
-            const p = item.productData;
-            const price =
-              (p.variantPrices[item.variantIndex] ?? p.variantPrices[0]) *
-              item.qty;
-            return `<div class="orow"><span>${p.name} (${p.variants[item.variantIndex] || "Standard"}) ×${item.qty}</span><span>${price.toLocaleString()} DA</span></div>`;
-          })
-          .join("");
-
-        const subtotal =
-          cart.length > 0
-            ? cartTotal()
-            : (product.variantPrices[currentVariant] ??
-                product.variantPrices[0]) * currentQty;
-
-        summary.innerHTML =
-          itemsHtml +
-          `<div class="orow"><span>Livraison ${typeLabel} (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
-           <div class="orow total"><span>Total</span><span>${(subtotal + shipping).toLocaleString()} DA</span></div>`;
-      }
-
-      // Override placeOrder to use cart items if cart has items
-      const _origPlaceOrder = placeOrder;
-      window.placeOrder = async function () {
-        const name = document.getElementById("co-name").value.trim();
-        const phone = document.getElementById("co-phone").value.trim();
-        const wilEl = document.getElementById("co-wilaya");
-        const wilaya = wilEl.options[wilEl.selectedIndex]?.dataset.name || "";
-        const note = document.getElementById("co-note").value.trim();
-
-        if (!phone || !wilaya) {
-          showToast("Téléphone et Wilaya sont obligatoires");
-          return;
-        }
-
-        let address = "";
-        if (deliveryType === "bureau") {
-          const compEl = document.getElementById("co-company");
-          const offEl = document.getElementById("co-office");
-          const company = compEl?.options[compEl.selectedIndex]?.text || "";
-          const office = offEl?.value || "";
-          if (!company || !office) {
-            showToast("Choisissez la société et le bureau");
-            return;
-          }
-          address = "Bureau — " + company + " — " + office;
-        } else {
-          address =
-            "Domicile — " +
-            (document.getElementById("co-address").value.trim() || "—");
-        }
-
-        // Build items: use cart if populated, otherwise use variantQtys selection
-        let itemsToOrder;
-        if (cart.length > 0) {
-          itemsToOrder = cart.map((i) => ({
-            id: i.productData.id,
-            variant: i.variantIndex,
-            qty: i.qty,
-          }));
-        } else {
-          const selectedVariants = variantQtys
-            .map((q, i) => ({ q, i }))
-            .filter((x) => x.q > 0);
-          itemsToOrder =
-            selectedVariants.length > 0
-              ? selectedVariants.map((x) => ({
-                  id: product.id,
-                  variant: x.i,
-                  qty: x.q,
-                }))
-              : [{ id: product.id, variant: currentVariant, qty: currentQty }];
-        }
-
-        const orderData = {
-          customer: name || phone,
-          phone,
-          wilaya,
-          address,
-          note,
-          items: itemsToOrder,
-        };
-
-        const btn = document.getElementById("confirm-btn");
-        btn.disabled = true;
-        btn.innerHTML =
-          '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> En cours...';
-
+      // ── FAVORITES ─────────────────────────────────────────────
+      function getFavorites() {
         try {
-          const res = await OrdersAPI.place(orderData);
-          try {
-            const saved = JSON.parse(
-              localStorage.getItem("mt_guest_orders") || "[]",
-            );
-            saved.unshift({
-              id: res.id,
-              order_ref: res.order_ref || "#MT-" + res.id,
-              customer: orderData.customer,
-              phone,
-              wilaya,
-              items: itemsToOrder.map((i) => {
-                const cartItem = cart.find((c) => c.productData.id === i.id);
-                return {
-                  name: cartItem ? cartItem.productData.name : "Produit",
-                  qty: i.qty,
-                };
-              }),
-              total: res.total || 0,
-              status: "pending",
-              created_at: new Date().toISOString(),
-            });
-            localStorage.setItem(
-              "mt_guest_orders",
-              JSON.stringify(saved.slice(0, 20)),
-            );
-          } catch (e) {}
-
-          document.getElementById("checkout-form").style.display = "none";
-          document.getElementById("share-actions").style.display = "none";
-          const box = document.getElementById("success-box");
-          box.innerHTML = `
-            <div style="color:var(--green-dark);margin-bottom:0.75rem;"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg></div>
-            <h2 style="color:var(--green-dark);margin-bottom:0.4rem;font-size:1.2rem;">Commande confirmée !</h2>
-            <p style="color:var(--gray-700);font-size:0.9rem;margin-bottom:0.3rem;">Merci <strong>${orderData.customer}</strong>, nous vous contacterons au <strong>${phone}</strong>.</p>
-            <p style="color:var(--green-dark);font-weight:800;font-size:1.05rem;margin:0.6rem 0;">${res.order_ref || "#MT-" + res.id}</p>
-            <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1rem;">${address}</p>
-            <a href="/" style="display:inline-block;padding:0.65rem 1.75rem;background:var(--green);color:#fff;border-radius:50px;font-weight:700;text-decoration:none;font-size:0.9rem;"><span style="display:inline-flex;align-items:center;gap:0.4rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Retour à la boutique</span></a>`;
-          box.classList.add("show");
-          box.scrollIntoView({ behavior: "smooth", block: "center" });
-          // Clear cart
-          cart = [];
-          updateCartUI();
+          return JSON.parse(localStorage.getItem("mt_favorites") || "[]");
         } catch (e) {
-          showToast("Erreur : " + e.message);
-          btn.disabled = false;
-          btn.innerHTML =
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirmer la Commande';
+          return [];
         }
+      }
+      function saveFavorites(favs) {
+        localStorage.setItem("mt_favorites", JSON.stringify(favs));
+      }
+      function isFavorite(id) {
+        return getFavorites().some((f) => f.id === id);
+      }
+      function toggleFavorite() {
+        if (!product) return;
+        let favs = getFavorites();
+        const idx = favs.findIndex((f) => f.id === product.id);
+        if (idx >= 0) {
+          favs.splice(idx, 1);
+          showToast("Retiré des favoris");
+        } else {
+          favs.unshift({
+            id: product.id,
+            name: product.name,
+            img: product.images?.[0] || product.img || null,
+            icon: product.icon,
+            price: product.variantPrices[0],
+            cat: product.cat,
+            addedAt: new Date().toISOString(),
+          });
+          showToast("Ajouté aux favoris !");
+        }
+        saveFavorites(favs);
+        updateFavoriteUI();
+      }
+      function updateFavoriteUI() {
+        if (!product) return;
+        const isFav = isFavorite(product.id);
+        // Bottom bar icon
+        const favIcon = document.getElementById("fav-bar-icon");
+        const favBtn = document.getElementById("fav-bar-btn");
+        if (favIcon) {
+          favIcon.setAttribute("fill", isFav ? "var(--green-dark)" : "none");
+          favIcon.setAttribute(
+            "stroke",
+            isFav ? "var(--green-dark)" : "currentColor",
+          );
+        }
+        if (favBtn)
+          favBtn.style.color = isFav ? "var(--green-dark)" : "var(--gray-700)";
+        // Wishlist button on card
+        const wishBtn = document.getElementById("wish-btn");
+        if (wishBtn) {
+          wishBtn.title = isFav ? "Retirer des favoris" : "Ajouter aux favoris";
+          const icon = wishBtn.querySelector("svg");
+          if (icon) {
+            icon.setAttribute("fill", isFav ? "#ff4b6e" : "none");
+            icon.setAttribute("stroke", isFav ? "#ff4b6e" : "currentColor");
+          }
+        }
+      }
+
+      // ── MY ORDERS MODAL (mobile) ──────────────────────────────
+      function openMyOrdersMobile() {
+        const favs = JSON.parse(
+          localStorage.getItem("mt_guest_orders") || "[]",
+        );
+        let html = "";
+        if (favs.length === 0) {
+          html = `<div style="text-align:center;padding:2rem;color:var(--gray-500);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:0.75rem;opacity:0.4;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <p>Aucune commande enregistrée.</p>
+          </div>`;
+        } else {
+          const statusLabels = {
+            pending: "En attente",
+            shipped: "Expédié",
+            delivered: "Livré",
+            cancelled: "Annulé",
+          };
+          const statusColors = {
+            pending: "#d97706",
+            shipped: "#0369a1",
+            delivered: "#15803d",
+            cancelled: "#dc2626",
+          };
+          html = favs
+            .map(
+              (o) => `
+            <div style="border:1.5px solid var(--gray-100);border-radius:12px;padding:0.85rem 1rem;margin-bottom:0.6rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                <span style="font-weight:800;color:var(--green-dark);font-size:0.9rem;">${o.order_ref || "#MT-" + o.id}</span>
+                <span style="font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:50px;background:${statusColors[o.status] || "#888"}22;color:${statusColors[o.status] || "#888"};">${statusLabels[o.status] || o.status}</span>
+              </div>
+              <div style="font-size:0.78rem;color:var(--gray-500);margin-bottom:0.25rem;">${o.wilaya} · ${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
+              <div style="font-size:0.82rem;color:var(--gray-700);">${Array.isArray(o.items) ? o.items.map((i) => i.name + " ×" + i.qty).join(", ") : ""}</div>
+              <div style="font-weight:800;color:var(--gray-900);margin-top:0.4rem;">${(o.total || 0).toLocaleString()} DA</div>
+            </div>`,
+            )
+            .join("");
+        }
+        // Create or reuse modal
+        let modal = document.getElementById("mobile-orders-modal");
+        if (!modal) {
+          modal = document.createElement("div");
+          modal.id = "mobile-orders-modal";
+          modal.style.cssText =
+            "position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;display:flex;align-items:flex-end;";
+          modal.onclick = (e) => {
+            if (e.target === modal) modal.remove();
+          };
+          document.body.appendChild(modal);
+        }
+        modal.innerHTML = `
+          <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:80vh;overflow-y:auto;padding:1.25rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+              <h3 style="font-size:1rem;font-weight:800;">Mes Commandes</h3>
+              <button onclick="document.getElementById('mobile-orders-modal').remove()" style="background:var(--gray-50);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            ${html}
+          </div>`;
+        modal.style.display = "flex";
+      }
+
+      // ── MOBILE BAR SHOW/HIDE ──────────────────────────────────
+      function isMobile() {
+        return window.innerWidth <= 860;
+      }
+      function updateMobileBar() {
+        const bar = document.getElementById("mobile-bottom-bar");
+        if (!bar) return;
+        bar.style.display = isMobile() ? "block" : "none";
+        // Add padding to page to avoid overlap with bottom bar
+        const page = document.getElementById("page");
+        if (page) page.style.paddingBottom = isMobile() ? "80px" : "0";
+        // Update cart badge in bottom bar
+        const count = cart.reduce ? cart.reduce((s, i) => s + i.qty, 0) : 0;
+        const badge = document.getElementById("bottom-cart-badge");
+        if (badge) badge.textContent = count;
+      }
+      window.addEventListener("resize", updateMobileBar);
+
+      // Override updateCartUI to also update mobile bar badge
+      window.updateCartUI = window.updateCartUI || function () {};
+      const _origUpdateCartUI = window.updateCartUI;
+      window.updateCartUI = function () {
+        if (_origUpdateCartUI) _origUpdateCartUI();
+        const count = cart.reduce ? cart.reduce((s, i) => s + i.qty, 0) : 0;
+        const badge = document.getElementById("bottom-cart-badge");
+        if (badge) badge.textContent = count;
       };
+
+      // ── INIT MOBILE BAR ──
+      setTimeout(updateMobileBar, 100);
     </script>
   </body>
 </html>
