@@ -4150,41 +4150,25 @@
             <div
               id="ep-image-section"
               style="display: flex; flex-direction: column; gap: 0.6rem">
-              <!-- Current image preview -->
-              <div
-                id="ep-current-img-wrap"
-                style="
-                  display: none;
-                  position: relative;
-                  width: 100%;
-                  border-radius: 10px;
-                  overflow: hidden;
-                  background: var(--gray-50, #f9f9f9);
-                  border: 1.5px solid var(--gray-100, #e5e5e5);
-                ">
-                <img
-                  id="ep-current-img"
-                  src=""
-                  alt="Image actuelle"
+              <!-- Current images gallery -->
+              <div id="ep-current-img-wrap" style="display: none">
+                <div
                   style="
-                    width: 100%;
-                    max-height: 180px;
-                    object-fit: contain;
-                    display: block;
-                    padding: 0.5rem;
-                  " />
-                <div style="position: absolute; top: 6px; right: 6px">
+                    font-size: 0.72rem;
+                    font-weight: 700;
+                    color: var(--gray-500);
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                    margin-bottom: 0.4rem;
+                  ">
+                  Images actuelles
                   <span
-                    style="
-                      background: rgba(0, 0, 0, 0.55);
-                      color: #fff;
-                      font-size: 0.7rem;
-                      padding: 2px 8px;
-                      border-radius: 99px;
-                    "
-                    >Image actuelle</span
-                  >
+                    id="ep-img-count"
+                    style="color: var(--green-dark)"></span>
                 </div>
+                <div
+                  id="ep-current-imgs-grid"
+                  style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
               </div>
               <!-- New image drop zone -->
               <label
@@ -4680,19 +4664,32 @@
           p.variantPrices.join(", ");
         document.getElementById("ep-desc").value = PRODUCT_DESCS[id] || "";
 
-        // Image preview
+        // Image gallery preview
         const currentWrap = document.getElementById("ep-current-img-wrap");
-        const currentImg = document.getElementById("ep-current-img");
         const newWrap = document.getElementById("ep-new-img-wrap");
-        const newImg = document.getElementById("ep-new-img");
         const fileInput = document.getElementById("ep-image");
         if (fileInput) fileInput.value = "";
         if (newWrap) newWrap.style.display = "none";
-        if (newImg) newImg.src = "";
-        const imgSrc = p.images && p.images.length > 0 ? p.images[0] : p.img;
-        if (imgSrc && currentImg && currentWrap) {
-          currentImg.src = imgSrc;
+
+        // Track which existing images to remove
+        window._epRemovedImages = [];
+
+        const existingImgs =
+          p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
+        const grid = document.getElementById("ep-current-imgs-grid");
+        const countEl = document.getElementById("ep-img-count");
+        if (existingImgs.length > 0 && grid && currentWrap) {
           currentWrap.style.display = "block";
+          grid.innerHTML = existingImgs
+            .map(
+              (src, i) => `
+            <div style="position:relative;width:80px;height:80px;" id="ep-img-slot-${i}">
+              <img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1.5px solid var(--gray-100);">
+              <button type="button" onclick="epRemoveExistingImg('${src}', ${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#ff4b6e;border:none;color:#fff;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+            </div>`,
+            )
+            .join("");
+          if (countEl) countEl.textContent = "(" + existingImgs.length + ")";
         } else if (currentWrap) {
           currentWrap.style.display = "none";
         }
@@ -4745,6 +4742,11 @@
             fd.append("images", file);
           }
         }
+        // Send list of removed existing images
+        const removed = window._epRemovedImages || [];
+        if (removed.length > 0) {
+          fd.append("removeImages", JSON.stringify(removed));
+        }
 
         try {
           await ProductsAPI.update(id, fd);
@@ -4760,6 +4762,23 @@
       }
 
       // ── EDIT PRODUCT IMAGE PREVIEW ───────────────────────────
+      function epRemoveExistingImg(src, idx) {
+        window._epRemovedImages = window._epRemovedImages || [];
+        window._epRemovedImages.push(src);
+        const slot = document.getElementById("ep-img-slot-" + idx);
+        if (slot) slot.remove();
+        const grid = document.getElementById("ep-current-imgs-grid");
+        const countEl = document.getElementById("ep-img-count");
+        if (grid && countEl) {
+          const remaining = grid.querySelectorAll(
+            "[id^='ep-img-slot-']",
+          ).length;
+          countEl.textContent = remaining > 0 ? "(" + remaining + ")" : "";
+          const wrap = document.getElementById("ep-current-img-wrap");
+          if (remaining === 0 && wrap) wrap.style.display = "none";
+        }
+      }
+
       function cancelNewImage() {
         const fileInput = document.getElementById("ep-image");
         const newWrap = document.getElementById("ep-new-img-wrap");

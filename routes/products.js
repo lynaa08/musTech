@@ -1,23 +1,23 @@
-const express = require('express');
-const router  = express.Router();
-const multer  = require('multer');
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const db      = require('../database');
-const { adminMiddleware } = require('../middleware/auth');
+const express = require("express");
+const router = express.Router();
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const db = require("../database");
+const { adminMiddleware } = require("../middleware/auth");
 
 // ── CLOUDINARY SETUP ──────────────────────────────────────
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'mustech-products',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    folder: "mustech-products",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
 
@@ -25,107 +25,158 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) cb(null, true);
-    else cb(new Error('Fichier image uniquement'));
-  }
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Fichier image uniquement"));
+  },
 });
 
 // Helper: parse product from DB row
 function parseProduct(row) {
   return {
     ...row,
-    variants:       JSON.parse(row.variants || '["Standard"]'),
-    variantPrices:  JSON.parse(row.variant_prices || '[0]'),
-    oldPrice:       row.old_price,
-    img:            row.img || null,
-    images:         row.images ? JSON.parse(row.images) : (row.img ? [row.img] : []),
+    variants: JSON.parse(row.variants || '["Standard"]'),
+    variantPrices: JSON.parse(row.variant_prices || "[0]"),
+    oldPrice: row.old_price,
+    img: row.img || null,
+    images: row.images ? JSON.parse(row.images) : row.img ? [row.img] : [],
   };
 }
 
 // ── GET /api/products ─────────────────────────────────────
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   const { cat, search } = req.query;
-  let query = 'SELECT * FROM products WHERE active = 1';
+  let query = "SELECT * FROM products WHERE active = 1";
   const params = [];
-  if (cat && cat !== 'all') {
-    query += ' AND cat = ?';
+  if (cat && cat !== "all") {
+    query += " AND cat = ?";
     params.push(cat);
   }
   if (search) {
-    query += ' AND name LIKE ?';
+    query += " AND name LIKE ?";
     params.push(`%${search}%`);
   }
-  query += ' ORDER BY created_at DESC';
+  query += " ORDER BY created_at DESC";
   const rows = db.prepare(query).all(...params);
   res.json(rows.map(parseProduct));
 });
 
 // ── GET /api/products/:id ─────────────────────────────────
-router.get('/:id', (req, res) => {
-  const row = db.prepare('SELECT * FROM products WHERE id = ? AND active = 1').get(req.params.id);
-  if (!row) return res.status(404).json({ error: 'Produit non trouvé' });
+router.get("/:id", (req, res) => {
+  const row = db
+    .prepare("SELECT * FROM products WHERE id = ? AND active = 1")
+    .get(req.params.id);
+  if (!row) return res.status(404).json({ error: "Produit non trouvé" });
   res.json(parseProduct(row));
 });
 
 // ── POST /api/products ── (admin) ─────────────────────────
-router.post('/', adminMiddleware, upload.array('images', 5), (req, res) => {
-  const { name, cat, price, old_price, icon, variants, variant_prices, stock, badge, description } = req.body;
+router.post("/", adminMiddleware, upload.array("images", 5), (req, res) => {
+  const {
+    name,
+    cat,
+    price,
+    old_price,
+    icon,
+    variants,
+    variant_prices,
+    stock,
+    badge,
+    description,
+  } = req.body;
 
   if (!name || !cat || !price) {
-    return res.status(400).json({ error: 'Nom, catégorie et prix sont requis.' });
+    return res
+      .status(400)
+      .json({ error: "Nom, catégorie et prix sont requis." });
   }
 
-  const variantsArr = variants ? JSON.parse(variants) : ['Standard'];
-  const pricesArr   = variant_prices ? JSON.parse(variant_prices) : [parseInt(price)];
+  const variantsArr = variants ? JSON.parse(variants) : ["Standard"];
+  const pricesArr = variant_prices
+    ? JSON.parse(variant_prices)
+    : [parseInt(price)];
 
-  const uploadedFiles = req.files ? req.files.map(f => f.path) : [];
+  const uploadedFiles = req.files ? req.files.map((f) => f.path) : [];
   const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : null;
 
-  const result = db.prepare(`
+  const result = db
+    .prepare(
+      `
     INSERT INTO products (name, cat, price, old_price, icon, img, images, variants, variant_prices, stock, badge, description)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    name, cat, parseInt(price),
-    old_price ? parseInt(old_price) : null,
-    icon || '📦',
-    primaryImg,
-    JSON.stringify(uploadedFiles),
-    JSON.stringify(variantsArr),
-    JSON.stringify(pricesArr),
-    parseInt(stock) || 0,
-    badge || null,
-    description || null
-  );
+  `,
+    )
+    .run(
+      name,
+      cat,
+      parseInt(price),
+      old_price ? parseInt(old_price) : null,
+      icon || "📦",
+      primaryImg,
+      JSON.stringify(uploadedFiles),
+      JSON.stringify(variantsArr),
+      JSON.stringify(pricesArr),
+      parseInt(stock) || 0,
+      badge || null,
+      description || null,
+    );
 
-  const product = db.prepare('SELECT * FROM products WHERE id = ?').get(result.lastInsertRowid);
+  const product = db
+    .prepare("SELECT * FROM products WHERE id = ?")
+    .get(result.lastInsertRowid);
   res.status(201).json(parseProduct(product));
 });
 
 // ── PUT /api/products/:id ── (admin) ──────────────────────
-router.put('/:id', adminMiddleware, upload.array('images', 5), (req, res) => {
-  const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if (!existing) return res.status(404).json({ error: 'Produit non trouvé' });
+router.put("/:id", adminMiddleware, upload.array("images", 5), (req, res) => {
+  const existing = db
+    .prepare("SELECT * FROM products WHERE id = ?")
+    .get(req.params.id);
+  if (!existing) return res.status(404).json({ error: "Produit non trouvé" });
 
-  const { name, cat, price, old_price, icon, variants, variant_prices, stock, badge, description } = req.body;
+  const {
+    name,
+    cat,
+    price,
+    old_price,
+    icon,
+    variants,
+    variant_prices,
+    stock,
+    badge,
+    description,
+  } = req.body;
 
-  const variantsArr = variants ? JSON.parse(variants) : JSON.parse(existing.variants);
-  const pricesArr   = variant_prices ? JSON.parse(variant_prices) : JSON.parse(existing.variant_prices);
+  const variantsArr = variants
+    ? JSON.parse(variants)
+    : JSON.parse(existing.variants);
+  const pricesArr = variant_prices
+    ? JSON.parse(variant_prices)
+    : JSON.parse(existing.variant_prices);
 
-  const useNewImages = req.files && req.files.length > 0;
-  const uploadedFiles = useNewImages ? req.files.map(f => f.path) : JSON.parse(existing.images || '[]');
+  const existingImages = JSON.parse(existing.images || "[]");
+  const toRemove = req.body.removeImages
+    ? JSON.parse(req.body.removeImages)
+    : [];
+  const newFiles =
+    req.files && req.files.length > 0 ? req.files.map((f) => f.path) : [];
+  // Remove deleted images, add new ones, cap at 5
+  const kept = existingImages.filter((img) => !toRemove.includes(img));
+  const uploadedFiles = [...kept, ...newFiles].slice(0, 5);
   const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : existing.img;
 
   // (Cloudinary files persist — no local deletion needed)
 
-  db.prepare(`
+  db.prepare(
+    `
     UPDATE products SET
       name = ?, cat = ?, price = ?, old_price = ?, icon = ?,
       img = ?, images = ?, variants = ?, variant_prices = ?,
       stock = ?, badge = ?, description = ?
     WHERE id = ?
-  `).run(
+  `,
+  ).run(
     name || existing.name,
-    cat  || existing.cat,
+    cat || existing.cat,
     price ? parseInt(price) : existing.price,
     old_price ? parseInt(old_price) : null,
     icon || existing.icon,
@@ -136,22 +187,28 @@ router.put('/:id', adminMiddleware, upload.array('images', 5), (req, res) => {
     stock !== undefined ? parseInt(stock) : existing.stock,
     badge !== undefined ? badge : existing.badge,
     description !== undefined ? description : existing.description,
-    req.params.id
+    req.params.id,
   );
 
-  res.json(parseProduct(db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id)));
+  res.json(
+    parseProduct(
+      db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id),
+    ),
+  );
 });
 
 // ── DELETE /api/products/:id ── (admin) ───────────────────
-router.delete('/:id', adminMiddleware, (req, res) => {
-  const existing = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
-  if (!existing) return res.status(404).json({ error: 'Produit non trouvé' });
+router.delete("/:id", adminMiddleware, (req, res) => {
+  const existing = db
+    .prepare("SELECT * FROM products WHERE id = ?")
+    .get(req.params.id);
+  if (!existing) return res.status(404).json({ error: "Produit non trouvé" });
 
   // (Cloudinary files persist — no local deletion needed)
 
   // Soft delete
-  db.prepare('UPDATE products SET active = 0 WHERE id = ?').run(req.params.id);
-  res.json({ message: 'Produit supprimé' });
+  db.prepare("UPDATE products SET active = 0 WHERE id = ?").run(req.params.id);
+  res.json({ message: "Produit supprimé" });
 });
 
 module.exports = router;
