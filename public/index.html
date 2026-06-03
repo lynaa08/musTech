@@ -1076,17 +1076,82 @@
         background: var(--gray-50);
         padding: 2rem;
       }
+      /* MOBILE ADMIN MENU */
+      .admin-mobile-toggle {
+        display: none;
+        background: transparent;
+        border: none;
+        color: var(--gray-900);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        z-index: 50;
+      }
+      .admin-mobile-nav {
+        display: none;
+      }
+      .admin-mobile-nav.open {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+      .admin-mobile-nav-content {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: var(--gray-900);
+        padding: 1.5rem;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+      .admin-mobile-nav.open .admin-mobile-nav-content {
+        transform: translateX(0);
+      }
+      .admin-mobile-nav-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        color: #fff;
+      }
+      .admin-mobile-nav-close {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
       /* Sur mobile, compenser la barre sticky admin */
       @media (max-width: 900px) {
         .admin-tab {
           padding-top: 0.5rem;
         }
-      }
-      @media (max-width: 600px) {
-        /* Cacher la sidebar sur mobile */
         .admin-sidebar {
           display: none !important;
         }
+        .admin-layout {
+          grid-template-columns: 1fr;
+        }
+        .admin-mobile-toggle {
+          display: block;
+        }
+        .admin-header {
+          position: relative;
+          padding-left: 2.5rem;
+        }
+      }
+
+      @media (max-width: 600px) {
         /* Admin layout full width */
         .admin-layout {
           grid-template-columns: 1fr !important;
@@ -1100,6 +1165,7 @@
           flex-wrap: wrap;
           gap: 0.5rem;
           margin-bottom: 1rem;
+          padding-left: 2.5rem;
         }
         .admin-header h1 {
           font-size: 1.2rem;
@@ -1174,12 +1240,6 @@
         .action-btn {
           font-size: 0.68rem;
           padding: 0.25rem 0.5rem;
-        }
-        /* Barre mobile admin */
-        .admin-mobile-nav {
-          margin-left: -0.75rem;
-          margin-right: -0.75rem;
-          width: calc(100% + 1.5rem);
         }
       }
       .admin-header {
@@ -2534,6 +2594,78 @@
     <!-- ADMIN PAGE -->
     <div id="admin-page" class="page-section">
       <div class="admin-layout">
+        <!-- Mobile Toggle Button -->
+        <button class="admin-mobile-toggle" id="adminMobileToggle">☰</button>
+
+        <!-- Mobile Navigation Drawer -->
+        <div class="admin-mobile-nav" id="adminMobileNav">
+          <div class="admin-mobile-nav-content">
+            <div class="admin-mobile-nav-header">
+              <div class="admin-logo" style="margin-bottom: 0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 80 80"
+                  width="24"
+                  height="24"
+                  style="
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-right: 8px;
+                  ">
+                  <defs>
+                    <linearGradient
+                      id="aGrad2"
+                      x1="0%"
+                      y1="0%"
+                      x2="100%"
+                      y2="100%">
+                      <stop offset="0%" style="stop-color: #3ecf6e" />
+                      <stop offset="100%" style="stop-color: #1fad52" />
+                    </linearGradient>
+                  </defs>
+                  <polygon
+                    points="40,4 68,20 68,56 40,72 12,56 12,20"
+                    fill="#1a1a24" />
+                  <polygon
+                    points="40,4 68,20 68,56 40,72 12,56 12,20"
+                    fill="none"
+                    stroke="url(#aGrad2)"
+                    stroke-width="3" />
+                  <text
+                    x="40"
+                    y="50"
+                    font-family="'Arial Black',sans-serif"
+                    font-size="26"
+                    font-weight="900"
+                    fill="url(#aGrad2)"
+                    text-anchor="middle"
+                    letter-spacing="-1">
+                    M
+                  </text>
+                  <text
+                    x="47"
+                    y="44"
+                    font-family="'Arial Black',sans-serif"
+                    font-size="13"
+                    font-weight="900"
+                    fill="white"
+                    text-anchor="middle"
+                    opacity="0.95">
+                    T
+                  </text>
+                </svg>
+                <span>Mus Tech</span>
+              </div>
+              <button class="admin-mobile-nav-close" id="adminMobileClose">
+                ✕
+              </button>
+            </div>
+            <nav class="admin-nav" id="mobileAdminNav">
+              <!-- Populated by JavaScript -->
+            </nav>
+          </div>
+        </div>
+
         <aside class="admin-sidebar">
           <div class="admin-logo">
             <svg
@@ -7442,6 +7574,56 @@
         );
         showToast("📊 Excel exporté avec succès !");
       }
+
+      // ── MOBILE ADMIN MENU HANDLER ────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", function () {
+        const adminMobileToggle = document.getElementById("adminMobileToggle");
+        const adminMobileNav = document.getElementById("adminMobileNav");
+        const adminMobileClose = document.getElementById("adminMobileClose");
+        const mobileAdminNav = document.getElementById("mobileAdminNav");
+        const adminNav = document.querySelector(".admin-nav");
+
+        // Toggle menu open/close
+        function toggleMobileMenu() {
+          adminMobileNav.classList.toggle("open");
+        }
+
+        function closeMobileMenu() {
+          adminMobileNav.classList.remove("open");
+        }
+
+        // Copy menu items to mobile nav
+        if (adminNav && mobileAdminNav) {
+          const navItems = adminNav.innerHTML;
+          mobileAdminNav.innerHTML = navItems;
+        }
+
+        // Event listeners
+        if (adminMobileToggle) {
+          adminMobileToggle.addEventListener("click", toggleMobileMenu);
+        }
+
+        if (adminMobileClose) {
+          adminMobileClose.addEventListener("click", closeMobileMenu);
+        }
+
+        // Close menu when clicking overlay
+        if (adminMobileNav) {
+          adminMobileNav.addEventListener("click", function (e) {
+            if (e.target === this) {
+              closeMobileMenu();
+            }
+          });
+        }
+
+        // Close menu when clicking a link
+        const mobileNavLinks = mobileAdminNav.querySelectorAll("a");
+        mobileNavLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            closeMobileMenu();
+          });
+        });
+      });
     </script>
   </body>
 </html>
