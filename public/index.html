@@ -4804,7 +4804,7 @@
         function showPreviews(files) {
           if (!grid) return;
           grid.innerHTML = "";
-          const count = Math.min(files.length, 5);
+          const count = Math.min(files.length, 15);
           if (countEl)
             countEl.textContent =
               count + " nouvelle" + (count > 1 ? "s images" : " image");
@@ -4926,7 +4926,7 @@
           const previewContainer = document.getElementById("ap-imgs-preview");
           previewContainer.innerHTML = "";
           previewContainer.style.display = "flex";
-          for (let i = 0; i < e.target.files.length && i < 5; i++) {
+          for (let i = 0; i < e.target.files.length && i < 15; i++) {
             const file = e.target.files[i];
             const reader = new FileReader();
             reader.onload = (ev) => {
@@ -5015,7 +5015,7 @@
 
         const fileInput = document.getElementById("ap-imgs");
         if (fileInput && fileInput.files.length > 0) {
-          for (let i = 0; i < fileInput.files.length && i < 5; i++) {
+          for (let i = 0; i < fileInput.files.length && i < 15; i++) {
             fd.append("images", fileInput.files[i]);
           }
         }
