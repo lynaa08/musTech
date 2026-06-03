@@ -1770,6 +1770,14 @@
           transform: translateY(0);
         }
       }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
       .hero h1 {
         animation: fadeUp 0.6s 0.1s both;
       }
@@ -4375,10 +4383,19 @@
 
       async function populateAdminTables() {
         try {
-          const stats = await StatsAPI.get();
-          const ordersRes = await OrdersAPI.getAll();
-          ORDERS = ordersRes.orders || [];
-          PRODUCTS = await ProductsAPI.getAll();
+          const [statsRes, ordersRes, productsRes] = await Promise.allSettled([
+            StatsAPI.get(),
+            OrdersAPI.getAll(),
+            ProductsAPI.getAll(),
+          ]);
+
+          const stats = statsRes.status === "fulfilled" ? statsRes.value : {};
+          const rawOrders =
+            ordersRes.status === "fulfilled" ? ordersRes.value : ORDERS;
+          ORDERS = Array.isArray(rawOrders)
+            ? rawOrders
+            : rawOrders?.orders || ORDERS || [];
+          if (productsRes.status === "fulfilled") PRODUCTS = productsRes.value;
 
           // Dashboard stats
           const set = (id, val) => {
@@ -5112,10 +5129,25 @@
         }
       }
 
-      function populateFavoritesPage() {
-        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+      async function populateFavoritesPage() {
         const favGrid = document.getElementById("favorites-grid");
         const favEmpty = document.getElementById("favorites-empty");
+
+        // Show loading while waiting for products
+        if (PRODUCTS.length === 0) {
+          favGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gray-400);">
+            <div style="display:inline-block;width:32px;height:32px;border:3px solid var(--gray-100);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:0.75rem;"></div>
+            <p>Chargement...</p>
+          </div>`;
+          try {
+            PRODUCTS = await ProductsAPI.getAll();
+          } catch (e) {
+            favGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gray-400);">Erreur de chargement.</div>`;
+            return;
+          }
+        }
+
+        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
 
         if (favs.length === 0) {
           favEmpty.style.display = "block";
@@ -5123,14 +5155,22 @@
           return;
         }
 
-        favEmpty.style.display = "none";
-        favGrid.innerHTML = favs
+        const cards = favs
           .map((fav) => {
             const product = PRODUCTS.find((p) => p.id === fav.id);
             if (!product) return "";
             return renderProductCard(product);
           })
-          .join("");
+          .filter(Boolean);
+
+        if (cards.length === 0) {
+          favEmpty.style.display = "block";
+          favGrid.innerHTML = "";
+        } else {
+          favEmpty.style.display = "none";
+          favGrid.innerHTML = cards.join("");
+          initFavoriteButtons();
+        }
       }
 
       function showAdminTab(tab, el) {
@@ -6493,7 +6533,10 @@
             currentUser = Auth.getUser();
             loginUser(currentUser);
             if (currentUser && currentUser.role === "admin") {
-              ORDERS = await OrdersAPI.getAll();
+              const ordersRes = await OrdersAPI.getAll();
+              ORDERS = Array.isArray(ordersRes)
+                ? ordersRes
+                : ordersRes?.orders || [];
             }
           }
         } catch (e) {
