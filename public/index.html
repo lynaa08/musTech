@@ -2325,6 +2325,7 @@
           <div
             id="favorites-empty"
             style="
+              display: none;
               text-align: center;
               padding: 3rem 1rem;
               color: var(--gray-500);
@@ -4324,33 +4325,55 @@
   </div>`;
       }
 
-      function toggleFavorite(id, btn) {
-        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
-        const p = PRODUCTS.find((x) => x.id === id);
-        const idx = favs.findIndex((f) => f.id === id);
+      function getFavIds() {
+        try {
+          const raw = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+          // support both [{id:1}] and [1] formats, always return array of numbers
+          return raw
+            .map((f) => Number(typeof f === "object" ? f.id : f))
+            .filter(Boolean);
+        } catch {
+          return [];
+        }
+      }
+      function saveFavIds(ids) {
+        localStorage.setItem(
+          "mt_favorites",
+          JSON.stringify(ids.map((id) => ({ id }))),
+        );
+      }
+
+      function toggleFavorite(rawId, btn) {
+        const id = Number(rawId);
+        const p = PRODUCTS.find((x) => Number(x.id) === id);
+        let ids = getFavIds();
+        const idx = ids.indexOf(id);
         if (idx >= 0) {
-          favs.splice(idx, 1);
+          ids.splice(idx, 1);
           btn.classList.remove("favorited");
           btn.querySelector("svg").setAttribute("fill", "none");
+          btn.querySelector("svg").setAttribute("stroke", "currentColor");
           showToast(p ? p.name + " retiré des favoris" : "Retiré des favoris");
         } else {
-          favs.push({ id });
+          ids.push(id);
           btn.classList.add("favorited");
           btn.querySelector("svg").setAttribute("fill", "#ff4b6e");
           btn.querySelector("svg").setAttribute("stroke", "#ff4b6e");
           showToast(p ? p.name + " ajouté aux favoris" : "Ajouté aux favoris");
         }
-        localStorage.setItem("mt_favorites", JSON.stringify(favs));
+        saveFavIds(ids);
       }
 
       function initFavoriteButtons() {
-        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
-        favs.forEach((fav) => {
-          const btn = document.getElementById("wish-" + fav.id);
-          if (btn) {
-            btn.classList.add("favorited");
-            btn.querySelector("svg").setAttribute("fill", "#ff4b6e");
-            btn.querySelector("svg").setAttribute("stroke", "#ff4b6e");
+        const ids = getFavIds();
+        document.querySelectorAll(".product-wishlist").forEach((btn) => {
+          const svg = btn.querySelector("svg");
+          const cardId = Number(btn.id.replace("wish-", ""));
+          const isFav = ids.includes(cardId);
+          btn.classList.toggle("favorited", isFav);
+          if (svg) {
+            svg.setAttribute("fill", isFav ? "#ff4b6e" : "none");
+            svg.setAttribute("stroke", isFav ? "#ff4b6e" : "currentColor");
           }
         });
       }
@@ -4383,37 +4406,51 @@
 
       async function populateAdminTables() {
         try {
-          const [statsRes, ordersRes, productsRes] = await Promise.allSettled([
-            StatsAPI.get(),
-            OrdersAPI.getAll(),
-            ProductsAPI.getAll(),
-          ]);
+          const [ordersRes, productsRes, ratingsRes] = await Promise.allSettled(
+            [OrdersAPI.getAll(), ProductsAPI.getAll(), RatingsAPI.getStats()],
+          );
 
-          const stats = statsRes.status === "fulfilled" ? statsRes.value : {};
           const rawOrders =
             ordersRes.status === "fulfilled" ? ordersRes.value : ORDERS;
           ORDERS = Array.isArray(rawOrders)
             ? rawOrders
             : rawOrders?.orders || ORDERS || [];
           if (productsRes.status === "fulfilled") PRODUCTS = productsRes.value;
+          const ratingStats =
+            ratingsRes.status === "fulfilled" ? ratingsRes.value : null;
 
-          // Dashboard stats
+          // Compute stats directly from real data
+          const totalRevenue = ORDERS.reduce((s, o) => s + (o.total || 0), 0);
+          const pendingOrders = ORDERS.filter(
+            (o) => o.status === "pending",
+          ).length;
+
           const set = (id, val) => {
             const el = document.getElementById(id);
             if (el) el.textContent = val;
           };
-          set(
-            "stat-revenue",
-            (stats.total_revenue || 0).toLocaleString() + " DA",
-          );
-          set("stat-revenue-sub", stats.total_orders + " commande(s)");
-          set("stat-orders", stats.total_orders);
-          set("stat-orders-sub", stats.pending_orders + " en attente");
-          set("stat-products", stats.total_products);
-          set("fin-total-orders", "—");
-          set("fin-revenue", "— DA");
-          set("fin-delivered", "—");
-          set("fin-pending", "—");
+          set("stat-revenue", totalRevenue.toLocaleString() + " DA");
+          set("stat-revenue-sub", ORDERS.length + " commande(s)");
+          set("stat-orders", ORDERS.length);
+          set("stat-orders-sub", pendingOrders + " en attente");
+          set("stat-products", PRODUCTS.length);
+          if (ratingStats && ratingStats.average) {
+            set("stat-rating", Number(ratingStats.average).toFixed(1) + " / 5");
+            set(
+              "stat-rating-sub",
+              (ratingStats.count || ratingStats.total || 0) + " avis",
+            );
+          }
+          const deliveredRevenue = ORDERS.filter(
+            (o) => o.status === "delivered",
+          ).reduce((s, o) => s + (o.total || 0), 0);
+          const deliveredCount = ORDERS.filter(
+            (o) => o.status === "delivered",
+          ).length;
+          set("fin-total-orders", ORDERS.length);
+          set("fin-revenue", deliveredRevenue.toLocaleString() + " DA");
+          set("fin-delivered", deliveredCount);
+          set("fin-pending", pendingOrders);
 
           // Dashboard orders
           const t1 = document.getElementById("admin-orders-table");
@@ -5133,7 +5170,7 @@
         const favGrid = document.getElementById("favorites-grid");
         const favEmpty = document.getElementById("favorites-empty");
 
-        // Show loading while waiting for products
+        // Load products if not yet loaded
         if (PRODUCTS.length === 0) {
           favGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gray-400);">
             <div style="display:inline-block;width:32px;height:32px;border:3px solid var(--gray-100);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite;margin-bottom:0.75rem;"></div>
@@ -5147,21 +5184,18 @@
           }
         }
 
-        const favs = JSON.parse(localStorage.getItem("mt_favorites") || "[]");
+        const favIds = getFavIds();
 
-        if (favs.length === 0) {
+        if (favIds.length === 0) {
           favEmpty.style.display = "block";
           favGrid.innerHTML = "";
           return;
         }
 
-        const cards = favs
-          .map((fav) => {
-            const product = PRODUCTS.find((p) => p.id === fav.id);
-            if (!product) return "";
-            return renderProductCard(product);
-          })
-          .filter(Boolean);
+        const cards = favIds
+          .map((id) => PRODUCTS.find((p) => Number(p.id) === id))
+          .filter(Boolean)
+          .map(renderProductCard);
 
         if (cards.length === 0) {
           favEmpty.style.display = "block";
@@ -6526,6 +6560,18 @@
       }
 
       async function initAll() {
+        // Migrate old favorites format if needed
+        try {
+          const raw = localStorage.getItem("mt_favorites");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            // if it's not an array of objects with id, reset it
+            if (!Array.isArray(parsed)) localStorage.removeItem("mt_favorites");
+          }
+        } catch {
+          localStorage.removeItem("mt_favorites");
+        }
+
         try {
           WILAYAS = await WilayasAPI.getAll();
           PRODUCTS = await ProductsAPI.getAll();
