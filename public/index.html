@@ -242,6 +242,7 @@
         padding: 4rem 2rem;
         position: relative;
         overflow: hidden;
+        max-width: 100%;
       }
       .hero::before {
         content: "";
@@ -1467,6 +1468,45 @@
           font-size: 0.82rem;
         }
 
+        /* FIX: prevent horizontal overflow / page shifting left */
+        html,
+        body {
+          overflow-x: hidden;
+          max-width: 100vw;
+        }
+
+        /* LOGIN MODAL - compact on mobile */
+        #login-modal .modal {
+          margin: 0.5rem;
+          max-height: 92vh;
+          overflow-y: auto;
+        }
+        #login-modal .modal-body {
+          padding: 0.85rem 1rem;
+        }
+        #login-modal .modal-header {
+          padding: 0.85rem 1rem;
+        }
+        #login-modal .form-group {
+          margin-bottom: 0.65rem;
+        }
+        #login-modal .form-group label {
+          font-size: 0.75rem;
+          margin-bottom: 0.25rem;
+        }
+        #login-modal .form-group input {
+          padding: 0.5rem 0.75rem;
+          font-size: 0.85rem;
+        }
+        #login-modal .btn-primary {
+          padding: 0.65rem;
+          font-size: 0.88rem;
+        }
+        #login-modal [style*="border-radius: 10px"] button {
+          padding: 0.5rem !important;
+          font-size: 0.8rem !important;
+        }
+
         /* HERO */
         .hero {
           padding: 2rem 1rem 2.5rem;
@@ -2104,8 +2144,8 @@
         </li>
         <li id="admin-nav-link" style="display: none">
           <a
-            href="#"
-            onclick="showPage('admin')"
+            href="javascript:void(0)"
+            onclick="openMyOrders()"
             style="display: flex; align-items: center; gap: 0.4rem">
             <svg
               width="15"
@@ -2116,11 +2156,11 @@
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path
-                d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" />
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            Admin
+            Mes Commandes
           </a>
         </li>
       </ul>
