@@ -1166,6 +1166,8 @@
         /* Réduire le padding du contenu */
         .admin-content {
           padding: 0.75rem !important;
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
         }
         /* Titre plus petit */
         .admin-header {
@@ -1641,13 +1643,15 @@
         }
         .admin-mobile-nav {
           display: flex !important;
-          /* marge gauche/droite négative pour contrer le padding du parent */
-          margin-left: -1rem;
-          margin-right: -1rem;
-          width: calc(100% + 2rem);
+          margin-left: 0;
+          margin-right: 0;
+          width: 100%;
         }
         .admin-content {
           padding: 1rem;
+          /* prevent horizontal overflow on mobile */
+          overflow-x: hidden;
+          max-width: 100vw;
         }
       }
       .admin-mobile-nav {
@@ -1664,6 +1668,9 @@
         /* empêche le clipping horizontal */
         width: 100%;
         box-sizing: border-box;
+        /* prevent page zoom/overflow */
+        max-width: 100vw;
+        overflow-x: auto;
       }
       .admin-mobile-nav::-webkit-scrollbar {
         display: none;
@@ -2846,6 +2853,28 @@
                 <polyline points="12 19 5 12 12 5" />
               </svg>
               Boutique
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="logout()"
+              style="
+                border-color: rgba(255, 107, 107, 0.4);
+                color: rgba(255, 107, 107, 0.85);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Déconnexion
             </a>
           </nav>
           <div id="admin-dashboard" class="admin-tab">
