@@ -1030,12 +1030,15 @@
         const sel = document.getElementById("co-wilaya");
         sel.innerHTML = '<option value="">Sélectionnez une wilaya</option>';
         wilayas.forEach((w) => {
-          const price = w.shipping_price ?? w.price ?? 0;
+          const homePrice = w.shipping_price ?? w.price ?? 0;
+          const bureauPrice = w.bureau_price ?? homePrice;
           const o = document.createElement("option");
-          o.value = price;
+          o.value = homePrice;
           o.dataset.name = w.name;
           o.dataset.id = w.id;
-          o.textContent = w.name + " — " + price + " DA";
+          o.dataset.homePrice = homePrice;
+          o.dataset.bureauPrice = bureauPrice;
+          o.textContent = w.name + " — " + homePrice + " DA";
           sel.appendChild(o);
         });
         sel.addEventListener("change", updateOrderSummaryFromCart);
@@ -1283,6 +1286,18 @@
           .querySelectorAll(".shipping-option")
           .forEach((b) => b.classList.remove("active"));
         if (el) el.classList.add("active");
+        // Refresh wilaya option labels to show correct price
+        const sel = document.getElementById("co-wilaya");
+        if (sel) {
+          Array.from(sel.options).forEach((o, i) => {
+            if (i === 0) return;
+            const hp = o.dataset.homePrice || 0;
+            const bp = o.dataset.bureauPrice || hp;
+            const price = type === "bureau" ? bp : hp;
+            o.value = price;
+            o.textContent = o.dataset.name + " — " + price + " DA";
+          });
+        }
         updateDeliveryDetails();
         updateOrderSummaryFromCart();
       }
@@ -1298,22 +1313,10 @@
         } else {
           details.innerHTML = `
             <div class="form-group">
-              <label class="form-label">Société de livraison</label>
-              <select id="co-company" class="form-select" onchange="loadBureauOffices()">
-                <option value="">Sélectionnez une société</option>
-                <option value="yalidine">Yalidine Express</option>
-                <option value="zaki">Zaki Express</option>
-                <option value="procolis">Procolis</option>
-                <option value="noest">Noest Express</option>
-                <option value="eship">eShip</option>
-                <option value="maystro">Maystro Delivery</option>
-                <option value="dhlex">DHlex</option>
-                <option value="guepex">Guepex</option>
-              </select>
-            </div>
-            <div class="form-group" id="bureau-office-group" style="display:none">
-              <label class="form-label">Bureau de retrait</label>
-              <select id="co-office" class="form-select"><option value="">Sélectionnez un bureau</option></select>
+              <div style="background:var(--green-light);border-left:4px solid var(--green);padding:0.75rem 1rem;border-radius:8px;font-size:0.85rem;color:var(--green-dark);font-weight:600;display:flex;align-items:center;gap:0.5rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Votre colis sera déposé au bureau de livraison le plus proche de votre wilaya.
+              </div>
             </div>`;
         }
       }
@@ -1465,7 +1468,14 @@
         const summary = document.getElementById("order-summary-mini");
         if (!summary) return;
         const sel = document.getElementById("co-wilaya");
-        const shipping = sel ? parseInt(sel.value) || 0 : 0;
+        const selectedOpt = sel ? sel.options[sel.selectedIndex] : null;
+        let shipping = 0;
+        if (selectedOpt && sel.selectedIndex > 0) {
+          shipping =
+            deliveryType === "bureau"
+              ? parseInt(selectedOpt.dataset.bureauPrice) || 0
+              : parseInt(selectedOpt.dataset.homePrice) || 0;
+        }
         const wilayaName =
           sel && sel.selectedIndex > 0
             ? sel.options[sel.selectedIndex].dataset.name
@@ -1525,15 +1535,7 @@
 
         let address = "";
         if (deliveryType === "bureau") {
-          const compEl = document.getElementById("co-company");
-          const offEl = document.getElementById("co-office");
-          const company = compEl?.options[compEl.selectedIndex]?.text || "";
-          const office = offEl?.value || "";
-          if (!company || !office) {
-            showToast("Choisissez la société et le bureau");
-            return;
-          }
-          address = "Bureau — " + company + " — " + office;
+          address = "Au Bureau";
         } else {
           address =
             "Domicile — " +
@@ -1554,7 +1556,12 @@
             ];
 
         const selectedOpt = wilEl.options[wilEl.selectedIndex];
-        const shipping = parseInt(selectedOpt?.value) || 0;
+        const shipping =
+          deliveryType === "bureau"
+            ? parseInt(selectedOpt?.dataset.bureauPrice) || 0
+            : parseInt(selectedOpt?.dataset.homePrice) ||
+              parseInt(selectedOpt?.value) ||
+              0;
 
         const orderData = {
           customer: name || phone,
