@@ -660,47 +660,7 @@
           left: 10px;
         }
         .nav-center {
-          gap: 0.4rem;
-          margin: 0;
-          flex: 0 0 auto;
-        }
-        .nav-center a {
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background: var(--gray-50);
-          border: 1.5px solid var(--gray-100);
-        }
-        .nav-actions {
-          gap: 0.35rem;
-          flex-shrink: 0;
-        }
-        /* Panier: icon only, hide word "Panier" */
-        .cart-float-btn {
-          padding: 0.45rem 0.55rem;
-          font-size: 0;
-          gap: 0;
-        }
-        .cart-float-btn svg { flex-shrink: 0; }
-        /* Hide the disabled favoris button */
-        #fav-btn { display: none !important; }
-        /* Retour stays readable */
-        .back-btn {
-          padding: 0.4rem 0.7rem;
-          font-size: 0.8rem;
-          white-space: nowrap;
-          flex-shrink: 0;
-        }
-        nav {
-          padding: 0 0.6rem;
-          gap: 0.25rem;
-        }
-        .nav-logo {
-          font-size: 1.05rem;
-          flex-shrink: 0;
+          gap: 0.75rem;
         }
         .shipping-options {
           gap: 0.5rem;
@@ -712,12 +672,7 @@
       }
       @media (max-width: 400px) {
         .nav-center a {
-          width: 28px;
-          height: 28px;
-        }
-        .back-btn {
-          padding: 0.35rem 0.55rem;
-          font-size: 0.75rem;
+          font-size: 0.8rem;
         }
       }
     </style>
@@ -809,7 +764,7 @@
               d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
-        <button class="back-btn" onclick="location.href='index.html'">
+        <button class="back-btn" onclick="history.back()">
           <svg
             width="13"
             height="13"
@@ -1760,11 +1715,19 @@
         const hasSelected = variantQtys?.some((q) => q > 0);
         const itemsToOrder = hasSelected
           ? variantQtys
-              .map((qty, i) => ({ id: product.id, variant: i, qty }))
+              .map((qty, i) => ({
+                id: product.id,
+                name: product.name,
+                variantLabel: product.variants?.[i] || '',
+                variant: i,
+                qty,
+              }))
               .filter((item) => item.qty > 0)
           : [
               {
                 id: product.id,
+                name: product.name,
+                variantLabel: product.variants?.[currentVariant] || '',
                 variant: currentVariant,
                 qty: Math.max(1, currentQty),
               },
@@ -1832,14 +1795,18 @@
       document.head.appendChild(style);
 
       // ── EMAILJS CONFIG ────────────────────────────────────────
-      const EMAILJS_SERVICE_ID  = 'service_11zhp2j';
+      const EMAILJS_SERVICE_ID  = 'service_15yn72o';
       const EMAILJS_TEMPLATE_ID = 'template_513kir7';
       const EMAILJS_PUBLIC_KEY  = 'FETbWlavm4BamgdhM';
 
       function sendAdminOrderEmail(order) {
         if (typeof emailjs === 'undefined') return;
         const itemsText = Array.isArray(order.items)
-          ? order.items.map(i => (i.name || 'Produit') + ' ×' + i.qty).join(', ')
+          ? order.items.map(i => {
+              const nom = i.name || 'Produit';
+              const variant = i.variantLabel || '';
+              return (variant ? `${nom} (${variant})` : nom) + ' ×' + i.qty;
+            }).join(', ')
           : '—';
         emailjs.init(EMAILJS_PUBLIC_KEY);
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
