@@ -2436,10 +2436,6 @@
       <ul class="nav-links">
         <li><a href="#" onclick="showPage('home')">Accueil</a></li>
         <li><a href="#" onclick="showPage('shop')">Boutique</a></li>
-        <li><a href="#" onclick="showSection('pc-parts')">Pièces PC</a></li>
-        <li>
-          <a href="#" onclick="showSection('cosmétiques')">Cosmétiques PC</a>
-        </li>
         <li>
           <a
             href="#"
@@ -4645,28 +4641,252 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Catégorie *</label>
-              <select id="ap-cat">
-                <option value="PC Parts">Pièces PC</option>
-                <option value="Cosmétiques PC">Cosmétiques PC</option>
-                <option value="Écrans">Écrans</option>
-                <option value="Claviers">Claviers</option>
-                <option value="Souris">Souris</option>
-                <option value="Pâte Thermique">Pâte Thermique</option>
-                <option value="Boîtiers">Boîtiers</option>
-                <option value="Processeurs">Processeurs</option>
-                <option value="Cartes Graphiques">Cartes Graphiques</option>
-                <option value="RAM">RAM</option>
-                <option value="Stockage">Stockage</option>
-                <option value="Alimentations">Alimentations</option>
-                <option value="Refroidissement">Refroidissement</option>
-                <option value="Cartes Mères">Cartes Mères</option>
-                <option value="Câbles & Accessoires">
-                  Câbles & Accessoires
-                </option>
-                <option value="Audio">Audio</option>
-                <option value="Sièges & Bureau">Sièges & Bureau</option>
-              </select>
+              <label>Catégorie(s) *</label>
+              <div
+                id="ap-cat-checks"
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 0.3rem 0.75rem;
+                  max-height: 160px;
+                  overflow-y: auto;
+                  padding: 0.5rem;
+                  border: 1.5px solid var(--gray-100);
+                  border-radius: 8px;
+                  background: #fff;
+                ">
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="PC Parts" /> Pièces PC</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Cosmétiques PC" /> Cosmétiques
+                  PC</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Écrans" /> Écrans</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Claviers" /> Claviers</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Souris" /> Souris</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Pâte Thermique" /> Pâte
+                  Thermique</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Boîtiers" /> Boîtiers</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Processeurs" />
+                  Processeurs</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Cartes Graphiques" /> Cartes
+                  Graphiques</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="RAM" /> RAM</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Stockage" /> Stockage</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Alimentations" />
+                  Alimentations</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Refroidissement" />
+                  Refroidissement</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Cartes Mères" /> Cartes
+                  Mères</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Câbles & Accessoires" /> Câbles
+                  & Acc.</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Audio" /> Audio</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Sièges & Bureau" /> Sièges &
+                  Bureau</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Casques" /> Casques</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="LED & Déco" /> LED &
+                  Déco</label
+                >
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                    font-size: 0.85rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                  "
+                  ><input type="checkbox" value="Tapis" /> Tapis</label
+                >
+              </div>
+              <input type="hidden" id="ap-cat" />
             </div>
             <div class="form-group">
               <label>Stock *</label
