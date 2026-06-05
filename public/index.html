@@ -2320,6 +2320,31 @@
         transform: translateY(-3px);
         background: var(--green-dark);
       }
+      /* CATEGORY PILL MULTISELECT */
+      .cat-pill {
+        padding: 0.3rem 0.85rem;
+        border-radius: 50px;
+        border: 1.5px solid var(--gray-200, #d1d1d8);
+        background: var(--gray-50);
+        color: var(--gray-700);
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.18s;
+        white-space: nowrap;
+      }
+      .cat-pill:hover {
+        border-color: var(--green);
+        color: var(--green-dark);
+        background: var(--green-light);
+      }
+      .cat-pill.active {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(62, 207, 110, 0.3);
+      }
     </style>
   </head>
   <body>
@@ -4643,248 +4668,158 @@
             <div class="form-group">
               <label>Catégorie(s) *</label>
               <div
-                id="ap-cat-checks"
+                id="ap-cat-pills"
                 style="
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 0.3rem 0.75rem;
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 0.4rem;
+                  padding: 0.6rem;
+                  border: 1.5px solid var(--gray-100);
+                  border-radius: 10px;
+                  background: #fff;
                   max-height: 160px;
                   overflow-y: auto;
-                  padding: 0.5rem;
-                  border: 1.5px solid var(--gray-100);
-                  border-radius: 8px;
-                  background: #fff;
                 ">
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="PC Parts" /> Pièces PC</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Cosmétiques PC" /> Cosmétiques
-                  PC</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Écrans" /> Écrans</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Claviers" /> Claviers</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Souris" /> Souris</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Pâte Thermique" /> Pâte
-                  Thermique</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Boîtiers" /> Boîtiers</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Processeurs" />
-                  Processeurs</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Cartes Graphiques" /> Cartes
-                  Graphiques</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="RAM" /> RAM</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Stockage" /> Stockage</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Alimentations" />
-                  Alimentations</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Refroidissement" />
-                  Refroidissement</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Cartes Mères" /> Cartes
-                  Mères</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Câbles & Accessoires" /> Câbles
-                  & Acc.</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Audio" /> Audio</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Sièges & Bureau" /> Sièges &
-                  Bureau</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Casques" /> Casques</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="LED & Déco" /> LED &
-                  Déco</label
-                >
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.4rem;
-                    font-size: 0.85rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                  "
-                  ><input type="checkbox" value="Tapis" /> Tapis</label
-                >
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="PC Parts"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Pièces PC
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Cosmétiques PC"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Cosmétiques PC
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Écrans"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Écrans
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Claviers"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Claviers
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Souris"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Souris
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Pâte Thermique"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Pâte Thermique
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Boîtiers"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Boîtiers
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Processeurs"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Processeurs
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Cartes Graphiques"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Cartes Graphiques
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="RAM"
+                  onclick="toggleCatPill(this, 'ap')">
+                  RAM
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Stockage"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Stockage
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Alimentations"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Alimentations
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Refroidissement"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Refroidissement
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Cartes Mères"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Cartes Mères
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Câbles & Accessoires"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Câbles & Acc.
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Audio"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Audio
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Sièges & Bureau"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Sièges & Bureau
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Casques"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Casques
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="LED & Déco"
+                  onclick="toggleCatPill(this, 'ap')">
+                  LED & Déco
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Tapis"
+                  onclick="toggleCatPill(this, 'ap')">
+                  Tapis
+                </button>
               </div>
               <input type="hidden" id="ap-cat" />
             </div>
@@ -5133,28 +5068,162 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Catégorie *</label>
-              <select id="ep-cat">
-                <option value="PC Parts">Pièces PC</option>
-                <option value="Cosmétiques PC">Cosmétiques PC</option>
-                <option value="Écrans">Écrans</option>
-                <option value="Claviers">Claviers</option>
-                <option value="Souris">Souris</option>
-                <option value="Pâte Thermique">Pâte Thermique</option>
-                <option value="Boîtiers">Boîtiers</option>
-                <option value="Processeurs">Processeurs</option>
-                <option value="Cartes Graphiques">Cartes Graphiques</option>
-                <option value="RAM">RAM</option>
-                <option value="Stockage">Stockage</option>
-                <option value="Alimentations">Alimentations</option>
-                <option value="Refroidissement">Refroidissement</option>
-                <option value="Cartes Mères">Cartes Mères</option>
-                <option value="Câbles & Accessoires">
-                  Câbles & Accessoires
-                </option>
-                <option value="Audio">Audio</option>
-                <option value="Sièges & Bureau">Sièges & Bureau</option>
-              </select>
+              <label>Catégorie(s) *</label>
+              <div
+                id="ep-cat-pills"
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 0.4rem;
+                  padding: 0.6rem;
+                  border: 1.5px solid var(--gray-100);
+                  border-radius: 10px;
+                  background: #fff;
+                  max-height: 160px;
+                  overflow-y: auto;
+                ">
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="PC Parts"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Pièces PC
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Cosmétiques PC"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Cosmétiques PC
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Écrans"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Écrans
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Claviers"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Claviers
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Souris"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Souris
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Pâte Thermique"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Pâte Thermique
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Boîtiers"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Boîtiers
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Processeurs"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Processeurs
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Cartes Graphiques"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Cartes Graphiques
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="RAM"
+                  onclick="toggleCatPill(this, 'ep')">
+                  RAM
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Stockage"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Stockage
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Alimentations"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Alimentations
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Refroidissement"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Refroidissement
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Cartes Mères"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Cartes Mères
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Câbles & Accessoires"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Câbles & Acc.
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Audio"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Audio
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Sièges & Bureau"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Sièges & Bureau
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Casques"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Casques
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="LED & Déco"
+                  onclick="toggleCatPill(this, 'ep')">
+                  LED & Déco
+                </button>
+                <button
+                  type="button"
+                  class="cat-pill"
+                  data-val="Tapis"
+                  onclick="toggleCatPill(this, 'ep')">
+                  Tapis
+                </button>
+              </div>
+              <input type="hidden" id="ep-cat" />
             </div>
             <div class="form-group">
               <label>Stock *</label><input type="number" id="ep-stock" />
@@ -5725,7 +5794,12 @@
         document.getElementById("ep-name").value = p.name;
         document.getElementById("ep-price").value = p.price;
         document.getElementById("ep-old-price").value = p.oldPrice || "";
-        document.getElementById("ep-cat").value = p.cat;
+        // Populate pill multiselect for edit modal
+        const epCatVal = Array.isArray(p.cat) ? p.cat : p.cat ? [p.cat] : [];
+        document.getElementById("ep-cat").value = epCatVal.join(",");
+        document.querySelectorAll("#ep-cat-pills .cat-pill").forEach((btn) => {
+          btn.classList.toggle("active", epCatVal.includes(btn.dataset.val));
+        });
         document.getElementById("ep-stock").value = p.stock;
         document.getElementById("ep-icon").value = p.icon;
         document.getElementById("ep-variants").value = p.variants.join(", ");
@@ -6033,6 +6107,16 @@
           b.style.background = i === 0 ? "var(--green-light)" : "#fff";
         });
         document.getElementById("ap-icon").value = "🖥️";
+      }
+
+      // ── CATEGORY PILL TOGGLE ─────────────────────────────────
+      function toggleCatPill(btn, prefix) {
+        btn.classList.toggle("active");
+        const container = document.getElementById(prefix + "-cat-pills");
+        const vals = Array.from(
+          container.querySelectorAll(".cat-pill.active"),
+        ).map((b) => b.dataset.val);
+        document.getElementById(prefix + "-cat").value = vals.join(",");
       }
 
       async function saveNewProduct() {
@@ -8395,12 +8479,20 @@
         const PUBLIC_KEY = "FETbWlavm4BamgdhM"; // ← remplacez par votre Public Key EmailJS
 
         const itemsText = Array.isArray(order.items)
-          ? order.items.map((i) => `${i.name} ×${i.qty}`).join(", ")
+          ? order.items
+              .map((i) => {
+                const name = i.name || "Produit";
+                const variant = i.variantLabel || i.variant_label || "";
+                return (variant ? `${name} (${variant})` : name) + " ×" + i.qty;
+              })
+              .join(", ")
           : order.items || "—";
 
         emailjs.init(PUBLIC_KEY);
         emailjs
           .send(SERVICE_ID, TEMPLATE_ID, {
+            from_name: "Mus Tech Boutique",
+            reply_to: "no-reply@mustech.dz",
             order_ref: order.order_ref || "#MT-" + order.id,
             customer: order.customer,
             phone: order.phone,

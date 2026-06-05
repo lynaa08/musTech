@@ -764,7 +764,7 @@
               d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
-        <button class="back-btn" onclick="history.back()">
+        <button class="back-btn" onclick="location.href='index.html'">
           <svg
             width="13"
             height="13"
@@ -1715,11 +1715,19 @@
         const hasSelected = variantQtys?.some((q) => q > 0);
         const itemsToOrder = hasSelected
           ? variantQtys
-              .map((qty, i) => ({ id: product.id, variant: i, qty }))
+              .map((qty, i) => ({
+                id: product.id,
+                name: product.name,
+                variantLabel: product.variants[i] || '',
+                variant: i,
+                qty,
+              }))
               .filter((item) => item.qty > 0)
           : [
               {
                 id: product.id,
+                name: product.name,
+                variantLabel: product.variants[currentVariant] || '',
                 variant: currentVariant,
                 qty: Math.max(1, currentQty),
               },
@@ -1794,17 +1802,23 @@
       function sendAdminOrderEmail(order) {
         if (typeof emailjs === 'undefined') return;
         const itemsText = Array.isArray(order.items)
-          ? order.items.map(i => (i.name || 'Produit') + ' ×' + i.qty).join(', ')
+          ? order.items.map(i => {
+              const name = i.name || 'Produit';
+              const variant = i.variantLabel || i.variant_label || '';
+              return (variant ? `${name} (${variant})` : name) + ' ×' + i.qty;
+            }).join(', ')
           : '—';
         emailjs.init(EMAILJS_PUBLIC_KEY);
         emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-          order_ref: order.order_ref || '#MT-' + order.id,
-          customer:  order.customer,
-          phone:     order.phone,
-          wilaya:    order.wilaya,
-          items:     itemsText,
-          total:     (order.total || 0).toLocaleString() + ' DA',
-          date:      new Date().toLocaleString('fr-DZ'),
+          from_name:  'Mus Tech Boutique',
+          reply_to:   'no-reply@mustech.dz',
+          order_ref:  order.order_ref || '#MT-' + order.id,
+          customer:   order.customer,
+          phone:      order.phone,
+          wilaya:     order.wilaya,
+          items:      itemsText,
+          total:      (order.total || 0).toLocaleString() + ' DA',
+          date:       new Date().toLocaleString('fr-DZ'),
         }).then(() => console.log('📧 Email admin envoyé'))
           .catch(err => console.warn('EmailJS:', err));
       }
