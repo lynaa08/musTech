@@ -1718,7 +1718,7 @@
               .map((qty, i) => ({
                 id: product.id,
                 name: product.name,
-                variantLabel: product.variants?.[i] || '',
+                variantLabel: Array.isArray(product.variants) ? (product.variants[i] || '') : '',
                 variant: i,
                 qty,
               }))
@@ -1727,7 +1727,7 @@
               {
                 id: product.id,
                 name: product.name,
-                variantLabel: product.variants?.[currentVariant] || '',
+                variantLabel: Array.isArray(product.variants) ? (product.variants[currentVariant] || '') : '',
                 variant: currentVariant,
                 qty: Math.max(1, currentQty),
               },
@@ -1803,9 +1803,10 @@
         if (typeof emailjs === 'undefined') return;
         const itemsText = Array.isArray(order.items)
           ? order.items.map(i => {
-              const nom = i.name || 'Produit';
+              const nom = i.name || (product && product.name) || 'Produit';
               const variant = i.variantLabel || '';
-              return (variant ? `${nom} (${variant})` : nom) + ' ×' + i.qty;
+              const showVariant = variant && variant !== 'Standard';
+              return (showVariant ? `${nom} (${variant})` : nom) + ' \u00d7' + i.qty;
             }).join(', ')
           : '—';
         emailjs.init(EMAILJS_PUBLIC_KEY);
