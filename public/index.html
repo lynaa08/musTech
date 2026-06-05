@@ -6508,53 +6508,6 @@
           .catch((e) => console.error("Email error:", e));
       }
 
-      // ── RATINGS ───────────────────────────────────────────────
-      let RATINGS = []; // [{rating, comment, date}]
-      let _currentRating = 0;
-      const RATING_LABELS = [
-        "",
-        "Très mauvais 😞",
-        "Mauvais 😕",
-        "Correct 😐",
-        "Bien 😊",
-        "Excellent ! 🤩",
-      ];
-
-      function setRating(n) {
-        _currentRating = n;
-        document.querySelectorAll(".star-btn").forEach((s, i) => {
-          s.textContent = i < n ? "★" : "☆";
-          s.style.color = i < n ? "#f59e0b" : "#d1d5db";
-          s.style.transform = i < n ? "scale(1.15)" : "scale(1)";
-        });
-        document.getElementById("rating-label").textContent = RATING_LABELS[n];
-      }
-
-      function submitRating() {
-        if (!_currentRating) {
-          showToast("Veuillez choisir une note");
-          return;
-        }
-        const comment = document.getElementById("rating-comment").value.trim();
-        RATINGS.push({
-          rating: _currentRating,
-          comment,
-          date: new Date().toLocaleDateString("fr-DZ"),
-        });
-        closeModal("rating-modal");
-        // Reset
-        _currentRating = 0;
-        document.querySelectorAll(".star-btn").forEach((s) => {
-          s.textContent = "☆";
-          s.style.color = "";
-          s.style.transform = "";
-        });
-        document.getElementById("rating-comment").value = "";
-        document.getElementById("rating-label").textContent = "";
-        updateDashboardStats();
-        showToast("Merci pour votre avis");
-      }
-
       // ── DASHBOARD STATS ───────────────────────────────────────
       function updateDashboardStats() {
         populateAdminTables();
