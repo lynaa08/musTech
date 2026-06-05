@@ -2618,6 +2618,39 @@
           <div class="product-grid" id="featured-grid"></div>
         </div>
       </section>
+
+      <!-- AVIS CLIENTS SECTION -->
+      <section
+        class="section"
+        style="
+          background: var(--off-white);
+          border-top: 1px solid var(--gray-100);
+        ">
+        <div class="section-inner">
+          <div class="section-header">
+            <h2>Ce que disent nos <span>Clients</span></h2>
+            <p>Avis vérifiés de notre communauté</p>
+          </div>
+          <div
+            id="public-reviews-grid"
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+              gap: 1.25rem;
+            "></div>
+          <div
+            id="public-reviews-empty"
+            style="
+              display: none;
+              text-align: center;
+              padding: 3rem;
+              color: var(--gray-500);
+            ">
+            <div style="font-size: 3rem; margin-bottom: 1rem">⭐</div>
+            <p>Soyez le premier à laisser un avis !</p>
+          </div>
+        </div>
+      </section>
     </div>
     <!-- END HOME PAGE -->
 
@@ -2769,6 +2802,13 @@
               >
             </li>
             <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('reviews', this)"
+                >⭐ Avis Clients</a
+              >
+            </li>
+            <li>
               <a href="#" onclick="showPage('home')" style="margin-top: 2rem"
                 >← Retour à la Boutique</a
               >
@@ -2891,6 +2931,14 @@
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
               Finances
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('reviews', this);
+                syncMobileNav(this);
+              ">
+              ⭐ Avis
             </a>
             <a
               href="javascript:void(0)"
@@ -3017,20 +3065,40 @@
             </div>
             <div class="admin-table-card">
               <div class="filter-bar">
-                <select class="filter-select">
-                  <option>Tous les Statuts</option>
-                  <option>En attente</option>
-                  <option>Expédié</option>
-                  <option>Livré</option>
-                  <option>Annulé</option>
+                <input
+                  type="text"
+                  class="filter-select"
+                  id="filter-search"
+                  placeholder="🔍 Rechercher client, tél, ref..."
+                  oninput="applyOrderFilters()"
+                  style="min-width: 180px" />
+                <select
+                  class="filter-select"
+                  id="filter-status"
+                  onchange="applyOrderFilters()">
+                  <option value="">Tous les Statuts</option>
+                  <option value="pending">En attente</option>
+                  <option value="shipped">Expédié</option>
+                  <option value="delivered">Livré</option>
+                  <option value="cancelled">Annulé</option>
                 </select>
-                <select class="filter-select">
-                  <option>Toutes les Wilayas</option>
-                  <option>Alger</option>
-                  <option>Oran</option>
-                  <option>Constantine</option>
+                <select
+                  class="filter-select"
+                  id="filter-wilaya"
+                  onchange="applyOrderFilters()">
+                  <option value="">Toutes les Wilayas</option>
                 </select>
-                <input type="date" class="filter-select" />
+                <input
+                  type="date"
+                  class="filter-select"
+                  id="filter-date"
+                  onchange="applyOrderFilters()" />
+                <button
+                  class="btn btn-ghost"
+                  style="font-size: 0.8rem; padding: 0.4rem 0.9rem"
+                  onclick="clearOrderFilters()">
+                  ✕ Effacer
+                </button>
               </div>
               <div style="overflow-x: auto">
                 <table>
@@ -3047,6 +3115,30 @@
                     </tr>
                   </thead>
                   <tbody id="all-orders-table"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- REVIEWS TAB -->
+          <div id="admin-reviews" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Avis Clients</h1>
+            </div>
+            <div class="admin-table-card">
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Client</th>
+                      <th>Note</th>
+                      <th>Commentaire</th>
+                      <th>Date</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-reviews-table"></tbody>
                 </table>
               </div>
             </div>
@@ -4231,6 +4323,139 @@
       </div>
     </div>
 
+    <!-- RATING MODAL (shown after order) -->
+    <div class="modal-overlay" id="rating-modal">
+      <div class="modal" style="max-width: 480px">
+        <div class="modal-header">
+          <h3>⭐ Donnez votre avis</h3>
+          <button class="modal-close" onclick="closeModal('rating-modal')">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <div style="text-align: center; margin-bottom: 1.5rem">
+            <div
+              style="
+                font-size: 1rem;
+                color: var(--gray-500);
+                margin-bottom: 1rem;
+              ">
+              Votre commande est confirmée ! Comment évaluez-vous votre
+              expérience ?
+            </div>
+            <div
+              id="rating-stars"
+              style="
+                display: flex;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+              ">
+              <button
+                class="star-btn"
+                data-val="1"
+                onclick="setRating(1)"
+                style="
+                  font-size: 2.2rem;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  transition: transform 0.15s;
+                ">
+                ☆
+              </button>
+              <button
+                class="star-btn"
+                data-val="2"
+                onclick="setRating(2)"
+                style="
+                  font-size: 2.2rem;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  transition: transform 0.15s;
+                ">
+                ☆
+              </button>
+              <button
+                class="star-btn"
+                data-val="3"
+                onclick="setRating(3)"
+                style="
+                  font-size: 2.2rem;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  transition: transform 0.15s;
+                ">
+                ☆
+              </button>
+              <button
+                class="star-btn"
+                data-val="4"
+                onclick="setRating(4)"
+                style="
+                  font-size: 2.2rem;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  transition: transform 0.15s;
+                ">
+                ☆
+              </button>
+              <button
+                class="star-btn"
+                data-val="5"
+                onclick="setRating(5)"
+                style="
+                  font-size: 2.2rem;
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  transition: transform 0.15s;
+                ">
+                ☆
+              </button>
+            </div>
+            <div
+              id="rating-label"
+              style="
+                font-size: 0.88rem;
+                font-weight: 700;
+                color: var(--green-dark);
+                min-height: 1.2em;
+              "></div>
+          </div>
+          <div class="form-group">
+            <label>Commentaire (facultatif)</label>
+            <textarea
+              id="rating-comment"
+              rows="3"
+              placeholder="Partagez votre expérience d'achat..."
+              style="resize: vertical"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Votre prénom</label>
+            <input type="text" id="rating-name" placeholder="Ahmed" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-primary"
+            style="width: 100%"
+            onclick="submitRating()">
+            Envoyer mon avis ✓
+          </button>
+          <button
+            class="btn btn-ghost"
+            style="width: 100%; margin-top: 0.5rem"
+            onclick="closeModal('rating-modal')">
+            Non merci
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- LOGIN MODAL -->
     <div class="modal-overlay" id="login-modal">
       <div class="modal" style="max-width: 420px">
@@ -5141,8 +5366,9 @@
           // Dashboard orders
           const t1 = document.getElementById("admin-orders-table");
           if (t1)
-            t1.innerHTML = ORDERS.map(
-              (o) => `
+            t1.innerHTML = ORDERS.slice(0, 10)
+              .map(
+                (o) => `
       <tr>
         <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
         <td>${o.customer}</td>
@@ -5152,30 +5378,14 @@
         <td><div class="action-btns">
           <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
           <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'shipped')">Expédier</button>
-          <button class="action-btn action-del" onclick="deleteProduct(${o.id})">Supprimer</button>
+          <button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button>
         </div></td>
       </tr>`,
-            ).join("");
+              )
+              .join("");
 
-          // Full orders
-          const t2 = document.getElementById("all-orders-table");
-          if (t2)
-            t2.innerHTML = ORDERS.map(
-              (o) => `
-      <tr>
-        <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
-        <td>${o.customer}</td>
-        <td>${o.phone}</td>
-        <td>${o.wilaya}</td>
-        <td>${o.items ? o.items.length : 0}</td>
-        <td><strong>${(o.total || 0).toLocaleString()} DA</strong></td>
-        <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
-        <td><div class="action-btns">
-          <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
-          <button class="action-btn action-del" onclick="deleteProduct(${o.id})">Supprimer</button>
-        </div></td>
-      </tr>`,
-            ).join("");
+          // Full orders — render with current filters
+          renderFilteredOrders();
 
           // Top products (dashboard)
           const t3 = document.getElementById("admin-products-table");
@@ -5233,6 +5443,55 @@
               );
             });
           }
+
+          // Populate wilaya filter dropdown
+          const wFilter = document.getElementById("filter-wilaya");
+          if (wFilter && ORDERS.length) {
+            const ws = [
+              ...new Set(ORDERS.map((o) => o.wilaya).filter(Boolean)),
+            ].sort();
+            const cur = wFilter.value;
+            wFilter.innerHTML =
+              '<option value="">Toutes les Wilayas</option>' +
+              ws
+                .map(
+                  (w) =>
+                    `<option value="${w}" ${w === cur ? "selected" : ""}>${w}</option>`,
+                )
+                .join("");
+          }
+
+          // Admin reviews table
+          const tr = document.getElementById("admin-reviews-table");
+          if (tr) {
+            const allReviews = JSON.parse(
+              localStorage.getItem("mt_reviews") || "[]",
+            );
+            if (allReviews.length === 0) {
+              tr.innerHTML =
+                '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--gray-400);">Aucun avis pour le moment</td></tr>';
+            } else {
+              tr.innerHTML = allReviews
+                .map(
+                  (r, idx) => `
+                <tr>
+                  <td><strong>${r.name || "Anonyme"}</strong></td>
+                  <td><span style="color:#f59e0b;font-size:1.1rem;">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span> <span style="font-weight:700;">${r.rating}/5</span></td>
+                  <td style="max-width:250px;word-break:break-word;">${r.comment || "—"}</td>
+                  <td style="white-space:nowrap;">${new Date(r.date).toLocaleDateString("fr-DZ")}</td>
+                  <td><span class="status-badge ${r.hidden ? "status-cancelled" : "status-delivered"}">${r.hidden ? "Masqué" : "Visible"}</span></td>
+                  <td><div class="action-btns">
+                    <button class="action-btn ${r.hidden ? "action-edit" : "action-view"}" onclick="toggleReviewVisibility(${idx})">${r.hidden ? "👁 Afficher" : "🙈 Masquer"}</button>
+                    <button class="action-btn action-del" onclick="deleteReview(${idx})">Supprimer</button>
+                  </div></td>
+                </tr>`,
+                )
+                .join("");
+            }
+          }
+
+          // Public reviews on home page
+          renderPublicReviews();
         } catch (e) {
           console.error("Tables load error:", e);
         }
@@ -6198,14 +6457,14 @@
       // ── EMAIL (EmailJS) ───────────────────────────────────────
       //  Fill in your EmailJS public key, service ID and template ID below
       // Sign up free at https://www.emailjs.com → get these 3 values
-      const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // e.g. 'abc123XYZ'
-      const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID"; // e.g. 'service_xxxx'
-      const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID"; // e.g. 'template_xxxx'
+      const EMAILJS_PUBLIC_KEY = "FETbWlavm4BamgdhM"; // e.g. 'abc123XYZ'
+      const EMAILJS_SERVICE_ID = "service_15yn72o"; // e.g. 'service_xxxx'
+      const EMAILJS_TEMPLATE_ID = "template_513kir7"; // e.g. 'template_xxxx'
 
       function initEmailJS() {
         if (
           typeof emailjs !== "undefined" &&
-          EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY"
+          EMAILJS_PUBLIC_KEY !== "FETbWlavm4BamgdhM"
         ) {
           emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
         }
@@ -6219,7 +6478,7 @@
       function sendOrderEmail(order) {
         if (
           typeof emailjs === "undefined" ||
-          EMAILJS_PUBLIC_KEY === "YOUR_PUBLIC_KEY"
+          EMAILJS_PUBLIC_KEY === "FETbWlavm4BamgdhM"
         ) {
           console.log("EmailJS not configured — order data:", order);
           return;
@@ -6303,6 +6562,9 @@
 
       // ── ORDER ─────────────────────────────────────────────────
       async function placeOrder() {
+        // Rate limit guard
+        if (!checkOrderRateLimit()) return;
+
         const wilEl = document.getElementById("wilaya-select");
         const nameEl = document.querySelector(
           '#checkout-modal input[type="text"]',
@@ -6335,6 +6597,7 @@
             variant: item.variant,
             qty: item.qty,
           })),
+          // NOTE: Total is recalculated server-side. Never trust client total.
         };
 
         try {
@@ -6346,8 +6609,8 @@
           document.getElementById("confirm-total").textContent =
             resOrder.total_formatted || resOrder.total + " DA";
 
-          // Send email notification (optional)
-          sendOrderEmail(resOrder);
+          // Send admin email notification
+          sendAdminOrderEmail(resOrder);
 
           // Update stats if we are admin
           if (currentUser && currentUser.role === "admin") {
@@ -6360,6 +6623,12 @@
 
           closeModal("checkout-modal");
           openModal("confirm-modal");
+
+          // Show rating modal after a short delay
+          setTimeout(() => {
+            closeModal("confirm-modal");
+            openModal("rating-modal");
+          }, 2500);
         } catch (e) {
           showToast("Erreur: " + e.message);
         }
@@ -6887,6 +7156,7 @@
       }
 
       async function pmPlaceOrder() {
+        if (!checkOrderRateLimit()) return;
         const phone = document.getElementById("pm-phone")?.value.trim();
         const wilEl = document.getElementById("pm-wilaya");
         if (!phone) {
@@ -6948,6 +7218,8 @@
 
         try {
           const res = await OrdersAPI.place(orderData);
+          // Send admin email
+          sendAdminOrderEmail(res);
           try {
             const saved = JSON.parse(
               _storeLocal.getItem("mt_guest_orders") || "[]",
@@ -6978,6 +7250,11 @@
             ).toLocaleString() +
             " DA";
           suc.style.display = "block";
+          // Show rating modal after delay
+          setTimeout(() => {
+            closeModal("product-modal");
+            openModal("rating-modal");
+          }, 2000);
         } catch (e) {
           showToast("Erreur: " + e.message);
           if (btn) {
@@ -7759,6 +8036,240 @@
           });
         });
       }
+
+      // ── ORDER FILTERS ─────────────────────────────────────────
+      function renderFilteredOrders(orders) {
+        const list = orders || ORDERS;
+        const statusF = document.getElementById("filter-status")?.value || "";
+        const wilayaF = document.getElementById("filter-wilaya")?.value || "";
+        const dateF = document.getElementById("filter-date")?.value || "";
+        const searchF = (
+          document.getElementById("filter-search")?.value || ""
+        ).toLowerCase();
+
+        const filtered = list.filter((o) => {
+          if (statusF && o.status !== statusF) return false;
+          if (wilayaF && o.wilaya !== wilayaF) return false;
+          if (dateF) {
+            const oDate = o.created_at
+              ? new Date(o.created_at).toISOString().slice(0, 10)
+              : "";
+            if (oDate !== dateF) return false;
+          }
+          if (searchF) {
+            const hay = [o.order_ref, o.customer, o.phone, o.wilaya]
+              .join(" ")
+              .toLowerCase();
+            if (!hay.includes(searchF)) return false;
+          }
+          return true;
+        });
+
+        const t2 = document.getElementById("all-orders-table");
+        if (!t2) return;
+        if (filtered.length === 0) {
+          t2.innerHTML =
+            '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-400);">Aucune commande trouvée</td></tr>';
+          return;
+        }
+        t2.innerHTML = filtered
+          .map(
+            (o) => `
+          <tr>
+            <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
+            <td>${o.customer}</td>
+            <td>${o.phone || "—"}</td>
+            <td>${o.wilaya}</td>
+            <td>${o.items ? o.items.length : 0}</td>
+            <td><strong>${(o.total || 0).toLocaleString()} DA</strong></td>
+            <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
+            <td><div class="action-btns">
+              <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
+              <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'delivered')">✓ Livré</button>
+              <button class="action-btn action-del" onclick="deleteOrder(${o.id})">🗑 Supprimer</button>
+            </div></td>
+          </tr>`,
+          )
+          .join("");
+      }
+
+      function applyOrderFilters() {
+        renderFilteredOrders();
+      }
+      function clearOrderFilters() {
+        [
+          "filter-status",
+          "filter-wilaya",
+          "filter-date",
+          "filter-search",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        renderFilteredOrders();
+      }
+
+      // ── RATINGS / REVIEWS ─────────────────────────────────────
+      let _currentRating = 0;
+      const RATING_LABELS = [
+        "",
+        "Très mauvais 😞",
+        "Mauvais 😕",
+        "Moyen 😐",
+        "Bien 😊",
+        "Excellent ! 🤩",
+      ];
+
+      function setRating(val) {
+        _currentRating = val;
+        document.querySelectorAll(".star-btn").forEach((s, i) => {
+          s.textContent = i < val ? "★" : "☆";
+          s.style.color = i < val ? "#f59e0b" : "";
+          s.style.transform = i < val ? "scale(1.15)" : "";
+        });
+        const lbl = document.getElementById("rating-label");
+        if (lbl) lbl.textContent = RATING_LABELS[val] || "";
+      }
+
+      function submitRating() {
+        if (!_currentRating) {
+          showToast("Veuillez sélectionner une note ⭐");
+          return;
+        }
+        const comment =
+          document.getElementById("rating-comment")?.value.trim() || "";
+        const name =
+          document.getElementById("rating-name")?.value.trim() || "Client";
+        const reviews = JSON.parse(localStorage.getItem("mt_reviews") || "[]");
+        reviews.unshift({
+          rating: _currentRating,
+          comment,
+          name,
+          date: new Date().toISOString(),
+          hidden: false,
+        });
+        localStorage.setItem("mt_reviews", JSON.stringify(reviews));
+        closeModal("rating-modal");
+        _currentRating = 0;
+        document.querySelectorAll(".star-btn").forEach((s) => {
+          s.textContent = "☆";
+          s.style.color = "";
+          s.style.transform = "";
+        });
+        if (document.getElementById("rating-comment"))
+          document.getElementById("rating-comment").value = "";
+        if (document.getElementById("rating-name"))
+          document.getElementById("rating-name").value = "";
+        if (document.getElementById("rating-label"))
+          document.getElementById("rating-label").textContent = "";
+        renderPublicReviews();
+        showToast("Merci pour votre avis ! ⭐");
+      }
+
+      function renderPublicReviews() {
+        const grid = document.getElementById("public-reviews-grid");
+        const empty = document.getElementById("public-reviews-empty");
+        if (!grid) return;
+        const all = JSON.parse(localStorage.getItem("mt_reviews") || "[]");
+        const visible = all.filter((r) => !r.hidden);
+        if (visible.length === 0) {
+          grid.innerHTML = "";
+          if (empty) empty.style.display = "block";
+          return;
+        }
+        if (empty) empty.style.display = "none";
+        grid.innerHTML = visible
+          .map(
+            (r) => `
+          <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--gray-100);padding:1.25rem 1.5rem;box-shadow:var(--shadow-sm);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+              <span style="font-weight:700;color:var(--gray-900);">${r.name || "Client"}</span>
+              <span style="color:#f59e0b;font-size:1rem;">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span>
+            </div>
+            ${r.comment ? `<p style="font-size:0.88rem;color:var(--gray-600);line-height:1.6;margin-bottom:0.75rem;">"${r.comment}"</p>` : ""}
+            <div style="font-size:0.75rem;color:var(--gray-400);">${new Date(r.date).toLocaleDateString("fr-DZ")}</div>
+          </div>`,
+          )
+          .join("");
+      }
+
+      function toggleReviewVisibility(idx) {
+        const reviews = JSON.parse(localStorage.getItem("mt_reviews") || "[]");
+        if (reviews[idx]) {
+          reviews[idx].hidden = !reviews[idx].hidden;
+          localStorage.setItem("mt_reviews", JSON.stringify(reviews));
+          populateAdminTables();
+          showToast(reviews[idx].hidden ? "🙈 Avis masqué" : "👁 Avis affiché");
+        }
+      }
+
+      function deleteReview(idx) {
+        if (!confirm("Supprimer cet avis ?")) return;
+        const reviews = JSON.parse(localStorage.getItem("mt_reviews") || "[]");
+        reviews.splice(idx, 1);
+        localStorage.setItem("mt_reviews", JSON.stringify(reviews));
+        populateAdminTables();
+        showToast("🗑️ Avis supprimé");
+      }
+
+      // ── ADMIN EMAIL NOTIFICATION ──────────────────────────────
+      // Called after each successful order — sends email to admin via EmailJS
+      function sendAdminOrderEmail(order) {
+        if (typeof emailjs === "undefined") return;
+        // Configure your EmailJS service/template IDs here:
+        const SERVICE_ID = "service_15yn72o"; // ← remplacez par votre Service ID EmailJS
+        const TEMPLATE_ID = "template_513kir7"; // ← remplacez par votre Template ID EmailJS
+        const PUBLIC_KEY = "FETbWlavm4BamgdhM"; // ← remplacez par votre Public Key EmailJS
+
+        const itemsText = Array.isArray(order.items)
+          ? order.items.map((i) => `${i.name} ×${i.qty}`).join(", ")
+          : order.items || "—";
+
+        emailjs.init(PUBLIC_KEY);
+        emailjs
+          .send(SERVICE_ID, TEMPLATE_ID, {
+            order_ref: order.order_ref || "#MT-" + order.id,
+            customer: order.customer,
+            phone: order.phone,
+            wilaya: order.wilaya,
+            items: itemsText,
+            total: (order.total || 0).toLocaleString() + " DA",
+            date: new Date().toLocaleString("fr-DZ"),
+          })
+          .then(() => console.log("📧 Email admin envoyé"))
+          .catch((err) => console.warn("EmailJS error:", err));
+      }
+
+      // ── SECURITY: Rate limiting (client-side guard) ───────────
+      // The real protection MUST be on your backend (recalculate price server-side,
+      // limit orders per IP/hour). This is a lightweight frontend guard.
+      const _orderTimestamps = [];
+      const ORDER_RATE_LIMIT = 3; // max orders per window
+      const ORDER_RATE_WINDOW = 60 * 60 * 1000; // 1 hour in ms
+
+      function checkOrderRateLimit() {
+        const now = Date.now();
+        // Clean old timestamps
+        while (
+          _orderTimestamps.length &&
+          now - _orderTimestamps[0] > ORDER_RATE_WINDOW
+        ) {
+          _orderTimestamps.shift();
+        }
+        if (_orderTimestamps.length >= ORDER_RATE_LIMIT) {
+          showToast("⚠️ Trop de commandes. Veuillez réessayer dans une heure.");
+          return false;
+        }
+        _orderTimestamps.push(now);
+        return true;
+      }
+
+      // Init public reviews on page load
+      document.addEventListener("DOMContentLoaded", () => {
+        renderPublicReviews();
+      });
+      // Also render immediately if DOM already ready
+      if (document.readyState !== "loading") renderPublicReviews();
     </script>
   </body>
 </html>
