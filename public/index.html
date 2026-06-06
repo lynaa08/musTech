@@ -2366,10 +2366,13 @@
         transform: translateY(-3px);
         background: var(--green-dark);
       }
-      /* CATEGORY PILL MULTISELECT */
+      #add-product-modal .form-row,
+      #edit-product-modal .form-row {
+        grid-template-columns: 1fr;
+      }
       .cat-pill.active .pill-remove:hover {
         color: #fff;
-        background: rgba(0,0,0,0.2);
+        background: rgba(0, 0, 0, 0.2);
         border-radius: 50%;
       }
       .cat-pill {
@@ -4794,165 +4797,573 @@
                   class="cat-pill"
                   data-val="PC Parts"
                   onclick="toggleCatPill(this, 'ap')">
-                  Pièces PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Pièces PC<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cosmétiques PC"
                   onclick="toggleCatPill(this, 'ap')">
-                  Cosmétiques PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Cosmétiques PC<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Écrans"
                   onclick="toggleCatPill(this, 'ap')">
-                  Écrans<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Écrans<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Claviers"
                   onclick="toggleCatPill(this, 'ap')">
-                  Claviers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Claviers<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Souris"
                   onclick="toggleCatPill(this, 'ap')">
-                  Souris<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Souris<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Pâte Thermique"
                   onclick="toggleCatPill(this, 'ap')">
-                  Pâte Thermique<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Pâte Thermique<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Boîtiers"
                   onclick="toggleCatPill(this, 'ap')">
-                  Boîtiers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Boîtiers<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Processeurs"
                   onclick="toggleCatPill(this, 'ap')">
-                  Processeurs<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Processeurs<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Graphiques"
                   onclick="toggleCatPill(this, 'ap')">
-                  Cartes Graphiques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Cartes Graphiques<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="RAM"
                   onclick="toggleCatPill(this, 'ap')">
-                  RAM<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  RAM<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Stockage"
                   onclick="toggleCatPill(this, 'ap')">
-                  Stockage<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Stockage<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Alimentations"
                   onclick="toggleCatPill(this, 'ap')">
-                  Alimentations<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Alimentations<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Refroidissement"
                   onclick="toggleCatPill(this, 'ap')">
-                  Refroidissement<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Refroidissement<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Mères"
                   onclick="toggleCatPill(this, 'ap')">
-                  Cartes Mères<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Cartes Mères<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Câbles & Accessoires"
                   onclick="toggleCatPill(this, 'ap')">
-                  Câbles & Acc.<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Câbles & Acc.<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Audio"
                   onclick="toggleCatPill(this, 'ap')">
-                  Audio<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Audio<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Sièges & Bureau"
                   onclick="toggleCatPill(this, 'ap')">
-                  Sièges & Bureau<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Sièges & Bureau<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Casques"
                   onclick="toggleCatPill(this, 'ap')">
-                  Casques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Casques<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="LED & Déco"
                   onclick="toggleCatPill(this, 'ap')">
-                  LED & Déco<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  LED & Déco<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Tapis"
                   onclick="toggleCatPill(this, 'ap')">
-                  Tapis<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ap')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Tapis<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ap')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
               </div>
-              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                <input type="text" id="ap-new-cat-input" class="form-input" placeholder="Nouvelle catégorie..." style="flex:1;padding:0.45rem 0.75rem;font-size:0.85rem;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomCatPill('ap');}" />
-                <button type="button" onclick="addCustomCatPill('ap')" style="padding:0.45rem 0.9rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;line-height:1;transition:background 0.2s;" title="Ajouter catégorie">＋</button>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem">
+                <input
+                  type="text"
+                  id="ap-new-cat-input"
+                  class="form-input"
+                  placeholder="Nouvelle catégorie..."
+                  style="flex: 1; padding: 0.45rem 0.75rem; font-size: 0.85rem"
+                  onkeydown="
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      addCustomCatPill('ap');
+                    }
+                  " />
+                <button
+                  type="button"
+                  onclick="addCustomCatPill('ap')"
+                  style="
+                    padding: 0.45rem 0.9rem;
+                    background: var(--green);
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    line-height: 1;
+                    transition: background 0.2s;
+                  "
+                  title="Ajouter catégorie">
+                  ＋
+                </button>
               </div>
               <input type="hidden" id="ap-cat" />
             </div>
@@ -4985,7 +5396,18 @@
             <label>Stock par Variante *</label>
             <div id="ap-variant-stock-rows">
               <!-- Generated dynamically -->
-              <input type="number" id="ap-stock" placeholder="Stock (toutes variantes)" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />
+              <input
+                type="number"
+                id="ap-stock"
+                placeholder="Stock (toutes variantes)"
+                style="
+                  width: 100%;
+                  padding: 0.65rem 0.9rem;
+                  border: 1.5px solid var(--gray-100);
+                  border-radius: 10px;
+                  font-family: inherit;
+                  font-size: 0.9rem;
+                " />
             </div>
           </div>
           <div class="form-group">
@@ -5224,165 +5646,573 @@
                   class="cat-pill"
                   data-val="PC Parts"
                   onclick="toggleCatPill(this, 'ep')">
-                  Pièces PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Pièces PC<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cosmétiques PC"
                   onclick="toggleCatPill(this, 'ep')">
-                  Cosmétiques PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Cosmétiques PC<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Écrans"
                   onclick="toggleCatPill(this, 'ep')">
-                  Écrans<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Écrans<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Claviers"
                   onclick="toggleCatPill(this, 'ep')">
-                  Claviers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Claviers<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Souris"
                   onclick="toggleCatPill(this, 'ep')">
-                  Souris<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Souris<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Pâte Thermique"
                   onclick="toggleCatPill(this, 'ep')">
-                  Pâte Thermique<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Pâte Thermique<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Boîtiers"
                   onclick="toggleCatPill(this, 'ep')">
-                  Boîtiers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Boîtiers<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Processeurs"
                   onclick="toggleCatPill(this, 'ep')">
-                  Processeurs<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Processeurs<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Graphiques"
                   onclick="toggleCatPill(this, 'ep')">
-                  Cartes Graphiques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Cartes Graphiques<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="RAM"
                   onclick="toggleCatPill(this, 'ep')">
-                  RAM<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  RAM<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Stockage"
                   onclick="toggleCatPill(this, 'ep')">
-                  Stockage<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Stockage<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Alimentations"
                   onclick="toggleCatPill(this, 'ep')">
-                  Alimentations<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Alimentations<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Refroidissement"
                   onclick="toggleCatPill(this, 'ep')">
-                  Refroidissement<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Refroidissement<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Mères"
                   onclick="toggleCatPill(this, 'ep')">
-                  Cartes Mères<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Cartes Mères<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Câbles & Accessoires"
                   onclick="toggleCatPill(this, 'ep')">
-                  Câbles & Acc.<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Câbles & Acc.<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Audio"
                   onclick="toggleCatPill(this, 'ep')">
-                  Audio<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Audio<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Sièges & Bureau"
                   onclick="toggleCatPill(this, 'ep')">
-                  Sièges & Bureau<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Sièges & Bureau<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Casques"
                   onclick="toggleCatPill(this, 'ep')">
-                  Casques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Casques<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="LED & Déco"
                   onclick="toggleCatPill(this, 'ep')">
-                  LED & Déco<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  LED & Déco<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Tapis"
                   onclick="toggleCatPill(this, 'ep')">
-                  Tapis<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
-                  <span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'ep')" title="Supprimer cette catégorie" role="button">✕</span>
+                  Tapis<span
+                    class="pill-remove"
+                    onclick="removeCatPill(event, this.parentNode, 'ep')"
+                    style="
+                      display: none;
+                      margin-left: 4px;
+                      font-size: 0.75rem;
+                      line-height: 1;
+                      vertical-align: middle;
+                    "
+                    >✕</span
+                  >
+                  <span
+                    class="pill-delete"
+                    onclick="
+                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
+                    "
+                    title="Supprimer cette catégorie"
+                    role="button"
+                    >✕</span
+                  >
                 </button>
               </div>
-              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                <input type="text" id="ep-new-cat-input" class="form-input" placeholder="Nouvelle catégorie..." style="flex:1;padding:0.45rem 0.75rem;font-size:0.85rem;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomCatPill('ep');}" />
-                <button type="button" onclick="addCustomCatPill('ep')" style="padding:0.45rem 0.9rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;line-height:1;transition:background 0.2s;" title="Ajouter catégorie">＋</button>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem">
+                <input
+                  type="text"
+                  id="ep-new-cat-input"
+                  class="form-input"
+                  placeholder="Nouvelle catégorie..."
+                  style="flex: 1; padding: 0.45rem 0.75rem; font-size: 0.85rem"
+                  onkeydown="
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      addCustomCatPill('ep');
+                    }
+                  " />
+                <button
+                  type="button"
+                  onclick="addCustomCatPill('ep')"
+                  style="
+                    padding: 0.45rem 0.9rem;
+                    background: var(--green);
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    line-height: 1;
+                    transition: background 0.2s;
+                  "
+                  title="Ajouter catégorie">
+                  ＋
+                </button>
               </div>
               <input type="hidden" id="ep-cat" />
             </div>
@@ -5397,7 +6227,10 @@
           </div>
           <div class="form-group">
             <label>Variantes (séparées par des virgules)</label
-            ><input type="text" id="ep-variants" oninput="renderVariantStockFields('ep')" />
+            ><input
+              type="text"
+              id="ep-variants"
+              oninput="renderVariantStockFields('ep')" />
           </div>
           <div class="form-group">
             <label>Prix des Variantes (séparés par des virgules)</label
@@ -5406,9 +6239,19 @@
           <div class="form-group" id="ep-variant-stock-group">
             <label>Stock par Variante *</label>
             <div id="ep-variant-stock-rows">
-              <input type="number" id="ep-stock" placeholder="Stock" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />
+              <input
+                type="number"
+                id="ep-stock"
+                placeholder="Stock"
+                style="
+                  width: 100%;
+                  padding: 0.65rem 0.9rem;
+                  border: 1.5px solid var(--gray-100);
+                  border-radius: 10px;
+                  font-family: inherit;
+                  font-size: 0.9rem;
+                " />
             </div>
-          </div>
           </div>
           <div class="form-group">
             <label>Description</label
@@ -5968,7 +6811,10 @@
         document.querySelectorAll("#ep-cat-pills .cat-pill").forEach((btn) => {
           btn.classList.toggle("active", epCatVal.includes(btn.dataset.val));
           const x = btn.querySelector(".pill-remove");
-          if (x) x.style.display = btn.classList.contains("active") ? "inline-flex" : "none";
+          if (x)
+            x.style.display = btn.classList.contains("active")
+              ? "inline-flex"
+              : "none";
         });
         document.getElementById("ep-icon").value = p.icon;
         document.getElementById("ep-variants").value = p.variants.join(", ");
@@ -5982,7 +6828,11 @@
         if (p.variants.length > 1) {
           p.variants.forEach((_, i) => {
             const el = document.getElementById("ep-stock-" + i);
-            if (el) el.value = variantStocks[i] !== undefined ? variantStocks[i] : Math.round(p.stock / p.variants.length);
+            if (el)
+              el.value =
+                variantStocks[i] !== undefined
+                  ? variantStocks[i]
+                  : Math.round(p.stock / p.variants.length);
           });
         } else {
           const el = document.getElementById("ep-stock");
@@ -6309,7 +7159,10 @@
         btn.classList.toggle("active");
         // Show/hide the X button based on active state
         const x = btn.querySelector(".pill-remove");
-        if (x) x.style.display = btn.classList.contains("active") ? "inline-flex" : "none";
+        if (x)
+          x.style.display = btn.classList.contains("active")
+            ? "inline-flex"
+            : "none";
         const container = document.getElementById(prefix + "-cat-pills");
         const vals = Array.from(
           container.querySelectorAll(".cat-pill.active"),
@@ -6324,7 +7177,9 @@
         const pill = btn.closest ? btn.closest(".cat-pill") : btn;
         if (pill) pill.remove();
         const container = document.getElementById(prefix + "-cat-pills");
-        const vals = Array.from(container.querySelectorAll(".cat-pill.active")).map(b => b.dataset.val);
+        const vals = Array.from(
+          container.querySelectorAll(".cat-pill.active"),
+        ).map((b) => b.dataset.val);
         const catInput = document.getElementById(prefix + "-cat");
         if (catInput) catInput.value = vals.join(",");
       }
@@ -6335,7 +7190,9 @@
         const x = btn.querySelector(".pill-remove");
         if (x) x.style.display = "none";
         const container = document.getElementById(prefix + "-cat-pills");
-        const vals = Array.from(container.querySelectorAll(".cat-pill.active")).map(b => b.dataset.val);
+        const vals = Array.from(
+          container.querySelectorAll(".cat-pill.active"),
+        ).map((b) => b.dataset.val);
         document.getElementById(prefix + "-cat").value = vals.join(",");
       }
 
@@ -6345,8 +7202,9 @@
         if (!val) return;
         const container = document.getElementById(prefix + "-cat-pills");
         // Check if already exists
-        const existing = Array.from(container.querySelectorAll(".cat-pill"))
-          .find(b => b.dataset.val.toLowerCase() === val.toLowerCase());
+        const existing = Array.from(
+          container.querySelectorAll(".cat-pill"),
+        ).find((b) => b.dataset.val.toLowerCase() === val.toLowerCase());
         if (existing) {
           existing.classList.add("active");
         } else {
@@ -6354,34 +7212,50 @@
           btn.type = "button";
           btn.className = "cat-pill active";
           btn.dataset.val = val;
-          btn.onclick = function() { toggleCatPill(this, prefix); };
-          btn.innerHTML = val + `<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'${prefix}')" style="display:inline-flex;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span><span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'${prefix}')" title="Supprimer" role="button">✕</span>`;
+          btn.onclick = function () {
+            toggleCatPill(this, prefix);
+          };
+          btn.innerHTML =
+            val +
+            `<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'${prefix}')" style="display:inline-flex;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span><span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'${prefix}')" title="Supprimer" role="button">✕</span>`;
           container.appendChild(btn);
         }
         input.value = "";
         // Update hidden input
-        const vals = Array.from(container.querySelectorAll(".cat-pill.active"))
-          .map(b => b.dataset.val);
+        const vals = Array.from(
+          container.querySelectorAll(".cat-pill.active"),
+        ).map((b) => b.dataset.val);
         document.getElementById(prefix + "-cat").value = vals.join(",");
       }
 
       function renderVariantStockFields(prefix) {
         const varInput = document.getElementById(prefix + "-variants");
-        const container = document.getElementById(prefix + "-variant-stock-rows");
+        const container = document.getElementById(
+          prefix + "-variant-stock-rows",
+        );
         if (!varInput || !container) return;
         const raw = varInput.value.trim();
-        const variants = raw ? raw.split(",").map(v => v.trim()).filter(Boolean) : [];
+        const variants = raw
+          ? raw
+              .split(",")
+              .map((v) => v.trim())
+              .filter(Boolean)
+          : [];
         if (variants.length <= 1) {
           // Single or no variant: show simple stock input
           container.innerHTML = `<input type="number" id="${prefix}-stock" placeholder="Stock" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
         } else {
           // Multiple variants: show one stock input per variant
-          container.innerHTML = variants.map((v, i) => `
+          container.innerHTML = variants
+            .map(
+              (v, i) => `
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
               <span style="font-size:0.85rem;font-weight:700;color:var(--gray-700);min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${v}">${v}</span>
               <input type="number" id="${prefix}-stock-${i}" data-variant-stock="${i}" placeholder="0"
                 style="flex:1;padding:0.55rem 0.75rem;border:1.5px solid var(--gray-100);border-radius:8px;font-family:inherit;font-size:0.88rem;" />
-            </div>`).join("");
+            </div>`,
+            )
+            .join("");
           // Hidden main stock (sum)
           container.innerHTML += `<input type="hidden" id="${prefix}-stock" value="0" />`;
         }
@@ -6480,7 +7354,8 @@
           });
           // Reset stock fields
           const stockRows = document.getElementById("ap-variant-stock-rows");
-          if (stockRows) stockRows.innerHTML = `<input type="number" id="ap-stock" placeholder="Stock (toutes variantes)" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
+          if (stockRows)
+            stockRows.innerHTML = `<input type="number" id="ap-stock" placeholder="Stock (toutes variantes)" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
           document.getElementById("ap-imgs-preview").style.display = "none";
           document.getElementById("ap-imgs-preview").innerHTML = "";
           document.getElementById("ap-imgs").value = "";
