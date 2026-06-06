@@ -6801,7 +6801,6 @@
       function openEditProduct(id) {
         const p = PRODUCTS.find((x) => x.id === id);
         if (!p) return;
-        console.log("PRODUCT DATA:", JSON.stringify(p));
         document.getElementById("ep-id").value = id;
         document.getElementById("ep-name").value = p.name;
         document.getElementById("ep-price").value = p.price;
