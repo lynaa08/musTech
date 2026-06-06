@@ -697,6 +697,9 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-bottom: 0.35rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .product-name {
         font-size: 0.98rem;
@@ -3497,11 +3500,42 @@
           <div class="footer-col">
             <h4>Aide</h4>
             <ul>
-              <li><a href="#">Suivre ma Commande</a></li>
-              <li><a href="#">Retours</a></li>
-              <li><a href="#">Infos Livraison</a></li>
+              <li>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    openModal('my-orders-modal');
+                  "
+                  >Suivre ma Commande</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    document
+                      .querySelector('.section:has(#public-reviews-grid)')
+                      .scrollIntoView({ behavior: 'smooth' });
+                  "
+                  >Retours & Avis</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  onclick="
+                    event.preventDefault();
+                    openModal('my-orders-modal');
+                  "
+                  >Infos Livraison</a
+                >
+              </li>
               <li><a href="#">FAQ</a></li>
-              <li><a href="#">Contactez-nous</a></li>
+              <li>
+                <a href="mailto:mus.softwares@gmail.com">Contactez-nous</a>
+              </li>
             </ul>
           </div>
           <div class="footer-col">
@@ -5508,7 +5542,7 @@
       ${imgContent}
     </div>
     <div class="product-body">
-      <div class="product-cat">${p.cat}</div>
+      <div class="product-cat">${(p.cat || "").replace(/;/g, ", ")}</div>
       <div class="product-name">${p.name}</div>
       <div class="product-variants" onclick="event.stopPropagation()">${variantHTML}</div>
       <div class="product-footer">
@@ -6731,9 +6765,20 @@
           .querySelectorAll(".cat-chip")
           .forEach((c) => c.classList.remove("active"));
         el.classList.add("active");
-        const cards = document.querySelectorAll("#featured-grid .product-card");
+        const cards = document.querySelectorAll(
+          "#shop-grid .product-card, #featured-grid .product-card",
+        );
         cards.forEach((card) => {
-          card.style.display = "";
+          if (cat === "all") {
+            card.style.display = "";
+            return;
+          }
+          const cardCats = (card.dataset.cat || "")
+            .split(",")
+            .map((s) => s.trim().toLowerCase());
+          card.style.display = cardCats.includes(cat.toLowerCase())
+            ? ""
+            : "none";
         });
       }
 
