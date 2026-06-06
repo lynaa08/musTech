@@ -6801,6 +6801,7 @@
       function openEditProduct(id) {
         const p = PRODUCTS.find((x) => x.id === id);
         if (!p) return;
+        console.log("PRODUCT DATA:", JSON.stringify(p));
         document.getElementById("ep-id").value = id;
         document.getElementById("ep-name").value = p.name;
         document.getElementById("ep-price").value = p.price;
@@ -6824,19 +6825,41 @@
 
         // Populate per-variant stock after rendering fields
         renderVariantStockFields("ep");
-        const variantStocks = p.variant_stocks || p.variantStocks || [];
-        if (p.variants.length > 1) {
-          p.variants.forEach((_, i) => {
+        let variantStocks = p.variant_stocks || p.variantStocks || [];
+        // Parse if it came back as a JSON string from the API
+        if (typeof variantStocks === "string") {
+          try {
+            variantStocks = JSON.parse(variantStocks);
+          } catch (e) {
+            variantStocks = [];
+          }
+        }
+        // Use the rendered fields count (from text input), not p.variants array length
+        const epRenderedVariants = document
+          .getElementById("ep-variants")
+          .value.split(",")
+          .map((v) => v.trim())
+          .filter(Boolean);
+        console.log(
+          "variantStocks:",
+          variantStocks,
+          "renderedVariants:",
+          epRenderedVariants,
+          "p.variants:",
+          p.variants,
+        );
+        if (epRenderedVariants.length > 1) {
+          epRenderedVariants.forEach((_, i) => {
             const el = document.getElementById("ep-stock-" + i);
             if (el)
               el.value =
-                variantStocks[i] !== undefined
+                variantStocks[i] !== undefined && variantStocks[i] !== null
                   ? variantStocks[i]
-                  : Math.round(p.stock / p.variants.length);
+                  : 0;
           });
         } else {
           const el = document.getElementById("ep-stock");
-          if (el) el.value = p.stock;
+          if (el) el.value = p.stock || 0;
         }
 
         // Image gallery preview
