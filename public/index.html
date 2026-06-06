@@ -875,7 +875,7 @@
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
-        z-index: 200;
+        z-index: 2000;
         display: none;
         align-items: center;
         justify-content: center;
@@ -2001,11 +2001,10 @@
 
         /* MODALS */
         .modal-overlay {
-          padding: 0.5rem;
-          align-items: flex-start;
+          padding: 0.75rem;
+          align-items: center;
+          justify-content: center;
           overflow-y: auto;
-          padding-top: 1rem;
-          padding-bottom: 1rem;
           -webkit-overflow-scrolling: touch;
         }
         .modal {
@@ -2046,6 +2045,21 @@
           background: #fff;
           border-top: 1px solid var(--gray-100);
           z-index: 2;
+        }
+        #edit-product-modal,
+        #add-product-modal {
+          z-index: 9999 !important;
+          position: fixed !important;
+          inset: 0 !important;
+          align-items: center !important;
+          justify-content: center !important;
+          padding: 1rem !important;
+        }
+        #edit-product-modal .modal,
+        #add-product-modal .modal {
+          width: 100% !important;
+          max-width: 560px !important;
+          margin: auto !important;
         }
         /* Keep product detail modal as bottom sheet */
         #product-modal {
