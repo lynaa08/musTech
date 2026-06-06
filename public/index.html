@@ -2362,6 +2362,11 @@
         background: var(--green-dark);
       }
       /* CATEGORY PILL MULTISELECT */
+      .cat-pill.active .pill-remove:hover {
+        color: #fff;
+        background: rgba(0,0,0,0.2);
+        border-radius: 50%;
+      }
       .cat-pill {
         padding: 0.3rem 0.85rem;
         border-radius: 50px;
@@ -4758,140 +4763,140 @@
                   class="cat-pill"
                   data-val="PC Parts"
                   onclick="toggleCatPill(this, 'ap')">
-                  Pièces PC
+                  Pièces PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cosmétiques PC"
                   onclick="toggleCatPill(this, 'ap')">
-                  Cosmétiques PC
+                  Cosmétiques PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Écrans"
                   onclick="toggleCatPill(this, 'ap')">
-                  Écrans
+                  Écrans<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Claviers"
                   onclick="toggleCatPill(this, 'ap')">
-                  Claviers
+                  Claviers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Souris"
                   onclick="toggleCatPill(this, 'ap')">
-                  Souris
+                  Souris<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Pâte Thermique"
                   onclick="toggleCatPill(this, 'ap')">
-                  Pâte Thermique
+                  Pâte Thermique<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Boîtiers"
                   onclick="toggleCatPill(this, 'ap')">
-                  Boîtiers
+                  Boîtiers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Processeurs"
                   onclick="toggleCatPill(this, 'ap')">
-                  Processeurs
+                  Processeurs<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Graphiques"
                   onclick="toggleCatPill(this, 'ap')">
-                  Cartes Graphiques
+                  Cartes Graphiques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="RAM"
                   onclick="toggleCatPill(this, 'ap')">
-                  RAM
+                  RAM<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Stockage"
                   onclick="toggleCatPill(this, 'ap')">
-                  Stockage
+                  Stockage<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Alimentations"
                   onclick="toggleCatPill(this, 'ap')">
-                  Alimentations
+                  Alimentations<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Refroidissement"
                   onclick="toggleCatPill(this, 'ap')">
-                  Refroidissement
+                  Refroidissement<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Mères"
                   onclick="toggleCatPill(this, 'ap')">
-                  Cartes Mères
+                  Cartes Mères<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Câbles & Accessoires"
                   onclick="toggleCatPill(this, 'ap')">
-                  Câbles & Acc.
+                  Câbles & Acc.<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Audio"
                   onclick="toggleCatPill(this, 'ap')">
-                  Audio
+                  Audio<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Sièges & Bureau"
                   onclick="toggleCatPill(this, 'ap')">
-                  Sièges & Bureau
+                  Sièges & Bureau<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Casques"
                   onclick="toggleCatPill(this, 'ap')">
-                  Casques
+                  Casques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="LED & Déco"
                   onclick="toggleCatPill(this, 'ap')">
-                  LED & Déco
+                  LED & Déco<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Tapis"
                   onclick="toggleCatPill(this, 'ap')">
-                  Tapis
+                  Tapis<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ap')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
               </div>
               <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
@@ -5168,140 +5173,140 @@
                   class="cat-pill"
                   data-val="PC Parts"
                   onclick="toggleCatPill(this, 'ep')">
-                  Pièces PC
+                  Pièces PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cosmétiques PC"
                   onclick="toggleCatPill(this, 'ep')">
-                  Cosmétiques PC
+                  Cosmétiques PC<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Écrans"
                   onclick="toggleCatPill(this, 'ep')">
-                  Écrans
+                  Écrans<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Claviers"
                   onclick="toggleCatPill(this, 'ep')">
-                  Claviers
+                  Claviers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Souris"
                   onclick="toggleCatPill(this, 'ep')">
-                  Souris
+                  Souris<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Pâte Thermique"
                   onclick="toggleCatPill(this, 'ep')">
-                  Pâte Thermique
+                  Pâte Thermique<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Boîtiers"
                   onclick="toggleCatPill(this, 'ep')">
-                  Boîtiers
+                  Boîtiers<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Processeurs"
                   onclick="toggleCatPill(this, 'ep')">
-                  Processeurs
+                  Processeurs<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Graphiques"
                   onclick="toggleCatPill(this, 'ep')">
-                  Cartes Graphiques
+                  Cartes Graphiques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="RAM"
                   onclick="toggleCatPill(this, 'ep')">
-                  RAM
+                  RAM<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Stockage"
                   onclick="toggleCatPill(this, 'ep')">
-                  Stockage
+                  Stockage<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Alimentations"
                   onclick="toggleCatPill(this, 'ep')">
-                  Alimentations
+                  Alimentations<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Refroidissement"
                   onclick="toggleCatPill(this, 'ep')">
-                  Refroidissement
+                  Refroidissement<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Cartes Mères"
                   onclick="toggleCatPill(this, 'ep')">
-                  Cartes Mères
+                  Cartes Mères<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Câbles & Accessoires"
                   onclick="toggleCatPill(this, 'ep')">
-                  Câbles & Acc.
+                  Câbles & Acc.<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Audio"
                   onclick="toggleCatPill(this, 'ep')">
-                  Audio
+                  Audio<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Sièges & Bureau"
                   onclick="toggleCatPill(this, 'ep')">
-                  Sièges & Bureau
+                  Sièges & Bureau<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Casques"
                   onclick="toggleCatPill(this, 'ep')">
-                  Casques
+                  Casques<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="LED & Déco"
                   onclick="toggleCatPill(this, 'ep')">
-                  LED & Déco
+                  LED & Déco<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
                 <button
                   type="button"
                   class="cat-pill"
                   data-val="Tapis"
                   onclick="toggleCatPill(this, 'ep')">
-                  Tapis
+                  Tapis<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'ep')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>
                 </button>
               </div>
               <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
@@ -5891,6 +5896,8 @@
         document.getElementById("ep-cat").value = epCatVal.join(",");
         document.querySelectorAll("#ep-cat-pills .cat-pill").forEach((btn) => {
           btn.classList.toggle("active", epCatVal.includes(btn.dataset.val));
+          const x = btn.querySelector(".pill-remove");
+          if (x) x.style.display = btn.classList.contains("active") ? "inline-flex" : "none";
         });
         document.getElementById("ep-icon").value = p.icon;
         document.getElementById("ep-variants").value = p.variants.join(", ");
@@ -6229,10 +6236,23 @@
       // ── CATEGORY PILL TOGGLE ─────────────────────────────────
       function toggleCatPill(btn, prefix) {
         btn.classList.toggle("active");
+        // Show/hide the X button based on active state
+        const x = btn.querySelector(".pill-remove");
+        if (x) x.style.display = btn.classList.contains("active") ? "inline-flex" : "none";
         const container = document.getElementById(prefix + "-cat-pills");
         const vals = Array.from(
           container.querySelectorAll(".cat-pill.active"),
         ).map((b) => b.dataset.val);
+        document.getElementById(prefix + "-cat").value = vals.join(",");
+      }
+
+      function removeCatPill(e, btn, prefix) {
+        e.stopPropagation();
+        btn.classList.remove("active");
+        const x = btn.querySelector(".pill-remove");
+        if (x) x.style.display = "none";
+        const container = document.getElementById(prefix + "-cat-pills");
+        const vals = Array.from(container.querySelectorAll(".cat-pill.active")).map(b => b.dataset.val);
         document.getElementById(prefix + "-cat").value = vals.join(",");
       }
 
@@ -6251,8 +6271,8 @@
           btn.type = "button";
           btn.className = "cat-pill active";
           btn.dataset.val = val;
-          btn.textContent = val;
           btn.onclick = function() { toggleCatPill(this, prefix); };
+          btn.innerHTML = val + `<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'${prefix}')" style="display:inline-flex;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span>`;
           container.appendChild(btn);
         }
         input.value = "";
