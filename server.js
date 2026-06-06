@@ -64,6 +64,7 @@ app.use(
           "'self'",
           "https://mustech-production.up.railway.app",
           "https://api.emailjs.com",
+          "https://cdnjs.cloudflare.com",
         ],
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
