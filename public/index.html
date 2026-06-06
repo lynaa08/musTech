@@ -896,6 +896,8 @@
         -webkit-overflow-scrolling: touch;
         box-shadow: var(--shadow-lg);
         animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
       }
       @keyframes modalIn {
         from {
@@ -1003,6 +1005,12 @@
       }
       .modal-footer {
         padding: 1rem 1.75rem 1.5rem;
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        border-top: 1px solid var(--gray-100);
+        z-index: 2;
       }
 
       /* ADMIN PANEL */
@@ -2017,8 +2025,27 @@
         #checkout-modal .modal,
         #add-product-modal .modal,
         #edit-product-modal .modal {
-          max-height: none;
-          overflow-y: visible;
+          max-height: 92vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          display: flex;
+          flex-direction: column;
+        }
+        #checkout-modal .modal .modal-body,
+        #add-product-modal .modal .modal-body,
+        #edit-product-modal .modal .modal-body {
+          flex: 1;
+          overflow-y: auto;
+        }
+        #checkout-modal .modal .modal-footer,
+        #add-product-modal .modal .modal-footer,
+        #edit-product-modal .modal .modal-footer {
+          flex-shrink: 0;
+          position: sticky;
+          bottom: 0;
+          background: #fff;
+          border-top: 1px solid var(--gray-100);
+          z-index: 2;
         }
         /* Keep product detail modal as bottom sheet */
         #product-modal {
