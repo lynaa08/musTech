@@ -3500,11 +3500,40 @@
           <div class="footer-col">
             <h4>Aide</h4>
             <ul>
-              <li><a href="#">Suivre ma Commande</a></li>
-              <li><a href="#">Retours</a></li>
-              <li><a href="#">Infos Livraison</a></li>
+              <li>
+                <a
+                  href="#"
+                  onclick="
+                    openModal('my-orders-modal');
+                    return false;
+                  "
+                  >Suivre ma Commande</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  onclick="
+                    document
+                      .getElementById('public-reviews-grid')
+                      .scrollIntoView({ behavior: 'smooth' });
+                    return false;
+                  "
+                  >Retours</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  onclick="
+                    openModal('checkout-modal');
+                    return false;
+                  "
+                  >Infos Livraison</a
+                >
+              </li>
               <li><a href="#">FAQ</a></li>
-              <li><a href="#">Contactez-nous</a></li>
+              <li><a href="tel:+213558210430">Contactez-nous</a></li>
             </ul>
           </div>
           <div class="footer-col">
