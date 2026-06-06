@@ -6818,15 +6818,20 @@
               : "none";
         });
         document.getElementById("ep-icon").value = p.icon;
-        document.getElementById("ep-variants").value = p.variants.join(", ");
+        // p.variants may be [] if API didn't return them properly; use variantPrices length as fallback
+        const epVariantsArr =
+          Array.isArray(p.variants) && p.variants.length > 0
+            ? p.variants
+            : Array.isArray(p.variantPrices) && p.variantPrices.length > 0
+              ? p.variantPrices.map((_, i) => "Variante " + (i + 1))
+              : [];
+        document.getElementById("ep-variants").value = epVariantsArr.join(", ");
         document.getElementById("ep-variant-prices").value =
           p.variantPrices.join(", ");
         document.getElementById("ep-desc").value = PRODUCT_DESCS[id] || "";
 
-        // Populate per-variant stock after rendering fields
-        renderVariantStockFields("ep");
+        // Populate per-variant stock — render ONCE after variants text is set
         let variantStocks = p.variant_stocks || p.variantStocks || [];
-        // Parse if it came back as a JSON string from the API
         if (typeof variantStocks === "string") {
           try {
             variantStocks = JSON.parse(variantStocks);
@@ -6834,20 +6839,12 @@
             variantStocks = [];
           }
         }
-        // Use the rendered fields count (from text input), not p.variants array length
+        renderVariantStockFields("ep");
         const epRenderedVariants = document
           .getElementById("ep-variants")
           .value.split(",")
           .map((v) => v.trim())
           .filter(Boolean);
-        console.log(
-          "variantStocks:",
-          variantStocks,
-          "renderedVariants:",
-          epRenderedVariants,
-          "p.variants:",
-          p.variants,
-        );
         if (epRenderedVariants.length > 1) {
           epRenderedVariants.forEach((_, i) => {
             const el = document.getElementById("ep-stock-" + i);
