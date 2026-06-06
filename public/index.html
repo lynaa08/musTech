@@ -2561,7 +2561,7 @@
             Favoris
           </a>
         </li>
-        <li id="user-nav-item" style="display: none">
+        <li id="user-nav-item">
           <a
             href="javascript:void(0)"
             onclick="openMyOrders()"
@@ -9010,7 +9010,7 @@
         currentUser = null;
         document.getElementById("admin-nav-link").style.display = "none";
         const userNavItem = document.getElementById("user-nav-item");
-        if (userNavItem) userNavItem.style.display = "none";
+        if (userNavItem) userNavItem.style.display = ""; // always visible for guests
         const authBtn = document.getElementById("auth-btn");
         authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Connexion`;
         authBtn.onclick = () => openModal("login-modal");
@@ -9020,46 +9020,81 @@
       }
 
       async function openMyOrders() {
-        if (!Auth.isLoggedIn()) {
-          openModal("login-modal");
+        const body = document.getElementById("my-orders-body");
+        if (!body) return;
+
+        // ── Logged-in user: fetch from server ────────────────────
+        if (Auth.isLoggedIn()) {
+          try {
+            const orders = await OrdersAPI.myOrders();
+            if (orders.length === 0) {
+              body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
+                <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
+                <p>Vous n'avez pas encore de commandes.</p>
+                <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats →</button>
+              </div>`;
+            } else {
+              body.innerHTML = orders.map((o) => renderOrderCard(o)).join("");
+            }
+          } catch (e) {
+            showToast("Erreur: " + e.message);
+            return;
+          }
+          openModal("my-orders-modal");
           return;
         }
 
-        try {
-          const orders = await OrdersAPI.myOrders();
-          const body = document.getElementById("my-orders-body");
-          if (!body) return;
+        // ── Guest: show orders saved in localStorage ──────────────
+        const guestOrders = JSON.parse(
+          localStorage.getItem("mt_guest_orders") || "[]",
+        );
 
-          if (orders.length === 0) {
-            body.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray-400);">
-        <div style="font-size:3rem;margin-bottom:1rem;"></div>
-        <p>Vous n'avez pas encore de commandes.</p>
-        <button class="btn btn-primary" style="margin-top:1rem;" onclick="closeModal('my-orders-modal')">Commencer mes achats →</button>
-      </div>`;
-          } else {
-            body.innerHTML = orders
-              .map((o) => {
-                const itemNames = o.items
-                  ? o.items.map((i) => i.name + " ×" + i.qty).join(", ")
-                  : o.items + " article(s)";
-                return `
-        <div style="border:1.5px solid var(--gray-100);border-radius:12px;padding:1rem;margin-bottom:0.75rem;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-            <span style="font-weight:800;color:var(--green-dark)">${o.order_ref || "#MT-" + o.id}</span>
-            <span class="status-badge status-${o.status}">${statusLabel(o.status)}</span>
-          </div>
-          <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.4rem;">${new Date(o.created_at).toLocaleDateString("fr-DZ")}</div>
-          <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.4rem;">${o.wilaya}</div>
-          <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;">${itemNames}</div>
-          <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">${o.total.toLocaleString()} DA</div>
-        </div>`;
-              })
-              .join("");
-          }
-          openModal("my-orders-modal");
-        } catch (e) {
-          showToast("Erreur: " + e.message);
+        if (guestOrders.length === 0) {
+          body.innerHTML = `
+            <div style="text-align:center;padding:2rem;color:var(--gray-400);">
+              <div style="font-size:3rem;margin-bottom:1rem;">📦</div>
+              <p style="margin-bottom:1.25rem;">Aucune commande trouvée pour ce navigateur.</p>
+              <button class="btn btn-primary" onclick="closeModal('my-orders-modal');openModal('login-modal');">
+                Se connecter pour voir plus →
+              </button>
+            </div>`;
+        } else {
+          body.innerHTML = `
+            <div style="background:var(--green-light);border:1.5px solid var(--green);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.85rem;color:var(--green-dark);display:flex;align-items:center;gap:0.5rem;">
+              <span>📋</span> Vos commandes récentes sur cet appareil
+            </div>
+            ${guestOrders.map((o) => renderOrderCard(o)).join("")}
+            <div style="text-align:center;margin-top:1rem;">
+              <button class="btn btn-ghost" style="font-size:0.82rem;" onclick="closeModal('my-orders-modal');openModal('login-modal');">
+                Se connecter pour voir toutes mes commandes
+              </button>
+            </div>`;
         }
+        openModal("my-orders-modal");
+      }
+
+      function renderOrderCard(o) {
+        const itemNames = Array.isArray(o.items)
+          ? o.items.map((i) => (i.name || "Produit") + " ×" + i.qty).join(", ")
+          : o.items || "—";
+        const dateStr = o.created_at
+          ? new Date(o.created_at).toLocaleDateString("fr-DZ")
+          : "—";
+        const total =
+          typeof o.total === "number"
+            ? o.total.toLocaleString() + " DA"
+            : o.total || "—";
+        return `
+          <div style="border:1.5px solid var(--gray-100);border-radius:12px;padding:1rem;margin-bottom:0.75rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+              <span style="font-weight:800;color:var(--green-dark);">${o.order_ref || "#MT-" + o.id}</span>
+              <span class="status-badge status-${o.status || "pending"}">${statusLabel(o.status || "pending")}</span>
+            </div>
+            <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.35rem;">📅 ${dateStr}</div>
+            <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.35rem;">📍 ${o.wilaya || "—"}</div>
+            <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;">🛍 ${itemNames}</div>
+            <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">💰 ${total}</div>
+          </div>`;
       }
 
       document.addEventListener("keydown", (e) => {

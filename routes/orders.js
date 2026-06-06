@@ -82,11 +82,9 @@ router.post("/", optionalAuth, async (req, res) => {
       // Check stock for this specific variant
       const availableStock = variantStocks[variantIndex] ?? 0;
       if (availableStock < qty) {
-        return res
-          .status(400)
-          .json({
-            error: `Stock insuffisant pour "${product.name} - ${variants[variantIndex] || variants[0]}" (disponible: ${availableStock}).`,
-          });
+        return res.status(400).json({
+          error: `Stock insuffisant pour "${product.name} - ${variants[variantIndex] || variants[0]}" (disponible: ${availableStock}).`,
+        });
       }
 
       calculatedSubtotal += price * qty;
@@ -163,6 +161,28 @@ router.post("/", optionalAuth, async (req, res) => {
       order_ref: orderRef,
       total_formatted: total.toLocaleString("fr-DZ") + " DA",
     });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── GET /api/orders/track/:ref ── public ─────────────────
+router.get("/track/:ref", async (req, res) => {
+  try {
+    const raw = decodeURIComponent(req.params.ref).toUpperCase();
+    const ref = raw.startsWith("#") ? raw : "#" + raw;
+    const { rows } = await db.query(
+      "SELECT id, order_ref, customer, wilaya, status, total, shipping, items, created_at FROM orders WHERE UPPER(order_ref) = $1",
+      [ref],
+    );
+    if (!rows[0])
+      return res
+        .status(404)
+        .json({
+          error: "Commande introuvable. Vérifiez le numéro (ex: #MT-0001).",
+        });
+    const o = rows[0];
+    res.json({ ...o, items: JSON.parse(o.items) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
