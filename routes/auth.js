@@ -4,11 +4,35 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../database");
 
+// ── RATE LIMITER LOGIN (anti brute-force) ─────────────────
+const _loginAttempts = new Map();
+const LOGIN_MAX = 10;
+const LOGIN_WINDOW = 15 * 60 * 1000; // 15 minutes
+
+function loginRateLimiter(req, res, next) {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "unknown";
+  const now = Date.now();
+  const attempts = (_loginAttempts.get(ip) || []).filter(
+    (t) => now - t < LOGIN_WINDOW,
+  );
+  if (attempts.length >= LOGIN_MAX) {
+    return res.status(429).json({
+      error: "Trop de tentatives de connexion. Réessayez dans 15 minutes.",
+    });
+  }
+  attempts.push(now);
+  _loginAttempts.set(ip, attempts);
+  next();
+}
+
 function signToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email, name: user.name, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "30d" },
+    { expiresIn: "7d" },
   );
 }
 
@@ -33,25 +57,23 @@ router.post("/register", async (req, res) => {
       [name, email.toLowerCase(), phone || null, hashed],
     );
     const user = result.rows[0];
-    res
-      .status(201)
-      .json({
-        token: signToken(user),
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          role: user.role,
-        },
-      });
+    res.status(201).json({
+      token: signToken(user),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // ── POST /api/auth/login ───────────────────────────────────
-router.post("/login", async (req, res) => {
+router.post("/login", loginRateLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password)

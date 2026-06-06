@@ -195,17 +195,19 @@ async function initDB() {
   // ── SEED ADMIN ────────────────────────────────────────────
   const { rows: users } = await pool.query("SELECT COUNT(*) as c FROM users");
   if (parseInt(users[0].c) === 0) {
+    if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+      throw new Error(
+        "❌ ADMIN_EMAIL et ADMIN_PASSWORD doivent être définis dans les variables d'environnement.",
+      );
+    }
     const bcrypt = require("bcryptjs");
-    const adminPass = bcrypt.hashSync(
-      process.env.ADMIN_PASSWORD || "mustapha123",
-      10,
-    );
+    const adminPass = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
     await pool.query(
       "INSERT INTO users (name, email, phone, password, role) VALUES ($1,$2,$3,$4,$5)",
       [
         "Admin",
-        process.env.ADMIN_EMAIL || "mustaphakerras@gmail.com",
-        "0558210430",
+        process.env.ADMIN_EMAIL,
+        process.env.ADMIN_PHONE || null,
         adminPass,
         "admin",
       ],
