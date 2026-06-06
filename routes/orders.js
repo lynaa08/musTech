@@ -7,193 +7,210 @@ const {
   optionalAuth,
 } = require("../middleware/auth");
 
-// Generate order ref like #MT-0001
-function generateRef() {
-  const count = db.prepare("SELECT COUNT(*) as c FROM orders").get().c;
-  return "#MT-" + String(count + 1).padStart(4, "0");
+async function generateRef() {
+  const { rows } = await db.query("SELECT COUNT(*) as c FROM orders");
+  return "#MT-" + String(parseInt(rows[0].c) + 1).padStart(4, "0");
 }
 
-// ── POST /api/orders ── place an order ────────────────────
-router.post("/", optionalAuth, (req, res) => {
-  const {
-    customer,
-    phone,
-    wilaya,
-    wilaya_id,
-    address,
-    notes,
-    items,
-    subtotal,
-    shipping,
-  } = req.body;
-
-  if (!customer || !phone || !wilaya || !items || !items.length) {
-    return res
-      .status(400)
-      .json({ error: "Informations de commande incomplètes." });
-  }
-
-  // Validate items and calculate subtotal from DB prices
-  let calculatedSubtotal = 0;
-  const enrichedItems = [];
-
-  for (const item of items) {
-    const product = db
-      .prepare("SELECT * FROM products WHERE id = ? AND active = 1")
-      .get(item.id);
-    if (!product)
-      return res
-        .status(400)
-        .json({ error: `Produit #${item.id} introuvable.` });
-
-    const prices = JSON.parse(product.variant_prices);
-    const variants = JSON.parse(product.variants);
-    const price = prices[item.variant] ?? prices[0];
-    const qty = Math.max(1, parseInt(item.qty) || 1);
-    calculatedSubtotal += price * qty;
-
-    enrichedItems.push({
-      id: product.id,
-      name: product.name,
-      variant: variants[item.variant] || variants[0],
-      price,
-      qty,
-      total: price * qty,
-    });
-  }
-
-  // Fetch shipping price from wilaya
-  const wilayaRow = db
-    .prepare("SELECT * FROM wilayas WHERE id = ?")
-    .get(wilaya_id);
-  const shippingPrice = wilayaRow
-    ? wilayaRow.shipping_price
-    : parseInt(shipping) || 0;
-  const total = calculatedSubtotal + shippingPrice;
-
-  const orderRef = generateRef();
-  const result = db
-    .prepare(
-      `
-    INSERT INTO orders (order_ref, user_id, customer, phone, wilaya, address, items, subtotal, shipping, total, notes)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `,
-    )
-    .run(
-      orderRef,
-      (() => {
-        if (!req.user) return null;
-        const u = db
-          .prepare("SELECT id FROM users WHERE id = ?")
-          .get(req.user.id);
-        return u ? u.id : null;
-      })(),
+// ── POST /api/orders ──────────────────────────────────────
+router.post("/", optionalAuth, async (req, res) => {
+  try {
+    const {
       customer,
       phone,
       wilaya,
-      address || null,
-      JSON.stringify(enrichedItems),
-      calculatedSubtotal,
-      shippingPrice,
-      total,
-      notes || null,
+      wilaya_id,
+      address,
+      notes,
+      items,
+      shipping,
+    } = req.body;
+    if (!customer || !phone || !wilaya || !items || !items.length)
+      return res
+        .status(400)
+        .json({ error: "Informations de commande incomplètes." });
+
+    let calculatedSubtotal = 0;
+    const enrichedItems = [];
+
+    for (const item of items) {
+      const { rows } = await db.query(
+        "SELECT * FROM products WHERE id = $1 AND active = 1",
+        [item.id],
+      );
+      const product = rows[0];
+      if (!product)
+        return res
+          .status(400)
+          .json({ error: `Produit #${item.id} introuvable.` });
+
+      const prices = JSON.parse(product.variant_prices);
+      const variants = JSON.parse(product.variants);
+      const price = prices[item.variant] ?? prices[0];
+      const qty = Math.max(1, parseInt(item.qty) || 1);
+      calculatedSubtotal += price * qty;
+
+      enrichedItems.push({
+        id: product.id,
+        name: product.name,
+        variant: variants[item.variant] || variants[0],
+        price,
+        qty,
+        total: price * qty,
+      });
+    }
+
+    const { rows: wRows } = await db.query(
+      "SELECT * FROM wilayas WHERE id = $1",
+      [wilaya_id],
+    );
+    const shippingPrice = wRows[0]
+      ? wRows[0].shipping_price
+      : parseInt(shipping) || 0;
+    const total = calculatedSubtotal + shippingPrice;
+    const orderRef = await generateRef();
+
+    let userId = null;
+    if (req.user) {
+      const { rows: uRows } = await db.query(
+        "SELECT id FROM users WHERE id = $1",
+        [req.user.id],
+      );
+      if (uRows[0]) userId = uRows[0].id;
+    }
+
+    const { rows: inserted } = await db.query(
+      `INSERT INTO orders (order_ref,user_id,customer,phone,wilaya,address,items,subtotal,shipping,total,notes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [
+        orderRef,
+        userId,
+        customer,
+        phone,
+        wilaya,
+        address || null,
+        JSON.stringify(enrichedItems),
+        calculatedSubtotal,
+        shippingPrice,
+        total,
+        notes || null,
+      ],
     );
 
-  // Update stock
-  const updateStock = db.prepare(
-    "UPDATE products SET stock = MAX(0, stock - ?) WHERE id = ?",
-  );
-  for (const item of enrichedItems) {
-    updateStock.run(item.qty, item.id);
+    // Update stock
+    for (const item of enrichedItems) {
+      await db.query(
+        "UPDATE products SET stock = GREATEST(0, stock - $1) WHERE id = $2",
+        [item.qty, item.id],
+      );
+    }
+
+    const order = inserted[0];
+    res.status(201).json({
+      ...order,
+      items: JSON.parse(order.items),
+      order_ref: orderRef,
+      total_formatted: total.toLocaleString("fr-DZ") + " DA",
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  const order = db
-    .prepare("SELECT * FROM orders WHERE id = ?")
-    .get(result.lastInsertRowid);
-  res.status(201).json({
-    ...order,
-    items: JSON.parse(order.items),
-    order_ref: orderRef,
-    total_formatted: total.toLocaleString("fr-DZ") + " DA",
-  });
 });
 
-// ── GET /api/orders/my ── user's own orders ───────────────
-router.get("/my", authMiddleware, (req, res) => {
-  const orders = db
-    .prepare(
-      `
-    SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC
-  `,
-    )
-    .all(req.user.id);
-
-  res.json(orders.map((o) => ({ ...o, items: JSON.parse(o.items) })));
-});
-
-// ── GET /api/orders ── admin: all orders ──────────────────
-router.get("/", adminMiddleware, (req, res) => {
-  const { status, page = 1, limit = 50 } = req.query;
-  let query = "SELECT * FROM orders";
-  const params = [];
-  if (status) {
-    query += " WHERE status = ?";
-    params.push(status);
+// ── GET /api/orders/my ────────────────────────────────────
+router.get("/my", authMiddleware, async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC",
+      [req.user.id],
+    );
+    res.json(rows.map((o) => ({ ...o, items: JSON.parse(o.items) })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
-  params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
-
-  const orders = db.prepare(query).all(...params);
-  const total = db
-    .prepare(
-      "SELECT COUNT(*) as c FROM orders" + (status ? " WHERE status = ?" : ""),
-    )
-    .get(...(status ? [status] : [])).c;
-
-  res.json({
-    orders: orders.map((o) => ({ ...o, items: JSON.parse(o.items) })),
-    total,
-    page: parseInt(page),
-    pages: Math.ceil(total / parseInt(limit)),
-  });
 });
 
-// ── GET /api/orders/:id ── admin: single order ────────────
-router.get("/:id", adminMiddleware, (req, res) => {
-  const order = db
-    .prepare("SELECT * FROM orders WHERE id = ?")
-    .get(req.params.id);
-  if (!order) return res.status(404).json({ error: "Commande non trouvée" });
-  res.json({ ...order, items: JSON.parse(order.items) });
-});
-
-// ── PUT /api/orders/:id/status ── admin: update status ────
-router.put("/:id/status", adminMiddleware, (req, res) => {
-  const { status } = req.body;
-  const allowed = ["pending", "shipped", "delivered", "cancelled"];
-  if (!allowed.includes(status)) {
-    return res.status(400).json({ error: "Statut invalide" });
+// ── GET /api/orders ── admin ──────────────────────────────
+router.get("/", adminMiddleware, async (req, res) => {
+  try {
+    const { status, page = 1, limit = 50 } = req.query;
+    const params = [];
+    let where = "";
+    if (status) {
+      params.push(status);
+      where = `WHERE status = $${params.length}`;
+    }
+    params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
+    const { rows } = await db.query(
+      `SELECT * FROM orders ${where} ORDER BY created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params,
+    );
+    const countParams = status ? [status] : [];
+    const { rows: countRows } = await db.query(
+      `SELECT COUNT(*) as c FROM orders ${status ? "WHERE status = $1" : ""}`,
+      countParams,
+    );
+    const total = parseInt(countRows[0].c);
+    res.json({
+      orders: rows.map((o) => ({ ...o, items: JSON.parse(o.items) })),
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / parseInt(limit)),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  const order = db
-    .prepare("SELECT id FROM orders WHERE id = ?")
-    .get(req.params.id);
-  if (!order) return res.status(404).json({ error: "Commande non trouvée" });
-
-  db.prepare("UPDATE orders SET status = ? WHERE id = ?").run(
-    status,
-    req.params.id,
-  );
-  res.json({ message: "Statut mis à jour", status });
 });
 
-// ── DELETE /api/orders/:id ── admin ───────────────────────
-router.delete("/:id", adminMiddleware, (req, res) => {
-  const order = db
-    .prepare("SELECT id FROM orders WHERE id = ?")
-    .get(req.params.id);
-  if (!order) return res.status(404).json({ error: "Commande non trouvée" });
-  db.prepare("DELETE FROM orders WHERE id = ?").run(req.params.id);
-  res.json({ message: "Commande supprimée" });
+// ── GET /api/orders/:id ───────────────────────────────────
+router.get("/:id", adminMiddleware, async (req, res) => {
+  try {
+    const { rows } = await db.query("SELECT * FROM orders WHERE id = $1", [
+      req.params.id,
+    ]);
+    if (!rows[0])
+      return res.status(404).json({ error: "Commande non trouvée" });
+    res.json({ ...rows[0], items: JSON.parse(rows[0].items) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── PUT /api/orders/:id/status ────────────────────────────
+router.put("/:id/status", adminMiddleware, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const allowed = ["pending", "shipped", "delivered", "cancelled"];
+    if (!allowed.includes(status))
+      return res.status(400).json({ error: "Statut invalide" });
+    const { rows } = await db.query("SELECT id FROM orders WHERE id = $1", [
+      req.params.id,
+    ]);
+    if (!rows[0])
+      return res.status(404).json({ error: "Commande non trouvée" });
+    await db.query("UPDATE orders SET status = $1 WHERE id = $2", [
+      status,
+      req.params.id,
+    ]);
+    res.json({ message: "Statut mis à jour", status });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── DELETE /api/orders/:id ────────────────────────────────
+router.delete("/:id", adminMiddleware, async (req, res) => {
+  try {
+    const { rows } = await db.query("SELECT id FROM orders WHERE id = $1", [
+      req.params.id,
+    ]);
+    if (!rows[0])
+      return res.status(404).json({ error: "Commande non trouvée" });
+    await db.query("DELETE FROM orders WHERE id = $1", [req.params.id]);
+    res.json({ message: "Commande supprimée" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

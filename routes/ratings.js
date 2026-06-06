@@ -1,35 +1,52 @@
-const express = require('express');
-const router  = express.Router();
-const db      = require('../database');
-const { optionalAuth, adminMiddleware } = require('../middleware/auth');
+const express = require("express");
+const router = express.Router();
+const db = require("../database");
+const { optionalAuth, adminMiddleware } = require("../middleware/auth");
 
-// POST /api/ratings - submit a rating
-router.post('/', optionalAuth, (req, res) => {
-  const { rating, comment, order_ref } = req.body;
-  if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ error: 'Note invalide (1-5)' });
+router.post("/", optionalAuth, async (req, res) => {
+  try {
+    const { rating, comment, order_ref } = req.body;
+    if (!rating || rating < 1 || rating > 5)
+      return res.status(400).json({ error: "Note invalide (1-5)" });
+    await db.query(
+      "INSERT INTO ratings (user_id, order_ref, rating, comment) VALUES ($1,$2,$3,$4)",
+      [
+        req.user ? req.user.id : null,
+        order_ref || null,
+        parseInt(rating),
+        comment || null,
+      ],
+    );
+    res.status(201).json({ message: "Avis enregistré, merci !" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  db.prepare('INSERT INTO ratings (user_id, order_ref, rating, comment) VALUES (?, ?, ?, ?)').run(
-    req.user ? req.user.id : null,
-    order_ref || null,
-    parseInt(rating),
-    comment || null
-  );
-  res.status(201).json({ message: 'Avis enregistré, merci !' });
 });
 
-// GET /api/ratings/stats - average rating (public)
-router.get('/stats', (req, res) => {
-  const stats = db.prepare(`
-    SELECT AVG(rating) as average, COUNT(*) as total FROM ratings
-  `).get();
-  res.json({ average: stats.average ? Math.round(stats.average * 10) / 10 : null, total: stats.total });
+router.get("/stats", async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT AVG(rating) as average, COUNT(*) as total FROM ratings",
+    );
+    const stats = rows[0];
+    res.json({
+      average: stats.average ? Math.round(stats.average * 10) / 10 : null,
+      total: parseInt(stats.total),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// GET /api/ratings - all ratings (admin)
-router.get('/', adminMiddleware, (req, res) => {
-  const ratings = db.prepare('SELECT * FROM ratings ORDER BY created_at DESC').all();
-  res.json(ratings);
+router.get("/", adminMiddleware, async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM ratings ORDER BY created_at DESC",
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

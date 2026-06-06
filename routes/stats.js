@@ -1,35 +1,50 @@
-const express = require('express');
-const router  = express.Router();
-const db      = require('../database');
-const { adminMiddleware } = require('../middleware/auth');
+const express = require("express");
+const router = express.Router();
+const db = require("../database");
+const { adminMiddleware } = require("../middleware/auth");
 
-// GET /api/stats - dashboard stats (admin only)
-router.get('/', adminMiddleware, (req, res) => {
-  const totalOrders    = db.prepare("SELECT COUNT(*) as c FROM orders").get().c;
-  const totalRevenue   = db.prepare("SELECT SUM(total) as s FROM orders WHERE status != 'cancelled'").get().s || 0;
-  const totalProducts  = db.prepare("SELECT COUNT(*) as c FROM products WHERE active = 1").get().c;
-  const totalUsers     = db.prepare("SELECT COUNT(*) as c FROM users WHERE role = 'user'").get().c;
-  const pendingOrders  = db.prepare("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'").get().c;
-  const deliveredOrders= db.prepare("SELECT COUNT(*) as c FROM orders WHERE status = 'delivered'").get().c;
-  const avgRating      = db.prepare("SELECT AVG(rating) as a FROM ratings").get().a;
-  const lowStock       = db.prepare("SELECT COUNT(*) as c FROM products WHERE stock < 5 AND active = 1").get().c;
+router.get("/", adminMiddleware, async (req, res) => {
+  try {
+    const q = (sql, p = []) => db.query(sql, p).then((r) => r.rows[0]);
 
-  const recentOrders = db.prepare(`
-    SELECT id, order_ref, customer, wilaya, total, status, created_at
-    FROM orders ORDER BY created_at DESC LIMIT 5
-  `).all();
+    const [
+      orders,
+      revenue,
+      products,
+      users,
+      pending,
+      delivered,
+      rating,
+      lowStock,
+      recent,
+    ] = await Promise.all([
+      q("SELECT COUNT(*) as c FROM orders"),
+      q("SELECT SUM(total) as s FROM orders WHERE status != 'cancelled'"),
+      q("SELECT COUNT(*) as c FROM products WHERE active = 1"),
+      q("SELECT COUNT(*) as c FROM users WHERE role = 'user'"),
+      q("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'"),
+      q("SELECT COUNT(*) as c FROM orders WHERE status = 'delivered'"),
+      q("SELECT AVG(rating) as a FROM ratings"),
+      q("SELECT COUNT(*) as c FROM products WHERE stock < 5 AND active = 1"),
+      db.query(
+        "SELECT id,order_ref,customer,wilaya,total,status,created_at FROM orders ORDER BY created_at DESC LIMIT 5",
+      ),
+    ]);
 
-  res.json({
-    totalOrders,
-    totalRevenue,
-    totalProducts,
-    totalUsers,
-    pendingOrders,
-    deliveredOrders,
-    avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
-    lowStock,
-    recentOrders
-  });
+    res.json({
+      totalOrders: parseInt(orders.c),
+      totalRevenue: parseInt(revenue.s) || 0,
+      totalProducts: parseInt(products.c),
+      totalUsers: parseInt(users.c),
+      pendingOrders: parseInt(pending.c),
+      deliveredOrders: parseInt(delivered.c),
+      avgRating: rating.a ? Math.round(rating.a * 10) / 10 : null,
+      lowStock: parseInt(lowStock.c),
+      recentOrders: recent.rows,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

@@ -1,26 +1,42 @@
-const express = require('express');
-const router  = express.Router();
-const db      = require('../database');
-const { adminMiddleware } = require('../middleware/auth');
+const express = require("express");
+const router = express.Router();
+const db = require("../database");
+const { adminMiddleware } = require("../middleware/auth");
 
-// GET /api/wilayas - all active wilayas
-router.get('/', (req, res) => {
-  const wilayas = db.prepare('SELECT * FROM wilayas WHERE active = 1 ORDER BY id').all();
-  res.json(wilayas);
+router.get("/", async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM wilayas WHERE active = 1 ORDER BY id",
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// PUT /api/wilayas/:id - update shipping price (admin)
-router.put('/:id', adminMiddleware, (req, res) => {
-  const { shipping_price, active } = req.body;
-  const w = db.prepare('SELECT id FROM wilayas WHERE id = ?').get(req.params.id);
-  if (!w) return res.status(404).json({ error: 'Wilaya non trouvée' });
-
-  db.prepare('UPDATE wilayas SET shipping_price = ?, active = ? WHERE id = ?').run(
-    parseInt(shipping_price),
-    active !== undefined ? (active ? 1 : 0) : 1,
-    req.params.id
-  );
-  res.json(db.prepare('SELECT * FROM wilayas WHERE id = ?').get(req.params.id));
+router.put("/:id", adminMiddleware, async (req, res) => {
+  try {
+    const { shipping_price, active } = req.body;
+    const { rows } = await db.query("SELECT id FROM wilayas WHERE id = $1", [
+      req.params.id,
+    ]);
+    if (!rows[0]) return res.status(404).json({ error: "Wilaya non trouvée" });
+    await db.query(
+      "UPDATE wilayas SET shipping_price = $1, active = $2 WHERE id = $3",
+      [
+        parseInt(shipping_price),
+        active !== undefined ? (active ? 1 : 0) : 1,
+        req.params.id,
+      ],
+    );
+    const { rows: updated } = await db.query(
+      "SELECT * FROM wilayas WHERE id = $1",
+      [req.params.id],
+    );
+    res.json(updated[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
