@@ -893,7 +893,7 @@
         width: 100%;
         max-width: 560px;
         max-height: 90vh;
-        overflow-y: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         box-shadow: var(--shadow-lg);
         animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1008,11 +1008,8 @@
       .modal-footer {
         padding: 1rem 1.75rem 1.5rem;
         flex-shrink: 0;
-        position: sticky;
-        bottom: 0;
         background: #fff;
         border-top: 1px solid var(--gray-100);
-        z-index: 2;
       }
 
       /* ADMIN PANEL */
@@ -2010,8 +2007,8 @@
           -webkit-overflow-scrolling: touch;
         }
         .modal {
-          max-height: none;
-          overflow-y: visible;
+          max-height: 92vh;
+          overflow-y: hidden;
           width: 100%;
         }
         .modal-body {
@@ -2027,7 +2024,7 @@
         #add-product-modal .modal,
         #edit-product-modal .modal {
           max-height: 92vh;
-          overflow-y: auto;
+          overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
           display: flex;
           flex-direction: column;
@@ -2037,13 +2034,12 @@
         #edit-product-modal .modal .modal-body {
           flex: 1;
           overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
         }
         #checkout-modal .modal .modal-footer,
         #add-product-modal .modal .modal-footer,
         #edit-product-modal .modal .modal-footer {
           flex-shrink: 0;
-          position: sticky;
-          bottom: 0;
           background: #fff;
           border-top: 1px solid var(--gray-100);
           z-index: 2;
