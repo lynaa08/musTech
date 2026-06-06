@@ -49,25 +49,28 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"], // supprime unsafe-eval seulement
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-hashes'",
+          "https://cdn.jsdelivr.net",
+          "https://cdnjs.cloudflare.com",
+        ],
+        scriptSrcAttr: ["'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "blob:"],
-        connectSrc: ["'self'"],
+        connectSrc: [
+          "'self'",
+          "https://mustech-production.up.railway.app",
+          "https://api.emailjs.com",
+        ],
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],
         frameAncestors: ["'self'"],
         upgradeInsecureRequests: [],
-      },
-    },
-    permissionsPolicy: {
-      features: {
-        camera: [],
-        microphone: [],
-        geolocation: [],
-        payment: [],
       },
     },
     permissionsPolicy: {
