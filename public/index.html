@@ -7482,10 +7482,7 @@
       }
 
       async function saveWilayas() {
-        const homeInputs = document.querySelectorAll(
-          ".wilaya-home-input[data-id]",
-        );
-        if (!homeInputs.length) {
+        if (!WILAYAS.length) {
           showToast("Aucun prix à enregistrer.");
           return;
         }
@@ -7498,19 +7495,30 @@
 
         try {
           const promises = [];
-          homeInputs.forEach((homeInput) => {
-            const id = homeInput.dataset.id;
-            const shipping_price = parseInt(homeInput.value) || 0;
+          // Iterate over ALL wilayas (not just visible/filtered DOM inputs)
+          WILAYAS.forEach((w) => {
+            const id = w.id;
+            // Read from DOM if visible, otherwise keep existing value
+            const homeInput = document.querySelector(
+              `.wilaya-home-input[data-id="${id}"]`,
+            );
             const bureauInput = document.querySelector(
               `.wilaya-bureau-input[data-id="${id}"]`,
             );
-            const bureau_price = bureauInput
-              ? parseInt(bureauInput.value) || 0
-              : shipping_price;
             const toggle = document.querySelector(
               `.wilaya-toggle[data-id="${id}"]`,
             );
-            const active = toggle ? parseInt(toggle.dataset.active) : 1;
+            const shipping_price = homeInput
+              ? parseInt(homeInput.value) || 0
+              : (w.shipping_price ?? w.price ?? 0);
+            const bureau_price = bureauInput
+              ? parseInt(bureauInput.value) || 0
+              : (w.bureau_price ?? shipping_price);
+            const active = toggle
+              ? parseInt(toggle.dataset.active)
+              : w.active !== 0
+                ? 1
+                : 0;
             promises.push(
               WilayasAPI.update(id, { shipping_price, bureau_price, active }),
             );
