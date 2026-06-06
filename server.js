@@ -1,64 +1,118 @@
-require('dotenv').config();
-const express = require('express');
-const cors    = require('cors');
-const path    = require('path');
-const fs      = require('fs');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 
+// ── RATE LIMITER (sans librairie externe) ─────────────────
+const _ipRequests = new Map();
+const RATE_LIMIT = 5; // max 5 commandes
+const RATE_WINDOW = 60 * 60 * 1000; // par heure
+
+function orderRateLimiter(req, res, next) {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "unknown";
+  const now = Date.now();
+  const timestamps = (_ipRequests.get(ip) || []).filter(
+    (t) => now - t < RATE_WINDOW,
+  );
+
+  if (timestamps.length >= RATE_LIMIT) {
+    return res
+      .status(429)
+      .json({ error: "Trop de commandes. Réessayez dans une heure." });
+  }
+
+  timestamps.push(now);
+  _ipRequests.set(ip, timestamps);
+
+  // Nettoyage mémoire toutes les heures
+  if (_ipRequests.size > 10000) {
+    for (const [key, val] of _ipRequests) {
+      if (val.every((t) => now - t > RATE_WINDOW)) _ipRequests.delete(key);
+    }
+  }
+  next();
+}
+
 // ── MIDDLEWARE ────────────────────────────────────────────
-app.use(cors({
-  origin: '*', // In production, set to your domain
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // ex: https://mustech-production.up.railway.app
+  "http://localhost:3001",
+  "http://127.0.0.1:5500", // Live Server dev
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Autoriser les requêtes sans origin (Postman, etc.) seulement en dev
+      if (!origin && process.env.NODE_ENV !== "production")
+        return callback(null, true);
+      if (!origin || allowedOrigins.includes(origin))
+        return callback(null, true);
+      callback(new Error("CORS bloqué: origine non autorisée"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Serve uploaded images statically
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
-app.use('/uploads', express.static(uploadsDir));
+app.use("/uploads", express.static(uploadsDir));
 
 // Serve frontend HTML if present
-const frontendPath = path.join(__dirname, 'public');
+const frontendPath = path.join(__dirname, "public");
 if (fs.existsSync(frontendPath)) {
   app.use(express.static(frontendPath));
 }
 
 // ── INIT DATABASE ─────────────────────────────────────────
-require('./database'); // Runs table creation + seeding
+require("./database");
 
 // ── ROUTES ────────────────────────────────────────────────
-app.use('/api/auth',     require('./routes/auth'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/orders',   require('./routes/orders'));
-app.use('/api/wilayas',  require('./routes/wilayas'));
-app.use('/api/ratings',  require('./routes/ratings'));
-app.use('/api/stats',    require('./routes/stats'));
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/products", require("./routes/products"));
+app.use("/api/orders", require("./routes/orders"), orderRateLimiter); // ← rate limit orders
+app.use("/api/wilayas", require("./routes/wilayas"));
+app.use("/api/ratings", require("./routes/ratings"));
+app.use("/api/stats", require("./routes/stats"));
 
 // ── HEALTH CHECK ──────────────────────────────────────────
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Mus Tech API is running 🚀', time: new Date().toISOString() });
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Mus Tech API is running 🚀",
+    time: new Date().toISOString(),
+  });
 });
 
-// ── SERVE FRONTEND for all other routes ───────────────────
-app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, 'public', 'index.html');
+// ── SERVE FRONTEND ────────────────────────────────────────
+app.get("*", (req, res) => {
+  const indexPath = path.join(__dirname, "public", "index.html");
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.json({ message: 'Mus Tech API — place your HTML file in /public/index.html' });
+    res.json({ message: "Mus Tech API" });
   }
 });
 
 // ── ERROR HANDLER ─────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  if (err.code === 'LIMIT_FILE_SIZE') {
-    return res.status(400).json({ error: 'Image trop grande (max 5MB)' });
-  }
-  res.status(500).json({ error: err.message || 'Erreur serveur' });
+  if (err.message?.includes("CORS"))
+    return res.status(403).json({ error: err.message });
+  if (err.code === "LIMIT_FILE_SIZE")
+    return res.status(400).json({ error: "Image trop grande (max 5MB)" });
+  res.status(500).json({ error: err.message || "Erreur serveur" });
 });
 
 // ── START ─────────────────────────────────────────────────
@@ -67,5 +121,4 @@ app.listen(PORT, () => {
   console.log(`\n🚀 Mus Tech Backend running on http://localhost:${PORT}`);
   console.log(`📦 API ready at http://localhost:${PORT}/api`);
   console.log(`🔑 Admin: ${process.env.ADMIN_EMAIL}`);
-  console.log(`📁 Place your HTML in /public/index.html to serve it\n`);
 });
