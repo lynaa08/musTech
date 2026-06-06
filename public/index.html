@@ -7241,22 +7241,29 @@
               .map((v) => v.trim())
               .filter(Boolean)
           : [];
+        // Save existing values before re-render
+        const existing = {};
+        container
+          .querySelectorAll("input[data-variant-stock]")
+          .forEach((el) => {
+            existing[el.dataset.variantStock] = el.value;
+          });
+        const singleEl = document.getElementById(prefix + "-stock");
+        const existingSingle = singleEl ? singleEl.value : "";
         if (variants.length <= 1) {
-          // Single or no variant: show simple stock input
-          container.innerHTML = `<input type="number" id="${prefix}-stock" placeholder="Stock" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
+          container.innerHTML = `<input type="number" id="${prefix}-stock" placeholder="Stock" value="${existingSingle}" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
         } else {
-          // Multiple variants: show one stock input per variant
           container.innerHTML = variants
             .map(
               (v, i) => `
             <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
               <span style="font-size:0.85rem;font-weight:700;color:var(--gray-700);min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${v}">${v}</span>
               <input type="number" id="${prefix}-stock-${i}" data-variant-stock="${i}" placeholder="0"
+                value="${existing[i] !== undefined ? existing[i] : ""}"
                 style="flex:1;padding:0.55rem 0.75rem;border:1.5px solid var(--gray-100);border-radius:8px;font-family:inherit;font-size:0.88rem;" />
             </div>`,
             )
             .join("");
-          // Hidden main stock (sum)
           container.innerHTML += `<input type="hidden" id="${prefix}-stock" value="0" />`;
         }
       }
