@@ -697,9 +697,6 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         margin-bottom: 0.35rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
       .product-name {
         font-size: 0.98rem;
@@ -3500,42 +3497,11 @@
           <div class="footer-col">
             <h4>Aide</h4>
             <ul>
-              <li>
-                <a
-                  href="#"
-                  onclick="
-                    event.preventDefault();
-                    openModal('my-orders-modal');
-                  "
-                  >Suivre ma Commande</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onclick="
-                    event.preventDefault();
-                    document
-                      .querySelector('.section:has(#public-reviews-grid)')
-                      .scrollIntoView({ behavior: 'smooth' });
-                  "
-                  >Retours & Avis</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onclick="
-                    event.preventDefault();
-                    openModal('my-orders-modal');
-                  "
-                  >Infos Livraison</a
-                >
-              </li>
+              <li><a href="#">Suivre ma Commande</a></li>
+              <li><a href="#">Retours</a></li>
+              <li><a href="#">Infos Livraison</a></li>
               <li><a href="#">FAQ</a></li>
-              <li>
-                <a href="mailto:mus.softwares@gmail.com">Contactez-nous</a>
-              </li>
+              <li><a href="#">Contactez-nous</a></li>
             </ul>
           </div>
           <div class="footer-col">
@@ -5542,7 +5508,10 @@
       ${imgContent}
     </div>
     <div class="product-body">
-      <div class="product-cat">${(p.cat || "").replace(/;/g, ", ")}</div>
+      <div class="product-cat">${(p.cat || "")
+        .split(",")
+        .map((c) => c.trim())
+        .join(" · ")}</div>
       <div class="product-name">${p.name}</div>
       <div class="product-variants" onclick="event.stopPropagation()">${variantHTML}</div>
       <div class="product-footer">
@@ -6744,9 +6713,16 @@
         // Remove old dynamic chips (keep "Tous les Produits" = first child)
         while (inner.children.length > 1) inner.removeChild(inner.lastChild);
 
-        // Collect unique categories from loaded products
+        // Collect unique categories — split comma-separated values
         const cats = [
-          ...new Set(PRODUCTS.map((p) => p.cat).filter(Boolean)),
+          ...new Set(
+            PRODUCTS.flatMap((p) =>
+              (p.cat || "")
+                .split(",")
+                .map((c) => c.trim())
+                .filter(Boolean),
+            ),
+          ),
         ].sort();
 
         cats.forEach((cat) => {
@@ -6765,20 +6741,25 @@
           .querySelectorAll(".cat-chip")
           .forEach((c) => c.classList.remove("active"));
         el.classList.add("active");
-        const cards = document.querySelectorAll(
-          "#shop-grid .product-card, #featured-grid .product-card",
-        );
-        cards.forEach((card) => {
-          if (cat === "all") {
-            card.style.display = "";
-            return;
-          }
-          const cardCats = (card.dataset.cat || "")
-            .split(",")
-            .map((s) => s.trim().toLowerCase());
-          card.style.display = cardCats.includes(cat.toLowerCase())
-            ? ""
-            : "none";
+
+        const grids = ["featured-grid", "shop-grid"];
+        grids.forEach((gridId) => {
+          const cards = document.querySelectorAll(
+            "#" + gridId + " .product-card",
+          );
+          cards.forEach((card) => {
+            if (cat === "all") {
+              card.style.display = "";
+              return;
+            }
+            // data-cat can be "Cosmétiques PC,Écrans,Souris"
+            const cardCats = (card.dataset.cat || "")
+              .split(",")
+              .map((c) => c.trim().toLowerCase());
+            card.style.display = cardCats.includes(cat.toLowerCase())
+              ? ""
+              : "none";
+          });
         });
       }
 
