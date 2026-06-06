@@ -2622,7 +2622,10 @@
       <!-- CATEGORIES -->
       <div class="categories-bar">
         <div class="categories-inner" id="categories-inner">
-          <div class="cat-chip active" onclick="filterCat(this, 'all')">
+          <div
+            class="cat-chip active"
+            data-cat="all"
+            onclick="filterCat(this, 'all')">
             Tous les Produits
           </div>
           <!-- chips injected dynamically by buildCategoryChips() -->
@@ -6736,27 +6739,45 @@
         });
       }
 
-      function filterCat(el, cat) {
-        document
-          .querySelectorAll(".cat-chip")
-          .forEach((c) => c.classList.remove("active"));
-        el.classList.add("active");
+      // Active selected categories (multi-select)
+      const _activeCats = new Set();
 
+      function filterCat(el, cat) {
+        const allChip = document.querySelector(".cat-chip[data-cat='all']");
+        if (cat === "all") {
+          _activeCats.clear();
+          document
+            .querySelectorAll(".cat-chip")
+            .forEach((c) => c.classList.remove("active"));
+          el.classList.add("active");
+        } else {
+          if (allChip) allChip.classList.remove("active");
+          if (_activeCats.has(cat)) {
+            _activeCats.delete(cat);
+            el.classList.remove("active");
+            if (_activeCats.size === 0 && allChip)
+              allChip.classList.add("active");
+          } else {
+            _activeCats.add(cat);
+            el.classList.add("active");
+          }
+        }
         const grids = ["featured-grid", "shop-grid"];
         grids.forEach((gridId) => {
           const cards = document.querySelectorAll(
             "#" + gridId + " .product-card",
           );
           cards.forEach((card) => {
-            if (cat === "all") {
+            if (_activeCats.size === 0) {
               card.style.display = "";
               return;
             }
-            // data-cat can be "Cosmétiques PC,Écrans,Souris"
             const cardCats = (card.dataset.cat || "")
               .split(",")
               .map((c) => c.trim().toLowerCase());
-            card.style.display = cardCats.includes(cat.toLowerCase())
+            card.style.display = [..._activeCats].some((ac) =>
+              cardCats.includes(ac.toLowerCase()),
+            )
               ? ""
               : "none";
           });
