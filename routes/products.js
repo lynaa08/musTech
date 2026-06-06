@@ -30,13 +30,23 @@ const upload = multer({
 });
 
 function parseProduct(row) {
+  const variants = JSON.parse(row.variants || '["Standard"]');
+  const variantPrices = JSON.parse(row.variant_prices || "[0]");
+  const variantStocks = JSON.parse(row.variant_stocks || "[]");
+
+  // Pad variant_stocks if missing entries
+  while (variantStocks.length < variants.length) variantStocks.push(0);
+
   return {
     ...row,
-    variants: JSON.parse(row.variants || '["Standard"]'),
-    variantPrices: JSON.parse(row.variant_prices || "[0]"),
+    variants,
+    variantPrices,
+    variantStocks,
     oldPrice: row.old_price,
     img: row.img || null,
     images: row.images ? JSON.parse(row.images) : row.img ? [row.img] : [],
+    // Total stock = sum of all variant stocks
+    stock: variantStocks.reduce((a, b) => a + b, 0),
   };
 }
 
@@ -47,8 +57,8 @@ router.get("/", async (req, res) => {
     let query = "SELECT * FROM products WHERE active = 1";
     const params = [];
     if (cat && cat !== "all") {
-      params.push(cat);
-      query += ` AND cat = $${params.length}`;
+      params.push(`%${cat}%`);
+      query += ` AND cat ILIKE $${params.length}`;
     }
     if (search) {
       params.push(`%${search}%`);
@@ -91,7 +101,7 @@ router.post(
         icon,
         variants,
         variant_prices,
-        stock,
+        variant_stocks,
         badge,
         description,
       } = req.body;
@@ -104,12 +114,16 @@ router.post(
       const pricesArr = variant_prices
         ? JSON.parse(variant_prices)
         : [parseInt(price)];
+      const stocksArr = variant_stocks
+        ? JSON.parse(variant_stocks)
+        : variantsArr.map(() => 0);
+      const totalStock = stocksArr.reduce((a, b) => a + b, 0);
       const uploadedFiles = req.files ? req.files.map((f) => f.path) : [];
-      const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : null;
+      const primaryImg = uploadedFiles[0] || null;
 
       const { rows } = await db.query(
-        `INSERT INTO products (name,cat,price,old_price,icon,img,images,variants,variant_prices,stock,badge,description)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
+        `INSERT INTO products (name,cat,price,old_price,icon,img,images,variants,variant_prices,variant_stocks,stock,badge,description)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
         [
           name,
           cat,
@@ -120,7 +134,8 @@ router.post(
           JSON.stringify(uploadedFiles),
           JSON.stringify(variantsArr),
           JSON.stringify(pricesArr),
-          parseInt(stock) || 0,
+          JSON.stringify(stocksArr),
+          totalStock,
           badge || null,
           description || null,
         ],
@@ -155,7 +170,7 @@ router.put(
         icon,
         variants,
         variant_prices,
-        stock,
+        variant_stocks,
         badge,
         description,
       } = req.body;
@@ -165,6 +180,11 @@ router.put(
       const pricesArr = variant_prices
         ? JSON.parse(variant_prices)
         : JSON.parse(ex.variant_prices);
+      const stocksArr = variant_stocks
+        ? JSON.parse(variant_stocks)
+        : JSON.parse(ex.variant_stocks || "[]");
+      const totalStock = stocksArr.reduce((a, b) => a + b, 0);
+
       const existingImgs = JSON.parse(ex.images || "[]");
       const toRemove = req.body.removeImages
         ? JSON.parse(req.body.removeImages)
@@ -173,12 +193,12 @@ router.put(
         req.files && req.files.length > 0 ? req.files.map((f) => f.path) : [];
       const kept = existingImgs.filter((img) => !toRemove.includes(img));
       const uploadedFiles = [...kept, ...newFiles].slice(0, 15);
-      const primaryImg = uploadedFiles.length > 0 ? uploadedFiles[0] : ex.img;
+      const primaryImg = uploadedFiles[0] || ex.img;
 
       const { rows } = await db.query(
         `UPDATE products SET name=$1,cat=$2,price=$3,old_price=$4,icon=$5,
-       img=$6,images=$7,variants=$8,variant_prices=$9,stock=$10,badge=$11,description=$12
-       WHERE id=$13 RETURNING *`,
+       img=$6,images=$7,variants=$8,variant_prices=$9,variant_stocks=$10,stock=$11,badge=$12,description=$13
+       WHERE id=$14 RETURNING *`,
         [
           name || ex.name,
           cat || ex.cat,
@@ -189,7 +209,8 @@ router.put(
           JSON.stringify(uploadedFiles),
           JSON.stringify(variantsArr),
           JSON.stringify(pricesArr),
-          stock !== undefined ? parseInt(stock) : ex.stock,
+          JSON.stringify(stocksArr),
+          totalStock,
           badge !== undefined ? badge : ex.badge,
           description !== undefined ? description : ex.description,
           req.params.id,
@@ -213,6 +234,50 @@ router.delete("/:id", adminMiddleware, async (req, res) => {
       req.params.id,
     ]);
     res.json({ message: "Produit supprimé" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+// ── CATEGORIES ROUTES ─────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+
+// GET /api/products/categories/all  — public
+router.get("/categories/all", async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM categories WHERE active = 1 ORDER BY name ASC",
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/products/categories — admin
+router.post("/categories", adminMiddleware, async (req, res) => {
+  try {
+    const { name, icon } = req.body;
+    if (!name || name.trim().length < 2)
+      return res.status(400).json({ error: "Nom de catégorie invalide." });
+    const { rows } = await db.query(
+      "INSERT INTO categories (name, icon) VALUES ($1, $2) ON CONFLICT (name) DO UPDATE SET active=1 RETURNING *",
+      [name.trim(), icon || "🏷️"],
+    );
+    res.status(201).json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/products/categories/:id — admin
+router.delete("/categories/:id", adminMiddleware, async (req, res) => {
+  try {
+    await db.query("UPDATE categories SET active = 0 WHERE id = $1", [
+      req.params.id,
+    ]);
+    res.json({ message: "Catégorie supprimée" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

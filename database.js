@@ -8,7 +8,6 @@ const pool = new Pool({
       : false,
 });
 
-// ── INIT TABLES ───────────────────────────────────────────
 async function initDB() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
@@ -18,6 +17,14 @@ async function initDB() {
       phone       TEXT,
       password    TEXT    NOT NULL,
       role        TEXT    NOT NULL DEFAULT 'user',
+      created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS categories (
+      id          SERIAL PRIMARY KEY,
+      name        TEXT    NOT NULL UNIQUE,
+      icon        TEXT    DEFAULT '🏷️',
+      active      INTEGER NOT NULL DEFAULT 1,
       created_at  TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -34,6 +41,7 @@ async function initDB() {
       reviews         INTEGER DEFAULT 0,
       variants        TEXT    NOT NULL DEFAULT '["Standard"]',
       variant_prices  TEXT    NOT NULL DEFAULT '[0]',
+      variant_stocks  TEXT    NOT NULL DEFAULT '[0]',
       stock           INTEGER NOT NULL DEFAULT 0,
       badge           TEXT,
       description     TEXT,
@@ -75,6 +83,31 @@ async function initDB() {
       active          INTEGER NOT NULL DEFAULT 1
     );
   `);
+
+  // Add variant_stocks column if it doesn't exist (migration)
+  await pool.query(`
+    ALTER TABLE products ADD COLUMN IF NOT EXISTS variant_stocks TEXT NOT NULL DEFAULT '[0]';
+  `);
+
+  // Seed categories if empty
+  const { rows: catRows } = await pool.query(
+    "SELECT COUNT(*) as c FROM categories",
+  );
+  if (parseInt(catRows[0].c) === 0) {
+    const defaultCats = [
+      ["Cosmétiques PC", "💄"],
+      ["Écrans", "🖥️"],
+      ["Souris", "🖱️"],
+      ["Pâte Thermique", "🧪"],
+    ];
+    for (const [name, icon] of defaultCats) {
+      await pool.query(
+        "INSERT INTO categories (name, icon) VALUES ($1, $2) ON CONFLICT (name) DO NOTHING",
+        [name, icon],
+      );
+    }
+    console.log("✅ Default categories seeded");
+  }
 
   // ── SEED WILAYAS ─────────────────────────────────────────
   const { rows } = await pool.query("SELECT COUNT(*) as c FROM wilayas");

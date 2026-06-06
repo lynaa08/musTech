@@ -12,22 +12,16 @@ async function generateRef() {
   return "#MT-" + String(parseInt(rows[0].c) + 1).padStart(4, "0");
 }
 
-// ── VALIDATION ────────────────────────────────────────────
 function validateOrderInput({ customer, phone, wilaya, items }) {
   if (!customer || typeof customer !== "string" || customer.trim().length < 2)
     return "Nom invalide (minimum 2 caractères).";
-
-  // Numéro algérien : 10 chiffres commençant par 05, 06 ou 07
   const phoneClean = phone?.replace(/\s/g, "");
   if (!phoneClean || !/^(05|06|07)\d{8}$/.test(phoneClean))
     return "Numéro de téléphone invalide (ex: 0555123456).";
-
   if (!wilaya || typeof wilaya !== "string" || wilaya.trim().length < 2)
     return "Wilaya invalide.";
-
   if (!Array.isArray(items) || items.length === 0 || items.length > 20)
     return "Panier invalide.";
-
   for (const item of items) {
     if (!Number.isInteger(Number(item.id)) || Number(item.id) < 1)
       return "Produit invalide.";
@@ -38,8 +32,7 @@ function validateOrderInput({ customer, phone, wilaya, items }) {
     )
       return "Quantité invalide.";
   }
-
-  return null; // OK
+  return null;
 }
 
 // ── POST /api/orders ──────────────────────────────────────
@@ -56,7 +49,6 @@ router.post("/", optionalAuth, async (req, res) => {
       shipping,
     } = req.body;
 
-    // Validation
     const validationError = validateOrderInput({
       customer,
       phone,
@@ -82,15 +74,27 @@ router.post("/", optionalAuth, async (req, res) => {
 
       const prices = JSON.parse(product.variant_prices);
       const variants = JSON.parse(product.variants);
+      const variantStocks = JSON.parse(product.variant_stocks || "[]");
       const variantIndex = parseInt(item.variant) || 0;
       const price = prices[variantIndex] ?? prices[0];
       const qty = Math.min(99, Math.max(1, parseInt(item.qty) || 1));
-      calculatedSubtotal += price * qty;
 
+      // Check stock for this specific variant
+      const availableStock = variantStocks[variantIndex] ?? 0;
+      if (availableStock < qty) {
+        return res
+          .status(400)
+          .json({
+            error: `Stock insuffisant pour "${product.name} - ${variants[variantIndex] || variants[0]}" (disponible: ${availableStock}).`,
+          });
+      }
+
+      calculatedSubtotal += price * qty;
       enrichedItems.push({
         id: product.id,
         name: product.name,
         variant: variants[variantIndex] || variants[0],
+        variantIndex,
         price,
         qty,
         total: price * qty,
@@ -134,11 +138,21 @@ router.post("/", optionalAuth, async (req, res) => {
       ],
     );
 
-    // Update stock
+    // Decrement stock per variant
     for (const item of enrichedItems) {
+      const { rows: pRows } = await db.query(
+        "SELECT variant_stocks FROM products WHERE id = $1",
+        [item.id],
+      );
+      const stocks = JSON.parse(pRows[0]?.variant_stocks || "[]");
+      stocks[item.variantIndex] = Math.max(
+        0,
+        (stocks[item.variantIndex] || 0) - item.qty,
+      );
+      const totalStock = stocks.reduce((a, b) => a + b, 0);
       await db.query(
-        "UPDATE products SET stock = GREATEST(0, stock - $1) WHERE id = $2",
-        [item.qty, item.id],
+        "UPDATE products SET variant_stocks = $1, stock = $2 WHERE id = $3",
+        [JSON.stringify(stocks), totalStock, item.id],
       );
     }
 
@@ -182,10 +196,9 @@ router.get("/", adminMiddleware, async (req, res) => {
       `SELECT * FROM orders ${where} ORDER BY created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
       params,
     );
-    const countParams = status ? [status] : [];
     const { rows: countRows } = await db.query(
       `SELECT COUNT(*) as c FROM orders ${status ? "WHERE status = $1" : ""}`,
-      countParams,
+      status ? [status] : [],
     );
     const total = parseInt(countRows[0].c);
     res.json({
@@ -199,7 +212,6 @@ router.get("/", adminMiddleware, async (req, res) => {
   }
 });
 
-// ── GET /api/orders/:id ── admin ──────────────────────────
 router.get("/:id", adminMiddleware, async (req, res) => {
   try {
     const { rows } = await db.query("SELECT * FROM orders WHERE id = $1", [
@@ -213,7 +225,6 @@ router.get("/:id", adminMiddleware, async (req, res) => {
   }
 });
 
-// ── PUT /api/orders/:id/status ── admin ───────────────────
 router.put("/:id/status", adminMiddleware, async (req, res) => {
   try {
     const { status } = req.body;
@@ -235,7 +246,6 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
   }
 });
 
-// ── DELETE /api/orders/:id ── admin ───────────────────────
 router.delete("/:id", adminMiddleware, async (req, res) => {
   try {
     const { rows } = await db.query("SELECT id FROM orders WHERE id = $1", [

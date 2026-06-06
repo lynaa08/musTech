@@ -4853,11 +4853,11 @@
                   Tapis
                 </button>
               </div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                <input type="text" id="ap-new-cat-input" class="form-input" placeholder="Nouvelle catégorie..." style="flex:1;padding:0.45rem 0.75rem;font-size:0.85rem;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomCatPill('ap');}" />
+                <button type="button" onclick="addCustomCatPill('ap')" style="padding:0.45rem 0.9rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;line-height:1;transition:background 0.2s;" title="Ajouter catégorie">＋</button>
+              </div>
               <input type="hidden" id="ap-cat" />
-            </div>
-            <div class="form-group">
-              <label>Stock *</label
-              ><input type="number" id="ap-stock" placeholder="50" />
             </div>
           </div>
           <div class="form-group">
@@ -4874,7 +4874,8 @@
             ><input
               type="text"
               id="ap-variants"
-              placeholder="ex. Noir, Blanc, Argent" />
+              placeholder="ex. Noir, Blanc, Argent"
+              oninput="renderVariantStockFields('ap')" />
           </div>
           <div class="form-group">
             <label>Prix des Variantes (séparés par des virgules)</label
@@ -4882,6 +4883,13 @@
               type="text"
               id="ap-variant-prices"
               placeholder="ex. 18500, 17500, 16000" />
+          </div>
+          <div class="form-group" id="ap-variant-stock-group">
+            <label>Stock par Variante *</label>
+            <div id="ap-variant-stock-rows">
+              <!-- Generated dynamically -->
+              <input type="number" id="ap-stock" placeholder="Stock (toutes variantes)" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />
+            </div>
           </div>
           <div class="form-group">
             <label>Description</label
@@ -5255,10 +5263,11 @@
                   Tapis
                 </button>
               </div>
+              <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                <input type="text" id="ep-new-cat-input" class="form-input" placeholder="Nouvelle catégorie..." style="flex:1;padding:0.45rem 0.75rem;font-size:0.85rem;" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomCatPill('ep');}" />
+                <button type="button" onclick="addCustomCatPill('ep')" style="padding:0.45rem 0.9rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;line-height:1;transition:background 0.2s;" title="Ajouter catégorie">＋</button>
+              </div>
               <input type="hidden" id="ep-cat" />
-            </div>
-            <div class="form-group">
-              <label>Stock *</label><input type="number" id="ep-stock" />
             </div>
           </div>
           <div class="form-group">
@@ -5271,11 +5280,18 @@
           </div>
           <div class="form-group">
             <label>Variantes (séparées par des virgules)</label
-            ><input type="text" id="ep-variants" />
+            ><input type="text" id="ep-variants" oninput="renderVariantStockFields('ep')" />
           </div>
           <div class="form-group">
             <label>Prix des Variantes (séparés par des virgules)</label
             ><input type="text" id="ep-variant-prices" />
+          </div>
+          <div class="form-group" id="ep-variant-stock-group">
+            <label>Stock par Variante *</label>
+            <div id="ep-variant-stock-rows">
+              <input type="number" id="ep-stock" placeholder="Stock" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />
+            </div>
+          </div>
           </div>
           <div class="form-group">
             <label>Description</label
@@ -5835,12 +5851,24 @@
         document.querySelectorAll("#ep-cat-pills .cat-pill").forEach((btn) => {
           btn.classList.toggle("active", epCatVal.includes(btn.dataset.val));
         });
-        document.getElementById("ep-stock").value = p.stock;
         document.getElementById("ep-icon").value = p.icon;
         document.getElementById("ep-variants").value = p.variants.join(", ");
         document.getElementById("ep-variant-prices").value =
           p.variantPrices.join(", ");
         document.getElementById("ep-desc").value = PRODUCT_DESCS[id] || "";
+
+        // Populate per-variant stock after rendering fields
+        renderVariantStockFields("ep");
+        const variantStocks = p.variant_stocks || p.variantStocks || [];
+        if (p.variants.length > 1) {
+          p.variants.forEach((_, i) => {
+            const el = document.getElementById("ep-stock-" + i);
+            if (el) el.value = variantStocks[i] !== undefined ? variantStocks[i] : Math.round(p.stock / p.variants.length);
+          });
+        } else {
+          const el = document.getElementById("ep-stock");
+          if (el) el.value = p.stock;
+        }
 
         // Image gallery preview
         const currentWrap = document.getElementById("ep-current-img-wrap");
@@ -5883,7 +5911,6 @@
         const oldPrice =
           parseInt(document.getElementById("ep-old-price").value) || null;
         const cat = document.getElementById("ep-cat").value;
-        const stock = parseInt(document.getElementById("ep-stock").value);
         const icon = document.getElementById("ep-icon").value.trim();
 
         const vs = document.getElementById("ep-variants").value.trim();
@@ -5902,6 +5929,19 @@
           : [];
         const variantPrices = variants.map((_, i) => vpRaw[i] || price);
 
+        // Read per-variant stock
+        let variantStocks, stock;
+        if (variants.length > 1 && document.getElementById("ep-stock-0")) {
+          variantStocks = variants.map((_, i) => {
+            const el = document.getElementById("ep-stock-" + i);
+            return el ? parseInt(el.value) || 0 : 0;
+          });
+          stock = variantStocks.reduce((a, b) => a + b, 0);
+        } else {
+          stock = parseInt(document.getElementById("ep-stock").value) || 0;
+          variantStocks = [stock];
+        }
+
         const desc = document.getElementById("ep-desc").value.trim();
         const imgInput = document.getElementById("ep-image");
 
@@ -5914,6 +5954,7 @@
         if (stock >= 0) fd.append("stock", stock);
         fd.append("variants", JSON.stringify(variants));
         fd.append("variant_prices", JSON.stringify(variantPrices));
+        fd.append("variant_stocks", JSON.stringify(variantStocks));
         fd.append("description", desc);
         if (imgInput && imgInput.files.length > 0) {
           for (const file of imgInput.files) {
@@ -6154,25 +6195,63 @@
         document.getElementById(prefix + "-cat").value = vals.join(",");
       }
 
+      function addCustomCatPill(prefix) {
+        const input = document.getElementById(prefix + "-new-cat-input");
+        const val = input.value.trim();
+        if (!val) return;
+        const container = document.getElementById(prefix + "-cat-pills");
+        // Check if already exists
+        const existing = Array.from(container.querySelectorAll(".cat-pill"))
+          .find(b => b.dataset.val.toLowerCase() === val.toLowerCase());
+        if (existing) {
+          existing.classList.add("active");
+        } else {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cat-pill active";
+          btn.dataset.val = val;
+          btn.textContent = val;
+          btn.onclick = function() { toggleCatPill(this, prefix); };
+          container.appendChild(btn);
+        }
+        input.value = "";
+        // Update hidden input
+        const vals = Array.from(container.querySelectorAll(".cat-pill.active"))
+          .map(b => b.dataset.val);
+        document.getElementById(prefix + "-cat").value = vals.join(",");
+      }
+
+      function renderVariantStockFields(prefix) {
+        const varInput = document.getElementById(prefix + "-variants");
+        const container = document.getElementById(prefix + "-variant-stock-rows");
+        if (!varInput || !container) return;
+        const raw = varInput.value.trim();
+        const variants = raw ? raw.split(",").map(v => v.trim()).filter(Boolean) : [];
+        if (variants.length <= 1) {
+          // Single or no variant: show simple stock input
+          container.innerHTML = `<input type="number" id="${prefix}-stock" placeholder="Stock" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
+        } else {
+          // Multiple variants: show one stock input per variant
+          container.innerHTML = variants.map((v, i) => `
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+              <span style="font-size:0.85rem;font-weight:700;color:var(--gray-700);min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${v}">${v}</span>
+              <input type="number" id="${prefix}-stock-${i}" data-variant-stock="${i}" placeholder="0"
+                style="flex:1;padding:0.55rem 0.75rem;border:1.5px solid var(--gray-100);border-radius:8px;font-family:inherit;font-size:0.88rem;" />
+            </div>`).join("");
+          // Hidden main stock (sum)
+          container.innerHTML += `<input type="hidden" id="${prefix}-stock" value="0" />`;
+        }
+      }
+
       async function saveNewProduct() {
         const name = document.getElementById("ap-name").value.trim();
         const price = parseInt(document.getElementById("ap-price").value);
         const oldPrice =
           parseInt(document.getElementById("ap-old-price").value) || null;
         const cat = document.getElementById("ap-cat").value;
-        const stock = parseInt(document.getElementById("ap-stock").value);
         const icon = document.getElementById("ap-icon").value.trim() || "📦";
         const desc = document.getElementById("ap-desc").value.trim();
         const errEl = document.getElementById("add-product-error");
-
-        // Validate
-        if (!name || !price || !stock) {
-          errEl.textContent =
-            "⚠ Veuillez remplir les champs obligatoires (Nom, Prix, Stock).";
-          errEl.style.display = "block";
-          return;
-        }
-        errEl.style.display = "none";
 
         // Parse variants
         const variantStr = document.getElementById("ap-variants").value.trim();
@@ -6191,6 +6270,28 @@
           : [];
         const variantPrices = variants.map((_, i) => vpRaw[i] || price);
 
+        // Read per-variant stock
+        let variantStocks, stock;
+        if (variants.length > 1) {
+          variantStocks = variants.map((_, i) => {
+            const el = document.getElementById("ap-stock-" + i);
+            return el ? parseInt(el.value) || 0 : 0;
+          });
+          stock = variantStocks.reduce((a, b) => a + b, 0);
+        } else {
+          stock = parseInt(document.getElementById("ap-stock").value) || 0;
+          variantStocks = [stock];
+        }
+
+        // Validate
+        if (!name || !price || stock <= 0) {
+          errEl.textContent =
+            "⚠ Veuillez remplir les champs obligatoires (Nom, Prix, Stock).";
+          errEl.style.display = "block";
+          return;
+        }
+        errEl.style.display = "none";
+
         const fd = new FormData();
         fd.append("name", name);
         fd.append("cat", cat);
@@ -6200,6 +6301,7 @@
         fd.append("stock", stock);
         fd.append("variants", JSON.stringify(variants));
         fd.append("variant_prices", JSON.stringify(variantPrices));
+        fd.append("variant_stocks", JSON.stringify(variantStocks));
 
         const fileInput = document.getElementById("ap-imgs");
         if (fileInput && fileInput.files.length > 0) {
@@ -6224,7 +6326,6 @@
             "ap-name",
             "ap-price",
             "ap-old-price",
-            "ap-stock",
             "ap-icon",
             "ap-variants",
             "ap-variant-prices",
@@ -6233,6 +6334,9 @@
             const el = document.getElementById(id);
             if (el) el.value = "";
           });
+          // Reset stock fields
+          const stockRows = document.getElementById("ap-variant-stock-rows");
+          if (stockRows) stockRows.innerHTML = `<input type="number" id="ap-stock" placeholder="Stock (toutes variantes)" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
           document.getElementById("ap-imgs-preview").style.display = "none";
           document.getElementById("ap-imgs-preview").innerHTML = "";
           document.getElementById("ap-imgs").value = "";
