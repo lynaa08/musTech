@@ -39,6 +39,8 @@ function orderRateLimiter(req, res, next) {
 // ── MIDDLEWARE ────────────────────────────────────────────
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  "https://mustech.shop",
+  "https://www.mustech.shop",
   "http://localhost:3001",
   "http://127.0.0.1:5500",
 ].filter(Boolean);
