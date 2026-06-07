@@ -102,7 +102,17 @@ router.get("/:id", async (req, res) => {
 router.post(
   "/",
   adminMiddleware,
-  upload.array("images", 15),
+  (req, res, next) => {
+    upload.array("images", 15)(req, res, (err) => {
+      if (err) {
+        // Cloudinary or multer error: allow request without images
+        console.error("[UPLOAD ERROR]", err.message);
+        req.files = [];
+        req.uploadError = err.message;
+      }
+      next();
+    });
+  },
   async (req, res) => {
     try {
       const {
@@ -154,7 +164,12 @@ router.post(
           description || null,
         ],
       );
-      res.status(201).json(parseProduct(rows[0]));
+      res
+        .status(201)
+        .json({
+          ...parseProduct(rows[0]),
+          uploadWarning: req.uploadError || undefined,
+        });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -165,7 +180,16 @@ router.post(
 router.put(
   "/:id",
   adminMiddleware,
-  upload.array("images", 15),
+  (req, res, next) => {
+    upload.array("images", 15)(req, res, (err) => {
+      if (err) {
+        console.error("[UPLOAD ERROR]", err.message);
+        req.files = [];
+        req.uploadError = err.message;
+      }
+      next();
+    });
+  },
   async (req, res) => {
     try {
       const { rows: existing } = await db.query(
