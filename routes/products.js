@@ -47,6 +47,10 @@ function parseProduct(row) {
     img: row.img || null,
     images: row.images ? JSON.parse(row.images) : row.img ? [row.img] : [],
     stock: variantStocks.reduce((a, b) => a + b, 0),
+    status:
+      variantStocks.reduce((a, b) => a + b, 0) <= 0
+        ? "out_of_stock"
+        : row.status || "in_stock",
   };
 }
 
@@ -241,8 +245,8 @@ router.put(
 
       const { rows } = await db.query(
         `UPDATE products SET name=$1,cat=$2,price=$3,old_price=$4,cost_price=$5,icon=$6,
-       img=$7,images=$8,variants=$9,variant_prices=$10,variant_stocks=$11,stock=$12,badge=$13,description=$14
-       WHERE id=$15 RETURNING *`,
+       img=$7,images=$8,variants=$9,variant_prices=$10,variant_stocks=$11,stock=$12,badge=$13,description=$14,status=$15
+       WHERE id=$16 RETURNING *`,
         [
           name || ex.name,
           cat || ex.cat,
@@ -258,6 +262,7 @@ router.put(
           totalStock,
           badge !== undefined ? badge : ex.badge,
           description !== undefined ? description : ex.description,
+          totalStock <= 0 ? "out_of_stock" : "in_stock",
           req.params.id,
         ],
       );

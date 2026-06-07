@@ -7210,8 +7210,10 @@
         const badgeHTML = p.badge
           ? `<span class="product-badge ${p.badge === "Sale" ? "sale" : ""}">${p.badge}</span>`
           : "";
-        const isOutOfStock = p.stock <= 0;
-        const stockBadgeHTML = ""; // Rupture badge hidden from client view
+        const isOutOfStock = p.status === "out_of_stock" || p.stock <= 0;
+        const stockBadgeHTML = isOutOfStock
+          ? `<span class="product-badge out-of-stock" style="top:${p.badge ? "38px" : "10px"}">Rupture</span>`
+          : "";
         const oldPriceHTML = p.oldPrice
           ? `<span class="price-old" id="old-price-${p.id}">${p.oldPrice.toLocaleString()} DA</span>`
           : "";
