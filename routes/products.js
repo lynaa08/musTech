@@ -43,9 +43,9 @@ function parseProduct(row) {
     variantPrices,
     variantStocks,
     oldPrice: row.old_price,
+    costPrice: row.cost_price || 0,
     img: row.img || null,
     images: row.images ? JSON.parse(row.images) : row.img ? [row.img] : [],
-    // Total stock = sum of all variant stocks
     stock: variantStocks.reduce((a, b) => a + b, 0),
   };
 }
@@ -66,6 +66,18 @@ router.get("/", async (req, res) => {
     }
     query += " ORDER BY created_at DESC";
     const { rows } = await db.query(query, params);
+    res.json(rows.map(parseProduct));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── GET /api/products/admin/all ── (admin, includes cost_price) ──
+router.get("/admin/all", adminMiddleware, async (req, res) => {
+  try {
+    const { rows } = await db.query(
+      "SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC",
+    );
     res.json(rows.map(parseProduct));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -98,6 +110,7 @@ router.post(
         cat,
         price,
         old_price,
+        cost_price,
         icon,
         variants,
         variant_prices,
@@ -122,13 +135,14 @@ router.post(
       const primaryImg = uploadedFiles[0] || null;
 
       const { rows } = await db.query(
-        `INSERT INTO products (name,cat,price,old_price,icon,img,images,variants,variant_prices,variant_stocks,stock,badge,description)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+        `INSERT INTO products (name,cat,price,old_price,cost_price,icon,img,images,variants,variant_prices,variant_stocks,stock,badge,description)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
         [
           name,
           cat,
           parseInt(price),
           old_price ? parseInt(old_price) : null,
+          cost_price ? parseInt(cost_price) : 0,
           icon || "📦",
           primaryImg,
           JSON.stringify(uploadedFiles),
@@ -167,6 +181,7 @@ router.put(
         cat,
         price,
         old_price,
+        cost_price,
         icon,
         variants,
         variant_prices,
@@ -196,14 +211,15 @@ router.put(
       const primaryImg = uploadedFiles[0] || ex.img;
 
       const { rows } = await db.query(
-        `UPDATE products SET name=$1,cat=$2,price=$3,old_price=$4,icon=$5,
-       img=$6,images=$7,variants=$8,variant_prices=$9,variant_stocks=$10,stock=$11,badge=$12,description=$13
-       WHERE id=$14 RETURNING *`,
+        `UPDATE products SET name=$1,cat=$2,price=$3,old_price=$4,cost_price=$5,icon=$6,
+       img=$7,images=$8,variants=$9,variant_prices=$10,variant_stocks=$11,stock=$12,badge=$13,description=$14
+       WHERE id=$15 RETURNING *`,
         [
           name || ex.name,
           cat || ex.cat,
           price ? parseInt(price) : ex.price,
           old_price ? parseInt(old_price) : null,
+          cost_price !== undefined ? parseInt(cost_price) : ex.cost_price || 0,
           icon || ex.icon,
           primaryImg,
           JSON.stringify(uploadedFiles),

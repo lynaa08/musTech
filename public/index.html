@@ -3115,6 +3115,13 @@
                 <div class="value" id="stat-rating">—</div>
                 <div class="change" id="stat-rating-sub">Aucun avis</div>
               </div>
+              <div class="stat-card" id="stat-profit-card">
+                <div class="label">Profit Net</div>
+                <div class="value" id="stat-profit">— DA</div>
+                <div class="change" id="stat-profit-sub">
+                  Revenus - coût d'achat
+                </div>
+              </div>
             </div>
             <div class="admin-table-card">
               <div class="table-header">
@@ -4865,8 +4872,12 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Prix (DA) *</label
-              ><input type="number" id="ap-price" placeholder="82000" />
+              <label>Prix de Vente (DA) *</label
+              ><input
+                type="number"
+                id="ap-price"
+                placeholder="82000"
+                oninput="updateMarginDisplay('ap')" />
             </div>
             <div class="form-group">
               <label>Prix Remisé (DA)</label
@@ -4874,6 +4885,29 @@
                 type="number"
                 id="ap-old-price"
                 placeholder="Facultatif" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>🔒 Prix d'Achat (DA)</label
+              ><input
+                type="number"
+                id="ap-cost-price"
+                placeholder="Coût réel (admin)"
+                oninput="updateMarginDisplay('ap')"
+                style="border-color: var(--gray-300); background: #fffbeb" />
+            </div>
+            <div
+              class="form-group"
+              style="display: flex; align-items: flex-end">
+              <span
+                id="ap-margin-display"
+                style="
+                  font-size: 0.8rem;
+                  color: var(--green);
+                  font-weight: 600;
+                  padding-bottom: 0.5rem;
+                "></span>
             </div>
           </div>
           <div class="form-row">
@@ -5715,7 +5749,8 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Prix (DA) *</label><input type="number" id="ep-price" />
+              <label>Prix de Vente (DA) *</label
+              ><input type="number" id="ep-price" />
             </div>
             <div class="form-group">
               <label>Prix Remisé (DA)</label
@@ -5723,6 +5758,28 @@
                 type="number"
                 id="ep-old-price"
                 placeholder="Facultatif" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>🔒 Prix d'Achat (DA)</label
+              ><input
+                type="number"
+                id="ep-cost-price"
+                placeholder="Coût réel (admin)"
+                style="border-color: var(--gray-300); background: #fffbeb" />
+            </div>
+            <div
+              class="form-group"
+              style="display: flex; align-items: flex-end">
+              <span
+                id="ep-margin-display"
+                style="
+                  font-size: 0.8rem;
+                  color: var(--green);
+                  font-weight: 600;
+                  padding-bottom: 0.5rem;
+                "></span>
             </div>
           </div>
           <div class="form-row">
@@ -6538,6 +6595,26 @@
         }
         if (id === "add-product-modal") resetApIconPicker();
       }
+      function updateMarginDisplay(prefix) {
+        const price =
+          parseInt(document.getElementById(prefix + "-price")?.value) || 0;
+        const cost =
+          parseInt(document.getElementById(prefix + "-cost-price")?.value) || 0;
+        const el = document.getElementById(prefix + "-margin-display");
+        if (!el) return;
+        if (price && cost) {
+          const margin = price - cost;
+          const pct = ((margin / price) * 100).toFixed(0);
+          el.textContent =
+            margin >= 0
+              ? `✅ Marge: ${margin.toLocaleString()} DA (${pct}%)`
+              : `❌ Perte: ${Math.abs(margin).toLocaleString()} DA`;
+          el.style.color = margin >= 0 ? "var(--green)" : "#e53e3e";
+        } else {
+          el.textContent = "";
+        }
+      }
+
       function closeModal(id) {
         document.getElementById(id).classList.remove("open");
       }
@@ -6742,6 +6819,30 @@
           };
           set("stat-revenue", totalRevenue.toLocaleString() + " DA");
           set("stat-revenue-sub", ORDERS.length + " commande(s)");
+          // Profit = revenue - cost of sold items
+          const totalCost = ORDERS.reduce((sum, o) => {
+            const items = Array.isArray(o.items)
+              ? o.items
+              : JSON.parse(o.items || "[]");
+            return (
+              sum +
+              items.reduce((s, it) => {
+                const prod = PRODUCTS.find(
+                  (pr) => pr.id === it.id || pr.id === it.product_id,
+                );
+                return (
+                  s + (prod?.costPrice || prod?.cost_price || 0) * (it.qty || 1)
+                );
+              }, 0)
+            );
+          }, 0);
+          const profit = totalRevenue - totalCost;
+          set("stat-profit", profit.toLocaleString() + " DA");
+          set("stat-profit-sub", profit >= 0 ? "✅ Bénéfice" : "❌ Perte");
+          const profitCard = document.getElementById("stat-profit-card");
+          if (profitCard)
+            profitCard.style.borderTop =
+              profit >= 0 ? "3px solid var(--green)" : "3px solid #e53e3e";
           set("stat-orders", ORDERS.length);
           set("stat-orders-sub", pendingOrders + " en attente");
           set("stat-products", PRODUCTS.length);
@@ -6770,7 +6871,19 @@
               .map(
                 (o) => `
       <tr>
-        <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
+        <td><strong>${o.order_ref || "#MT-" + o.id}</strong>${(() => {
+          try {
+            const its = Array.isArray(o.items)
+              ? o.items
+              : JSON.parse(o.items || "[]");
+            const hasOOS = its.some((it) => it.outOfStock);
+            return hasOOS
+              ? ' <span title="Stock insuffisant !" style="color:#e53e3e;font-size:0.85rem;">⚠️</span>'
+              : "";
+          } catch (e) {
+            return "";
+          }
+        })()}</td>
         <td>${o.customer}</td>
         <td>${o.wilaya}</td>
         <td><strong>${(o.total || 0).toLocaleString()} DA</strong></td>
@@ -6825,7 +6938,11 @@
           <td>${p.cat}</td>
           <td>${p.price.toLocaleString()} DA</td>
           <td>${p.stock}</td>
-          <td><span class="status-badge ${p.stock > 0 ? "status-delivered" : "status-cancelled"}">${p.stock > 0 ? "Actif" : "Rupture"}</span></td>
+          <td>
+            <button onclick="toggleProductStock(${p.id}, ${p.stock})" style="border:none;cursor:pointer;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:700;background:${p.stock > 0 ? "var(--green-light)" : "#fee2e2"};color:${p.stock > 0 ? "var(--green)" : "#e53e3e"};">
+              ${p.stock > 0 ? "● En stock" : "○ Rupture"}
+            </button>
+          </td>
           <td><div class="action-btns">
             <button class="action-btn action-edit" onclick="openEditProduct(${p.id})">Modifier</button>
             <button class="action-btn action-del" onclick="deleteProduct(${p.id})">Supprimer</button>
@@ -6904,6 +7021,9 @@
         document.getElementById("ep-id").value = id;
         document.getElementById("ep-name").value = p.name;
         document.getElementById("ep-price").value = p.price;
+        const epCost = document.getElementById("ep-cost-price");
+        if (epCost) epCost.value = p.costPrice || p.cost_price || "";
+        updateMarginDisplay("ep");
         document.getElementById("ep-old-price").value = p.oldPrice || "";
         // Populate pill multiselect for edit modal
         const epCatVal = Array.isArray(p.cat) ? p.cat : p.cat ? [p.cat] : [];
@@ -6996,6 +7116,8 @@
         const id = parseInt(document.getElementById("ep-id").value);
         const name = document.getElementById("ep-name").value.trim();
         const price = parseInt(document.getElementById("ep-price").value);
+        const costPrice =
+          parseInt(document.getElementById("ep-cost-price")?.value) || 0;
         const oldPrice =
           parseInt(document.getElementById("ep-old-price").value) || null;
         const cat = document.getElementById("ep-cat").value;
@@ -7043,6 +7165,7 @@
         fd.append("variants", JSON.stringify(variants));
         fd.append("variant_prices", JSON.stringify(variantPrices));
         fd.append("variant_stocks", JSON.stringify(variantStocks));
+        fd.append("cost_price", costPrice);
         fd.append("description", desc);
         if (imgInput && imgInput.files.length > 0) {
           for (const file of imgInput.files) {
@@ -7158,6 +7281,32 @@
             fileInput.files = dt.files;
             fileInput.dispatchEvent(new Event("change"));
           });
+        }
+      }
+
+      async function toggleProductStock(id, currentStock) {
+        try {
+          const p = PRODUCTS.find((pr) => pr.id === id);
+          if (!p) return;
+          const fd = new FormData();
+          const newStocks = (p.variantStocks || [0]).map(() =>
+            currentStock > 0 ? 0 : 1,
+          );
+          fd.append("variant_stocks", JSON.stringify(newStocks));
+          fd.append("name", p.name);
+          fd.append("cat", p.cat || "");
+          fd.append("price", p.price);
+          fd.append("variants", JSON.stringify(p.variants || ["Standard"]));
+          fd.append(
+            "variant_prices",
+            JSON.stringify(p.variantPrices || [p.price]),
+          );
+          await ProductsAPI.update(id, fd);
+          PRODUCTS = await ProductsAPI.getAll();
+          renderAdmin();
+          showToast(currentStock > 0 ? "Mis en rupture !" : "Remis en stock !");
+        } catch (e) {
+          showToast("Erreur: " + e.message);
         }
       }
 
@@ -7390,6 +7539,8 @@
       async function saveNewProduct() {
         const name = document.getElementById("ap-name").value.trim();
         const price = parseInt(document.getElementById("ap-price").value);
+        const costPrice =
+          parseInt(document.getElementById("ap-cost-price")?.value) || 0;
         const oldPrice =
           parseInt(document.getElementById("ap-old-price").value) || null;
         const cat = document.getElementById("ap-cat").value;
@@ -7446,6 +7597,7 @@
         fd.append("variants", JSON.stringify(variants));
         fd.append("variant_prices", JSON.stringify(variantPrices));
         fd.append("variant_stocks", JSON.stringify(variantStocks));
+        fd.append("cost_price", costPrice);
 
         const fileInput = document.getElementById("ap-imgs");
         if (fileInput && fileInput.files.length > 0) {

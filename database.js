@@ -45,6 +45,7 @@ async function initDB() {
       stock           INTEGER NOT NULL DEFAULT 0,
       badge           TEXT,
       description     TEXT,
+      cost_price      INTEGER DEFAULT 0,
       active          INTEGER NOT NULL DEFAULT 1,
       created_at      TIMESTAMP NOT NULL DEFAULT NOW()
     );
@@ -224,3 +225,10 @@ initDB().catch((err) => {
 });
 
 module.exports = pool;
+
+// Migration: add cost_price column if not exists
+pool
+  .query(
+    "ALTER TABLE products ADD COLUMN IF NOT EXISTS cost_price INTEGER DEFAULT 0",
+  )
+  .catch(() => {});
