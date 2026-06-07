@@ -6953,7 +6953,7 @@
           <td>${p.stock > 0 ? p.stock : `<span style="color:#e53e3e;font-weight:700;">${p.stock}</span>`}</td>
           <td>
             <button onclick="toggleProductStock(${p.id}, ${p.stock})" style="border:none;cursor:pointer;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:700;background:${p.stock <= 0 ? "#fee2e2" : "var(--green-light)"};color:${p.stock <= 0 ? "#e53e3e" : "var(--green)"};">
-              ${p.stock <= 0 ? `○ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}` : "● En stock"}
+              ${p.stock <= 0 ? `○ Out of Stock (-${Math.abs(p.stock) + 1})` : "● En stock"}
             </button>
           </td>
           <td><div class="action-btns">
@@ -8484,7 +8484,7 @@
         document.getElementById("pm-qty").textContent = 1;
         document.getElementById("pm-stock").textContent =
           p.stock <= 0
-            ? `✗ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}`
+            ? `✗ Out of Stock (-${Math.abs(p.stock) + 1})`
             : p.stock > 10
               ? `✓ En stock (${p.stock})`
               : `⚠ Stock limité (${p.stock})`;
