@@ -48,7 +48,7 @@ function validateOrderInput({ customer, phone, wilaya, items }) {
     return "Nom invalide (minimum 2 caractères).";
   const phoneClean = normalizeAlgerianPhone(phone || "");
   if (!phoneClean)
-    return "Numéro de téléphone invalide (ex: 0558210430, +213558210430 ou +2130558210430).";
+    return "Numéro de téléphone invalide.";
   if (!wilaya || typeof wilaya !== "string" || wilaya.trim().length < 2)
     return "Wilaya invalide.";
   if (!Array.isArray(items) || items.length === 0 || items.length > 20)
