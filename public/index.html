@@ -8289,8 +8289,23 @@
         }
       }
 
-      // CHECKOUT CART ITEMS
+      // CHECKOUT CART ITEMS — shared with product.html via localStorage
+      const CART_KEY = "mt_shared_cart";
       let checkoutCart = [];
+
+      function persistCart() {
+        localStorage.setItem(CART_KEY, JSON.stringify(checkoutCart));
+      }
+
+      function loadPersistedCart() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+          // saved items have {id, variant, qty} — compatible with checkoutCart format
+          checkoutCart = Array.isArray(saved) ? saved : [];
+        } catch {
+          checkoutCart = [];
+        }
+      }
 
       function getSubtotal() {
         return checkoutCart.reduce((sum, item) => {
@@ -8376,6 +8391,7 @@
 
       function removeCheckoutItem(productId) {
         checkoutCart = checkoutCart.filter((x) => x.id !== productId);
+        persistCart();
         renderCheckoutItems();
       }
 
@@ -8665,6 +8681,7 @@
 
       function removeFromCart(id) {
         checkoutCart = checkoutCart.filter((x) => x.id !== id);
+        persistCart();
         updateCartBadge();
         renderCartItems();
       }
@@ -8687,6 +8704,7 @@
         } else {
           checkoutCart.push({ id, qty: 1, variant: 0 });
         }
+        persistCart();
         updateCartBadge();
         const p = PRODUCTS.find((x) => x.id === id);
         showToast(`${p ? p.name : "Produit"} ajouté au panier`);
@@ -8781,25 +8799,10 @@
         });
       }
 
-      // CART ITEMS
+      // CART ITEMS — renders the real checkoutCart
       function populateCart() {
-        const ci = document.getElementById("cart-items");
-        if (!ci) return;
-        const cartProds = PRODUCTS.slice(0, 3);
-        ci.innerHTML = cartProds
-          .map(
-            (p) => `
-    <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem 0;border-bottom:1px solid var(--gray-100);">
-      <div style="width:50px;height:50px;background:var(--green-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">${p.icon}</div>
-      <div style="flex:1">
-        <div style="font-weight:600;font-size:0.88rem">${p.name}</div>
-        <div style="font-size:0.78rem;color:var(--gray-500)">${p.variants[0]}</div>
-      </div>
-      <div style="font-weight:700;color:var(--green-dark)">${p.price.toLocaleString()} DA</div>
-      <button onclick="this.closest('div').remove()" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1rem;">✕</button>
-    </div>`,
-          )
-          .join("");
+        // just sync badge; renderCartItems handles the modal content
+        updateCartBadge();
       }
 
       // ── EMAIL (EmailJS) ───────────────────────────────────────
@@ -9001,6 +9004,7 @@
           checkoutCart = [];
           checkoutPromoDiscount = 0;
           checkoutAppliedPromo = null;
+          persistCart();
           updateCartBadge();
 
           closeModal("checkout-modal");
@@ -9695,8 +9699,8 @@
               variant: variantIndex,
             });
         });
+        persistCart();
         updateCartBadge();
-        closeModal("product-modal");
         const names = pmSelectedVariants
           .map((i) => pmCurrentProduct.variants[i])
           .join(", ");
@@ -10142,7 +10146,9 @@
       }
 
       async function initAll() {
-        // Migrate old favorites format if needed
+        // Load shared cart from localStorage (shared with product.html)
+        loadPersistedCart();
+        updateCartBadge();
         try {
           const raw = _storeLocal.getItem("mt_favorites");
           if (raw) {
@@ -10174,6 +10180,12 @@
         populateWilayas();
         populateCart();
         initCarousel();
+
+        // Open cart modal if redirected from product.html
+        if (window.location.hash === "#open-cart") {
+          history.replaceState(null, "", window.location.pathname);
+          setTimeout(() => openModal("cart-modal"), 400);
+        }
       }
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initAll);
