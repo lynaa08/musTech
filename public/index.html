@@ -654,6 +654,14 @@
       .product-badge.sale {
         background: #ff4b6e;
       }
+      .product-badge.out-of-stock {
+        background: #6b7280;
+      }
+      .btn-add:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
       .product-wishlist {
         position: absolute;
         top: 10px;
@@ -6677,6 +6685,10 @@
         const badgeHTML = p.badge
           ? `<span class="product-badge ${p.badge === "Sale" ? "sale" : ""}">${p.badge}</span>`
           : "";
+        const isOutOfStock = p.status === "out_of_stock" || p.stock <= 0;
+        const stockBadgeHTML = isOutOfStock
+          ? `<span class="product-badge out-of-stock" style="top:${p.badge ? "38px" : "10px"}">Rupture</span>`
+          : "";
         const oldPriceHTML = p.oldPrice
           ? `<span class="price-old" id="old-price-${p.id}">${p.oldPrice.toLocaleString()} DA</span>`
           : "";
@@ -6687,6 +6699,7 @@
   <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='${productURL(p)}'" style="cursor:pointer;">
     <div class="product-img" id="card-img-${p.id}">
       ${badgeHTML}
+      ${stockBadgeHTML}
       <button class="product-wishlist" title="Favoris" id="wish-${p.id}" onclick="event.stopPropagation();toggleFavorite(${p.id},this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
@@ -6704,7 +6717,7 @@
           <span class="price-main" id="price-${p.id}">${p.variantPrices[0].toLocaleString()} DA</span>
           ${oldPriceHTML}
         </div>
-        <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier">
+        <button class="btn-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Ajouter au panier" ${isOutOfStock ? "disabled" : ""}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
         </button>
       </div>
@@ -6937,10 +6950,10 @@
           </td>
           <td>${p.cat}</td>
           <td>${p.price.toLocaleString()} DA</td>
-          <td>${p.stock}</td>
+          <td>${p.stock > 0 ? p.stock : `<span style="color:#e53e3e;font-weight:700;">${p.stock}</span>`}</td>
           <td>
-            <button onclick="toggleProductStock(${p.id}, ${p.stock})" style="border:none;cursor:pointer;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:700;background:${p.stock > 0 ? "var(--green-light)" : "#fee2e2"};color:${p.stock > 0 ? "var(--green)" : "#e53e3e"};">
-              ${p.stock > 0 ? "● En stock" : "○ Rupture"}
+            <button onclick="toggleProductStock(${p.id}, ${p.stock})" style="border:none;cursor:pointer;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:700;background:${p.status === "out_of_stock" || p.stock <= 0 ? "#fee2e2" : "var(--green-light)"};color:${p.status === "out_of_stock" || p.stock <= 0 ? "#e53e3e" : "var(--green)"};">
+              ${p.status === "out_of_stock" || p.stock <= 0 ? `○ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}` : "● En stock"}
             </button>
           </td>
           <td><div class="action-btns">
@@ -8470,11 +8483,11 @@
           PRODUCT_DESCS[p.id] || "";
         document.getElementById("pm-qty").textContent = 1;
         document.getElementById("pm-stock").textContent =
-          p.stock > 10
-            ? `✓ En stock (${p.stock})`
-            : p.stock > 0
-              ? `⚠ Stock limité (${p.stock})`
-              : "✗ Rupture";
+          p.status === "out_of_stock" || p.stock <= 0
+            ? `✗ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}`
+            : p.stock > 10
+              ? `✓ En stock (${p.stock})`
+              : `⚠ Stock limité (${p.stock})`;
 
         const badgeEl = document.getElementById("pm-badge-img");
         if (p.badge) {
