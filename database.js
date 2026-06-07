@@ -103,6 +103,11 @@ async function initDB() {
     ALTER TABLE products ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'in_stock';
   `);
 
+  // ── NEW MIGRATION: Add pinned column to orders ──────────────────
+  await pool.query(`
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS pinned INTEGER NOT NULL DEFAULT 0;
+  `);
+
   // Sync status for existing products based on current stock
   await pool.query(`
     UPDATE products SET status = CASE WHEN stock <= 0 THEN 'out_of_stock' ELSE 'in_stock' END;

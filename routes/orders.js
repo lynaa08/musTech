@@ -213,7 +213,7 @@ router.get("/track/:ref", async (req, res) => {
     const raw = decodeURIComponent(req.params.ref).toUpperCase();
     const ref = raw.startsWith("#") ? raw : "#" + raw;
     const { rows } = await db.query(
-      "SELECT id, order_ref, customer, wilaya, status, total, shipping, items, created_at FROM orders WHERE UPPER(order_ref) = $1",
+      "SELECT id, order_ref, customer, wilaya, status, total, shipping, items, created_at, pinned FROM orders WHERE UPPER(order_ref) = $1",
       [ref],
     );
     if (!rows[0])
@@ -228,10 +228,11 @@ router.get("/track/:ref", async (req, res) => {
 });
 
 // ── GET /api/orders/my ────────────────────────────────────
+// UPDATED: Now sorted by pinned DESC, then created_at DESC
 router.get("/my", authMiddleware, async (req, res) => {
   try {
     const { rows } = await db.query(
-      "SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC",
+      "SELECT * FROM orders WHERE user_id = $1 ORDER BY pinned DESC, created_at DESC",
       [req.user.id],
     );
     res.json(rows.map((o) => ({ ...o, items: JSON.parse(o.items) })));
@@ -241,6 +242,7 @@ router.get("/my", authMiddleware, async (req, res) => {
 });
 
 // ── GET /api/orders ── admin ──────────────────────────────
+// UPDATED: Now sorted by pinned DESC, then created_at DESC
 router.get("/", adminMiddleware, async (req, res) => {
   try {
     const { status, page = 1, limit = 50 } = req.query;
@@ -252,7 +254,7 @@ router.get("/", adminMiddleware, async (req, res) => {
     }
     params.push(parseInt(limit), (parseInt(page) - 1) * parseInt(limit));
     const { rows } = await db.query(
-      `SELECT * FROM orders ${where} ORDER BY created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      `SELECT * FROM orders ${where} ORDER BY pinned DESC, created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
       params,
     );
     const { rows: countRows } = await db.query(
@@ -300,6 +302,48 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
       req.params.id,
     ]);
     res.json({ message: "Statut mis à jour", status });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── NEW ENDPOINT: PUT /api/orders/:id/pin ── admin ──────
+// Toggle pin status for an order
+router.put("/:id/pin", adminMiddleware, async (req, res) => {
+  try {
+    const { pinned } = req.body; // true to pin, false to unpin
+
+    // Validate if order exists
+    const { rows } = await db.query(
+      "SELECT id, pinned FROM orders WHERE id = $1",
+      [req.params.id],
+    );
+
+    if (!rows[0]) {
+      return res.status(404).json({ error: "Commande non trouvée" });
+    }
+
+    const currentPinnedStatus = rows[0].pinned;
+    const newPinnedStatus = pinned ? 1 : 0;
+
+    // Only update if status is different
+    if (currentPinnedStatus === newPinnedStatus) {
+      return res.json({
+        message: `Commande déjà ${pinned ? "épinglée" : "désépinglée"}`,
+        pinned: newPinnedStatus,
+      });
+    }
+
+    // Update the pinned status
+    await db.query("UPDATE orders SET pinned = $1 WHERE id = $2", [
+      newPinnedStatus,
+      req.params.id,
+    ]);
+
+    res.json({
+      message: `Commande ${pinned ? "épinglée" : "désépinglée"} avec succès`,
+      pinned: newPinnedStatus,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
