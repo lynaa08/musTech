@@ -7211,9 +7211,7 @@
           ? `<span class="product-badge ${p.badge === "Sale" ? "sale" : ""}">${p.badge}</span>`
           : "";
         const isOutOfStock = p.stock <= 0;
-        const stockBadgeHTML = isOutOfStock
-          ? `<span class="product-badge out-of-stock" style="top:${p.badge ? "38px" : "10px"}">Rupture</span>`
-          : "";
+        const stockBadgeHTML = ""; // Rupture badge hidden from client view
         const oldPriceHTML = p.oldPrice
           ? `<span class="price-old" id="old-price-${p.id}">${p.oldPrice.toLocaleString()} DA</span>`
           : "";
@@ -10890,7 +10888,7 @@
         if (lbl) lbl.textContent = RATING_LABELS[val] || "";
       }
 
-      function submitRating() {
+      async function submitRating() {
         if (!_currentRating) {
           showToast("Veuillez sélectionner une note ⭐");
           return;
@@ -10899,6 +10897,15 @@
           document.getElementById("rating-comment")?.value.trim() || "";
         const name =
           document.getElementById("rating-name")?.value.trim() || "Client";
+
+        // ✅ FIX: Save to DB so admin receives avis and all users see them
+        try {
+          await RatingsAPI.submit(_currentRating, comment, null);
+        } catch (e) {
+          console.warn("RatingsAPI error:", e.message);
+        }
+
+        // Also save to localStorage for immediate display
         const reviews = JSON.parse(localStorage.getItem("mt_reviews") || "[]");
         reviews.unshift({
           rating: _currentRating,
@@ -10908,6 +10915,7 @@
           hidden: false,
         });
         localStorage.setItem("mt_reviews", JSON.stringify(reviews));
+
         closeModal("rating-modal");
         _currentRating = 0;
         document.querySelectorAll(".star-btn").forEach((s) => {
