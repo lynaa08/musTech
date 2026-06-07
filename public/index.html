@@ -705,7 +705,7 @@
         height: 32px;
         background: #fff;
         border-radius: 50%;
-        display: none; /* shown only for admin via JS */
+        display: none !important; /* hidden for everyone by default */
         align-items: center;
         justify-content: center;
         box-shadow: var(--shadow-sm);
@@ -715,20 +715,20 @@
         color: var(--gray-400);
         font-size: 0.85rem;
       }
-      .product-card:hover .product-pin-btn,
-      .product-pin-btn.pinned {
-        display: flex;
+      /* Only admin sees the pin button */
+      body.admin-mode .product-pin-btn {
+        display: flex !important;
       }
-      .product-pin-btn.pinned {
+      body.admin-mode .product-pin-btn.pinned {
         background: var(--green);
         color: #fff;
       }
-      .product-pin-btn:hover {
+      body.admin-mode .product-pin-btn:hover {
         background: var(--green-light);
         color: var(--green-dark);
         transform: scale(1.1);
       }
-      .product-pin-btn.pinned:hover {
+      body.admin-mode .product-pin-btn.pinned:hover {
         background: var(--green-dark);
         color: #fff;
       }
@@ -744,12 +744,12 @@
         border-radius: 50%;
         font-size: 0.62rem;
         font-weight: 900;
-        display: flex;
+        display: none; /* hidden by default */
         align-items: center;
         justify-content: center;
         pointer-events: none;
       }
-      body.admin-mode .product-pin-btn {
+      body.admin-mode .pin-rank-badge {
         display: flex;
       }
       .product-body {
