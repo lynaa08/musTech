@@ -8812,8 +8812,21 @@
         const wilayaName =
           wilEl.options[wilEl.selectedIndex]?.text.split(" —")[0] || "";
         const customer = nameEl?.value.trim() || "Client";
-        const phone = phoneEl?.value.trim() || "—";
+        const rawPhone = phoneEl?.value.trim() || "";
+        const phoneNorm = normalizeAlgerianPhone(rawPhone) || rawPhone || "—";
         const address = addrEl?.value.trim() || "—";
+
+        if (!rawPhone) {
+          showToast("Veuillez entrer votre numéro de téléphone !");
+          phoneEl?.focus();
+          return;
+        }
+        if (!normalizeAlgerianPhone(rawPhone)) {
+          showToast("Numéro invalide ! Ex: 0558210430 ou +213558210430");
+          phoneEl.style.borderColor = "#e53e3e";
+          phoneEl?.focus();
+          return;
+        }
 
         const orderData = {
           customer,
