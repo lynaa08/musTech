@@ -7307,7 +7307,7 @@
             headers: { Authorization: "Bearer " + Auth.getToken() },
           });
           PRODUCTS = await fresh.json();
-          await loadAdminData();
+          await populateAdminTables();
           showToast(currentStock > 0 ? "Mis en rupture !" : "Remis en stock !");
         } catch (e) {
           showToast("Erreur: " + e.message);
@@ -9906,7 +9906,18 @@
           .map(
             (o) => `
           <tr>
-            <td><strong>${o.order_ref || "#MT-" + o.id}</strong></td>
+            <td><strong>${o.order_ref || "#MT-" + o.id}</strong>${(() => {
+              try {
+                const its = Array.isArray(o.items)
+                  ? o.items
+                  : JSON.parse(o.items || "[]");
+                return its.some((it) => it.outOfStock)
+                  ? ' <span title="Stock insuffisant au moment de la commande !" style="color:#e53e3e;font-size:0.9rem;">⚠️</span>'
+                  : "";
+              } catch (e) {
+                return "";
+              }
+            })()}</td>
             <td>${o.customer}</td>
             <td>${o.phone || "—"}</td>
             <td>${o.wilaya}</td>
