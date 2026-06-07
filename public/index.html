@@ -3989,7 +3989,19 @@
                         transition: border-color 0.2s;
                       "
                       onfocus="this.style.borderColor = 'var(--green)'"
-                      onblur="this.style.borderColor = 'var(--gray-100)'" />
+                      onblur="validatePmPhone(this)"
+                      oninput="validatePmPhone(this)" />
+                    <span
+                      id="pm-phone-error"
+                      style="
+                        display: none;
+                        color: #e53e3e;
+                        font-size: 0.75rem;
+                        margin-top: 0.2rem;
+                      "
+                      >Numéro invalide. Formats acceptés : 0558210430,
+                      +213558210430 ou +2130558210430</span
+                    >
                   </div>
                   <div>
                     <label
@@ -4017,7 +4029,19 @@
                         transition: border-color 0.2s;
                       "
                       onfocus="this.style.borderColor = 'var(--green)'"
-                      onblur="this.style.borderColor = 'var(--gray-100)'" />
+                      onblur="validatePmPhone(this)"
+                      oninput="validatePmPhone(this)" />
+                    <span
+                      id="pm-phone-error"
+                      style="
+                        display: none;
+                        color: #e53e3e;
+                        font-size: 0.75rem;
+                        margin-top: 0.2rem;
+                      "
+                      >Numéro invalide. Formats acceptés : 0558210430,
+                      +213558210430 ou +2130558210430</span
+                    >
                   </div>
                 </div>
                 <div>
@@ -8155,7 +8179,7 @@
 
         const orderData = {
           customer,
-          phone,
+          phone: phoneNorm,
           wilaya: wilayaName,
           address,
           items: checkoutCart.map((item) => ({
@@ -8721,13 +8745,48 @@
               " DA + livraison";
       }
 
+      function normalizeAlgerianPhone(phone) {
+        const p = phone.replace(/\s/g, "");
+        if (/^\+2130[5-7]\d{8}$/.test(p)) return "0" + p.slice(4);
+        if (/^\+213[5-7]\d{8}$/.test(p)) return "0" + p.slice(3);
+        if (/^0[5-7]\d{8}$/.test(p)) return p;
+        return null;
+      }
+
+      function validatePmPhone(input) {
+        const errorEl = document.getElementById("pm-phone-error");
+        const normalized = normalizeAlgerianPhone(input.value.trim());
+        if (input.value.trim() === "") {
+          input.style.borderColor = "var(--gray-100)";
+          if (errorEl) errorEl.style.display = "none";
+        } else if (!normalized) {
+          input.style.borderColor = "#e53e3e";
+          if (errorEl) errorEl.style.display = "block";
+        } else {
+          input.style.borderColor = "var(--green)";
+          if (errorEl) errorEl.style.display = "none";
+        }
+      }
+
       async function pmPlaceOrder() {
         if (!checkOrderRateLimit()) return;
         const phone = document.getElementById("pm-phone")?.value.trim();
         const wilEl = document.getElementById("pm-wilaya");
+        const phoneNorm = normalizeAlgerianPhone(phone);
         if (!phone) {
           showToast("Entrez votre numéro de téléphone !");
           document.getElementById("pm-phone")?.focus();
+          return;
+        }
+        if (!phoneNorm) {
+          showToast("Numéro invalide ! Ex: 0558210430 ou +213558210430");
+          const phoneEl2 = document.getElementById("pm-phone");
+          if (phoneEl2) {
+            phoneEl2.style.borderColor = "#e53e3e";
+            phoneEl2.focus();
+          }
+          const errEl = document.getElementById("pm-phone-error");
+          if (errEl) errEl.style.display = "block";
           return;
         }
         if (!wilEl?.value) {
