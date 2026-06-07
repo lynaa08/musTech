@@ -695,6 +695,63 @@
           opacity: 1;
         }
       }
+      /* ADMIN PIN BUTTON */
+      .product-pin-btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+        width: 32px;
+        height: 32px;
+        background: #fff;
+        border-radius: 50%;
+        display: none; /* shown only for admin via JS */
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-sm);
+        cursor: pointer;
+        transition: all var(--transition);
+        border: none;
+        color: var(--gray-400);
+        font-size: 0.85rem;
+      }
+      .product-card:hover .product-pin-btn,
+      .product-pin-btn.pinned {
+        display: flex;
+      }
+      .product-pin-btn.pinned {
+        background: var(--green);
+        color: #fff;
+      }
+      .product-pin-btn:hover {
+        background: var(--green-light);
+        color: var(--green-dark);
+        transform: scale(1.1);
+      }
+      .product-pin-btn.pinned:hover {
+        background: var(--green-dark);
+        color: #fff;
+      }
+      .pin-rank-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 3;
+        width: 20px;
+        height: 20px;
+        background: var(--green);
+        color: #fff;
+        border-radius: 50%;
+        font-size: 0.62rem;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+      body.admin-mode .product-pin-btn {
+        display: flex;
+      }
       .product-body {
         padding: 1.1rem 1.25rem 1.25rem;
       }
@@ -7163,11 +7220,20 @@
         const imgContent = p.img
           ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" alt="${p.name}">`
           : `<span style="font-size:3.5rem">${p.icon}</span>`;
+        const rank = getPinnedRank(p.id);
+        const pinBtnHTML = `
+          <button class="product-pin-btn ${rank > 0 ? "pinned" : ""}" id="pin-${p.id}"
+            title="${rank > 0 ? "Désépingler (rang " + rank + ")" : "Épingler en avant"}"
+            onclick="event.stopPropagation();togglePin(${p.id})">
+            📌
+          </button>
+          ${rank > 0 ? `<span class="pin-rank-badge">${rank}</span>` : ""}`;
         return `
   <div class="product-card" data-cat="${p.cat}" onclick="window.location.href='${productURL(p)}'" style="cursor:pointer;">
     <div class="product-img" id="card-img-${p.id}">
       ${badgeHTML}
       ${stockBadgeHTML}
+      ${pinBtnHTML}
       <button class="product-wishlist" title="Favoris" id="wish-${p.id}" onclick="event.stopPropagation();toggleFavorite(${p.id},this)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
@@ -7246,6 +7312,53 @@
         });
       }
 
+      // ── PRODUCT PIN / ORDER (admin only) ─────────────────────
+      const PIN_ORDER_KEY = "mt_pin_order"; // [{id, rank}] sorted by rank asc
+
+      function getPinOrder() {
+        try {
+          return JSON.parse(localStorage.getItem(PIN_ORDER_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+      function savePinOrder(order) {
+        localStorage.setItem(PIN_ORDER_KEY, JSON.stringify(order));
+      }
+      function getPinnedRank(id) {
+        const entry = getPinOrder().find((e) => e.id === id);
+        return entry ? entry.rank : 0;
+      }
+      function togglePin(id) {
+        let order = getPinOrder();
+        const idx = order.findIndex((e) => e.id === id);
+        if (idx >= 0) {
+          // Unpin: remove and re-rank remaining
+          order.splice(idx, 1);
+          order = order.map((e, i) => ({ ...e, rank: i + 1 }));
+        } else {
+          // Pin: assign next rank
+          const nextRank =
+            order.length > 0 ? Math.max(...order.map((e) => e.rank)) + 1 : 1;
+          order.push({ id, rank: nextRank });
+        }
+        savePinOrder(order);
+        applyPinOrder();
+      }
+      function applyPinOrder() {
+        const order = getPinOrder();
+        const pinnedIds = order
+          .sort((a, b) => a.rank - b.rank)
+          .map((e) => e.id);
+        // Re-sort PRODUCTS: pinned first by rank, then rest in original order
+        const pinned = pinnedIds
+          .map((id) => PRODUCTS.find((p) => p.id === id))
+          .filter(Boolean);
+        const rest = PRODUCTS.filter((p) => !pinnedIds.includes(p.id));
+        PRODUCTS = [...pinned, ...rest];
+        populateProducts();
+      }
+
       function populateProducts() {
         const fg = document.getElementById("featured-grid");
         const sg = document.getElementById("shop-grid");
@@ -7284,7 +7397,21 @@
           ORDERS = Array.isArray(rawOrders)
             ? rawOrders
             : rawOrders?.orders || ORDERS || [];
-          if (productsRes.status === "fulfilled") PRODUCTS = productsRes.value;
+          if (productsRes.status === "fulfilled") {
+            PRODUCTS = productsRes.value;
+            // Apply saved pin order immediately
+            const _pinOrder = getPinOrder();
+            if (_pinOrder.length > 0) {
+              const _pinnedIds = _pinOrder
+                .sort((a, b) => a.rank - b.rank)
+                .map((e) => e.id);
+              const _pinned = _pinnedIds
+                .map((id) => PRODUCTS.find((p) => p.id === id))
+                .filter(Boolean);
+              const _rest = PRODUCTS.filter((p) => !_pinnedIds.includes(p.id));
+              PRODUCTS = [..._pinned, ..._rest];
+            }
+          }
           const ratingStats =
             ratingsRes.status === "fulfilled" ? ratingsRes.value : null;
 
@@ -9933,6 +10060,8 @@
           authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg> Admin`;
           document.getElementById("admin-nav-link").style.display = "";
           if (userNavItem) userNavItem.style.display = "none";
+          document.body.classList.add("admin-mode"); // show pin buttons
+          applyPinOrder(); // re-render with pin order applied
         } else {
           authBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> ${user.name}`;
           document.getElementById("admin-nav-link").style.display = "none";
@@ -9989,6 +10118,7 @@
       function logout() {
         AuthAPI.logout();
         currentUser = null;
+        document.body.classList.remove("admin-mode");
         document.getElementById("admin-nav-link").style.display = "none";
         const userNavItem = document.getElementById("user-nav-item");
         if (userNavItem) userNavItem.style.display = ""; // always visible for guests
