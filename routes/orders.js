@@ -48,7 +48,7 @@ function validateOrderInput({ customer, phone, wilaya, items }) {
     return "Nom invalide (minimum 2 caractères).";
   const phoneClean = normalizeAlgerianPhone(phone || "");
   if (!phoneClean)
-    return "Numéro de téléphone invalide.";
+    return "Numéro de téléphone invalide (ex: 0558210430, +213558210430 ou +2130558210430).";
   if (!wilaya || typeof wilaya !== "string" || wilaya.trim().length < 2)
     return "Wilaya invalide.";
   if (!Array.isArray(items) || items.length === 0 || items.length > 20)
@@ -112,11 +112,7 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
 
       // Check stock for this specific variant
       const availableStock = variantStocks[variantIndex] ?? 0;
-      if (availableStock < qty) {
-        return res.status(400).json({
-          error: `Stock insuffisant pour "${product.name} - ${variants[variantIndex] || variants[0]}" (disponible: ${availableStock}).`,
-        });
-      }
+      // Allow order even if out of stock — admin will be notified
 
       calculatedSubtotal += price * qty;
       enrichedItems.push({
@@ -127,6 +123,7 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
         price,
         qty,
         total: price * qty,
+        outOfStock: availableStock < qty,
       });
     }
 
