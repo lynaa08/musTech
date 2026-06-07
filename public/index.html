@@ -10632,8 +10632,6 @@
             stats.active;
           document.getElementById("promo-stat-expired").textContent =
             stats.expired;
-          document.getElementById("promo-stat-pending").textContent =
-            stats.pending;
           renderPromosTable();
         } catch (e) {
           showToast("Erreur chargement promos: " + e.message);

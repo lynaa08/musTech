@@ -951,6 +951,23 @@
                 <div class="order-summary">
                   <div id="order-summary-mini"></div>
                 </div>
+
+                <!-- CHAMP CODE PROMO - après le total -->
+                <div class="form-group" id="promo-group" style="margin-top:0.75rem;">
+                  <label class="form-label" style="font-size:0.78rem;">🏷️ Code Promo <span style="font-size:0.7rem;color:var(--gray-400);">(optionnel)</span></label>
+                  <div style="display:flex;gap:8px;">
+                    <input type="text" id="co-promo-code" class="form-input"
+                      placeholder="Ex: SUMMER20"
+                      maxlength="9"
+                      oninput="this.value=this.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase()"
+                      style="text-transform:uppercase;letter-spacing:0.1em;flex:1;font-size:0.85rem;">
+                    <button onclick="applyPromoCode()" type="button"
+                      style="padding:0 1rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;">
+                      Appliquer
+                    </button>
+                  </div>
+                  <div id="promo-feedback" style="margin-top:6px;font-size:0.8rem;display:none;"></div>
+                </div>
               </div>
 
               <h3 class="checkout-title">Finaliser la Commande</h3>
@@ -1039,22 +1056,6 @@
                 Ajouter au Panier
               </button>
 
-              <!-- CHAMP CODE PROMO (après total, avant confirmer) -->
-              <div class="form-group" id="promo-group" style="margin-top:0.5rem;">
-                <label class="form-label">Code Promo <span style="font-size:0.72rem;color:var(--gray-400);">(optionnel)</span></label>
-                <div style="display:flex;gap:8px;">
-                  <input type="text" id="co-promo-code" class="form-input"
-                    placeholder="Ex: SUMMER20"
-                    maxlength="9"
-                    oninput="this.value=this.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase()"
-                    style="text-transform:uppercase;letter-spacing:0.1em;flex:1;">
-                  <button onclick="applyPromoCode()" type="button"
-                    style="padding:0 1rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;">
-                    Appliquer
-                  </button>
-                </div>
-                <div id="promo-feedback" style="margin-top:6px;font-size:0.8rem;display:none;"></div>
-              </div>
 
               <button
                 class="btn-primary"
