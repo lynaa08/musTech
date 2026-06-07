@@ -1699,9 +1699,9 @@
 
       function normalizeAlgerianPhone(phone) {
         const p = phone.replace(/\s/g, "");
-        if (/^\+2130[5-7]\d{8}$/.test(p)) return "0" + p.slice(4);
-        if (/^\+213[5-7]\d{8}$/.test(p)) return "0" + p.slice(3);
-        if (/^0[5-7]\d{8}$/.test(p)) return p;
+        if (/^\+2130[5-7]\d{8}$/.test(p)) return p.slice(4);        // +2130558210430 -> 0558210430
+        if (/^\+213[5-7]\d{8}$/.test(p))  return "0" + p.slice(4);  // +213558210430  -> 0558210430
+        if (/^0[5-7]\d{8}$/.test(p))       return p;                 // 0558210430     -> 0558210430
         return null;
       }
 
