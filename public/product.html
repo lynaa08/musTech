@@ -1021,6 +1021,24 @@
                 </div>
               </div>
               <div id="delivery-details"></div>
+
+              <!-- CHAMP CODE PROMO -->
+              <div class="form-group" id="promo-group">
+                <label class="form-label">Code Promo <span style="font-size:0.72rem;color:var(--gray-400);">(optionnel)</span></label>
+                <div style="display:flex;gap:8px;">
+                  <input type="text" id="co-promo-code" class="form-input"
+                    placeholder="Ex: SUMMER20"
+                    maxlength="9"
+                    oninput="this.value=this.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase()"
+                    style="text-transform:uppercase;letter-spacing:0.1em;flex:1;">
+                  <button onclick="applyPromoCode()" type="button"
+                    style="padding:0 1rem;background:var(--green);color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.85rem;white-space:nowrap;">
+                    Appliquer
+                  </button>
+                </div>
+                <div id="promo-feedback" style="margin-top:6px;font-size:0.8rem;display:none;"></div>
+              </div>
+
               <div class="form-group">
                 <label class="form-label">Notes (optionnel)</label>
                 <textarea
@@ -1137,6 +1155,8 @@
       let currentQty = 1;
       let variantQtys = [];
       let deliveryType = "home";
+      let appliedPromo = null;
+      let promoDiscount = 0;
       let favoriteProducts = JSON.parse(
         localStorage.getItem("mt_favorites") || "[]",
       );
@@ -1676,11 +1696,15 @@
         }
         if (!itemsHtml)
           itemsHtml = `<div class="orow" style="color:var(--gray-400);">Aucun produit sélectionné</div>`;
-
+        const promoRow = promoDiscount > 0
+          ? `<div class="orow" style="color:#1fad52;font-weight:700;"><span>🏷️ Code (${appliedPromo?.code})</span><span>-${promoDiscount.toLocaleString()} DA</span></div>`
+          : "";
+        const finalTotal = Math.max(0, subtotal - promoDiscount) + shipping;
         summary.innerHTML =
           itemsHtml +
           `<div class="orow"><span>Livraison ${typeLabel} (${wilayaName})</span><span>${shipping ? shipping.toLocaleString() + " DA" : "—"}</span></div>
-           <div class="orow total"><span>Total</span><span>${(subtotal + shipping).toLocaleString()} DA</span></div>`;
+           ${promoRow}
+           <div class="orow total"><span>Total</span><span>${finalTotal.toLocaleString()} DA</span></div>`;
 
         const livraisonSection = document.getElementById("livraison-section");
         if (livraisonSection && shipping > 0) {
@@ -1790,6 +1814,8 @@
           shipping,
           address,
           notes: document.getElementById("co-note").value.trim(),
+          promo_code: appliedPromo ? appliedPromo.code : undefined,
+          promo_discount: promoDiscount > 0 ? promoDiscount : undefined,
           items: itemsToOrder,
         };
 
@@ -1799,6 +1825,14 @@
 
         try {
           const result = await OrdersAPI.place(orderData);
+          // Track promo usage
+          if (appliedPromo?.code) {
+            fetch(API_URL + "/promos/use", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: appliedPromo.code })
+            }).catch(() => {});
+          }
           // Send admin email notification
           sendAdminOrderEmail({ ...orderData, id: result.id, order_ref: result.order_ref, total: result.total });
           document.getElementById("checkout-form").style.display = "none";
@@ -1839,6 +1873,53 @@
       const EMAILJS_SERVICE_ID  = 'service_woy31bb';
       const EMAILJS_TEMPLATE_ID = 'template_ged9qwh';
       const EMAILJS_PUBLIC_KEY  = '8Nv8Jj9No6Lin0tt4';
+
+      async function applyPromoCode() {
+        const code = document.getElementById("co-promo-code").value.trim().toUpperCase();
+        const feedback = document.getElementById("promo-feedback");
+        if (!code) { feedback.style.display = "none"; return; }
+
+        // Calculate current subtotal
+        let subtotal = 0;
+        if (variantQtys && variantQtys.some(q => q > 0)) {
+          variantQtys.forEach((qty, i) => {
+            if (qty > 0) {
+              const price = (product?.variantPrices?.[i] || 0) + (product?.price || 0);
+              subtotal += price * qty;
+            }
+          });
+        } else {
+          const price = (product?.variantPrices?.[currentVariant] || 0) + (product?.price || 0);
+          subtotal = price * Math.max(1, currentQty);
+        }
+
+        feedback.style.display = "block";
+        feedback.style.color = "var(--gray-500)";
+        feedback.textContent = "⏳ Vérification...";
+
+        try {
+          const res = await fetch(API_URL + "/promos/validate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code, subtotal })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            appliedPromo = null; promoDiscount = 0;
+            feedback.style.color = "#e53e3e";
+            feedback.textContent = "❌ " + data.error;
+          } else {
+            appliedPromo = data.promo;
+            promoDiscount = data.discount;
+            feedback.style.color = "#1fad52";
+            feedback.textContent = "✅ Code appliqué ! Réduction : -" + promoDiscount.toLocaleString() + " DA";
+            updateOrderSummaryFromCart();
+          }
+        } catch(e) {
+          feedback.style.color = "#e53e3e";
+          feedback.textContent = "❌ Erreur réseau";
+        }
+      }
 
       function sendAdminOrderEmail(order) {
         if (typeof emailjs === 'undefined') return;

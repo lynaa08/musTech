@@ -96,7 +96,7 @@ app.use(
         return callback(null, true);
       callback(new Error("CORS bloqué: origine non autorisée"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
@@ -123,6 +123,7 @@ app.use("/api/orders", require("./routes/orders"));
 app.use("/api/wilayas", require("./routes/wilayas"));
 app.use("/api/ratings", require("./routes/ratings"));
 app.use("/api/stats", require("./routes/stats"));
+app.use("/api/promos", require("./routes/promos"));
 
 // ── HEALTH CHECK ──────────────────────────────────────────
 app.get("/api/health", (req, res) => {

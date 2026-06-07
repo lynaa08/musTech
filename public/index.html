@@ -2921,6 +2921,13 @@
               >
             </li>
             <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('promos', this)"
+                >🎟️ Promotions</a
+              >
+            </li>
+            <li>
               <a href="#" onclick="showPage('home')" style="margin-top: 2rem"
                 >← Retour à la Boutique</a
               >
@@ -3054,6 +3061,14 @@
             </a>
             <a
               href="javascript:void(0)"
+              onclick="
+                showAdminTab('promos', this);
+                syncMobileNav(this);
+              ">
+              🎟️ Promos
+            </a>
+            <a
+              href="javascript:void(0)"
               onclick="showPage('home')"
               style="
                 border-color: rgba(255, 255, 255, 0.2);
@@ -3159,57 +3174,7 @@
                 <div class="change" style="color: #185fa5">En transit</div>
               </div>
             </div>
-            <!-- 2 Cards Finance -->
-            <p
-              style="
-                font-size: 0.72rem;
-                font-weight: 600;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                color: var(--gray-500);
-                margin: 0 0 0.75rem 0.1rem;
-              ">
-              Finance
-            </p>
-            <div
-              class="stats-grid"
-              style="
-                grid-template-columns: repeat(2, 1fr);
-                margin-bottom: 2rem;
-              ">
-              <div class="stat-card" style="border-top: 3px solid #1d9e75">
-                <div class="label">
-                  Chiffre d'Affaires
-                  <span style="font-weight: 400; color: var(--gray-400)"
-                    >(hors livraison)</span
-                  >
-                </div>
-                <div class="value" id="stat-revenue" style="color: #0f6e56">
-                  0 DA
-                </div>
-                <div
-                  class="change"
-                  id="stat-revenue-sub"
-                  style="color: var(--gray-500)">
-                  Commandes non annulées
-                </div>
-              </div>
-              <div
-                class="stat-card"
-                id="stat-profit-card"
-                style="border-top: 3px solid #7f77dd">
-                <div class="label">Profit Net</div>
-                <div class="value" id="stat-profit" style="color: #534ab7">
-                  — DA
-                </div>
-                <div
-                  class="change"
-                  id="stat-profit-sub"
-                  style="color: var(--gray-500)">
-                  CA − coût d'achat
-                </div>
-              </div>
-            </div>
+
             <div class="admin-table-card">
               <div class="table-header">
                 <h3>Commandes Récentes</h3>
@@ -3510,36 +3475,26 @@
                 Exporter Excel
               </button>
             </div>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="label">Chiffre d'Affaires</div>
+            <div
+              class="stats-grid"
+              style="grid-template-columns: repeat(2, 1fr)">
+              <div class="stat-card" style="border-top: 3px solid #1d9e75">
+                <div class="label">
+                  Chiffre d'Affaires
+                  <span style="font-weight: 400; color: var(--gray-400)"
+                    >(sans livraison)</span
+                  >
+                </div>
                 <div class="value" id="fin-revenue">0 DA</div>
-                <div class="change">Sans livraison</div>
+                <div class="change">Commandes non annulées</div>
               </div>
-              <div class="stat-card" id="fin-profit-card">
+              <div
+                class="stat-card"
+                id="fin-profit-card"
+                style="border-top: 3px solid #7f77dd">
                 <div class="label">Profit Net</div>
                 <div class="value" id="fin-profit">— DA</div>
                 <div class="change" id="fin-profit-sub">CA - coût d'achat</div>
-              </div>
-              <div class="stat-card">
-                <div class="label">Total Commandes</div>
-                <div class="value" id="fin-total-orders">0</div>
-                <div class="change">Commandes</div>
-              </div>
-              <div class="stat-card">
-                <div class="label">En Attente</div>
-                <div class="value" id="fin-pending">0</div>
-                <div class="change" style="color: #f59e0b">À traiter</div>
-              </div>
-              <div class="stat-card">
-                <div class="label">Livrées</div>
-                <div class="value" id="fin-delivered">0</div>
-                <div class="change" style="color: var(--green)">Commandes</div>
-              </div>
-              <div class="stat-card">
-                <div class="label">Annulées</div>
-                <div class="value" id="fin-cancelled">0</div>
-                <div class="change" style="color: #e53e3e">Commandes</div>
               </div>
             </div>
             <div class="admin-table-card">
@@ -3590,6 +3545,371 @@
               </div>
             </div>
           </div>
+
+          <!-- ═══════════════════════════════════════════════ -->
+          <!-- PROMOS TAB                                      -->
+          <!-- ═══════════════════════════════════════════════ -->
+          <div id="admin-promos" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Promotions</h1>
+              <button class="btn btn-primary" onclick="openPromoModal()">
+                + Nouvelle Promo
+              </button>
+            </div>
+
+            <!-- Dashboard cards promos -->
+            <div
+              class="stats-grid"
+              style="
+                grid-template-columns: repeat(4, 1fr);
+                margin-bottom: 1.5rem;
+              ">
+              <div class="stat-card" style="border-top: 3px solid #7f77dd">
+                <div class="label">Total Promos</div>
+                <div class="value" id="promo-stat-total" style="color: #534ab7">
+                  —
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #639922">
+                <div class="label">Actives</div>
+                <div
+                  class="value"
+                  id="promo-stat-active"
+                  style="color: #3b6d11">
+                  —
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #e24b4a">
+                <div class="label">Expirées</div>
+                <div
+                  class="value"
+                  id="promo-stat-expired"
+                  style="color: #a32d2d">
+                  —
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #ef9f27">
+                <div class="label">En Attente</div>
+                <div
+                  class="value"
+                  id="promo-stat-pending"
+                  style="color: #ba7517">
+                  —
+                </div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="admin-table-card">
+              <div class="table-header"><h3>Liste des Promotions</h3></div>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Type</th>
+                      <th>Code / Valeur</th>
+                      <th>Remise</th>
+                      <th>Utilisations</th>
+                      <th>Expire</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="promos-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════ -->
+          <!-- PROMO MODAL                                     -->
+          <!-- ═══════════════════════════════════════════════ -->
+          <div
+            id="promo-modal-overlay"
+            style="
+              display: none;
+              position: fixed;
+              inset: 0;
+              background: rgba(0, 0, 0, 0.45);
+              z-index: 9000;
+              align-items: center;
+              justify-content: center;
+            ">
+            <div
+              style="
+                background: #fff;
+                border-radius: 16px;
+                padding: 2rem;
+                width: min(520px, 95vw);
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+              ">
+              <button
+                onclick="closePromoModal()"
+                style="
+                  position: absolute;
+                  top: 1rem;
+                  right: 1rem;
+                  background: none;
+                  border: none;
+                  font-size: 1.4rem;
+                  cursor: pointer;
+                  color: var(--gray-500);
+                ">
+                ✕
+              </button>
+              <h2
+                id="promo-modal-title"
+                style="
+                  font-size: 1.1rem;
+                  font-weight: 800;
+                  margin-bottom: 1.5rem;
+                ">
+                Nouvelle Promotion
+              </h2>
+
+              <input type="hidden" id="promo-edit-id" value="" />
+
+              <!-- Type selector -->
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 10px;
+                  margin-bottom: 1.25rem;
+                ">
+                <button
+                  id="promo-type-voucher"
+                  onclick="selectPromoType('voucher')"
+                  style="
+                    padding: 0.75rem;
+                    border-radius: 10px;
+                    border: 2px solid var(--green);
+                    background: var(--green-light);
+                    font-weight: 700;
+                    cursor: pointer;
+                    font-size: 0.85rem;
+                  ">
+                  🎁 Bon de Réduction
+                </button>
+                <button
+                  id="promo-type-code"
+                  onclick="selectPromoType('code')"
+                  style="
+                    padding: 0.75rem;
+                    border-radius: 10px;
+                    border: 2px solid var(--gray-100);
+                    background: #fff;
+                    font-weight: 700;
+                    cursor: pointer;
+                    font-size: 0.85rem;
+                    color: var(--gray-500);
+                  ">
+                  🏷️ Code Promo
+                </button>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Nom / Description *</label>
+                <input
+                  type="text"
+                  id="promo-name"
+                  class="form-input"
+                  placeholder="Ex: Offre Été 2025" />
+              </div>
+
+              <!-- Code promo fields -->
+              <div id="promo-code-fields">
+                <div class="form-group">
+                  <label class="form-label"
+                    >Code Promo *
+                    <span style="font-size: 0.72rem; color: var(--gray-400)"
+                      >(lettres + chiffres, 1–9 caractères)</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    id="promo-code"
+                    class="form-input"
+                    placeholder="EX: SUMMER20"
+                    maxlength="9"
+                    oninput="
+                      this.value = this.value
+                        .replace(/[^A-Za-z0-9]/g, '')
+                        .toUpperCase()
+                    "
+                    style="text-transform: uppercase; letter-spacing: 0.1em" />
+                </div>
+              </div>
+
+              <!-- Voucher fields (hidden when code) -->
+              <div id="promo-voucher-fields" style="display: none">
+                <div class="form-group">
+                  <label class="form-label">Utilisation *</label>
+                  <select
+                    id="promo-uses-type"
+                    class="form-select"
+                    onchange="onUsesTypeChange()">
+                    <option value="1">1ère fois (1 utilisation)</option>
+                    <option value="2">2 utilisations</option>
+                    <option value="3">3 utilisations</option>
+                    <option value="custom">Personnalisé</option>
+                    <option value="infinity">Illimité ♾️</option>
+                  </select>
+                </div>
+                <div
+                  id="promo-uses-custom-wrap"
+                  style="display: none"
+                  class="form-group">
+                  <label class="form-label">Nombre d'utilisations</label>
+                  <input
+                    type="number"
+                    id="promo-uses-custom"
+                    class="form-input"
+                    min="1"
+                    placeholder="Ex: 50" />
+                </div>
+              </div>
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 12px;
+                ">
+                <div class="form-group">
+                  <label class="form-label">Type de remise *</label>
+                  <select
+                    id="promo-value-type"
+                    class="form-select"
+                    onchange="onValueTypeChange()">
+                    <option value="fixed">Montant fixe (DA)</option>
+                    <option value="percent">Pourcentage (%)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" id="promo-value-label"
+                    >Valeur (DA) *</label
+                  >
+                  <input
+                    type="number"
+                    id="promo-value"
+                    class="form-input"
+                    min="0"
+                    placeholder="500" />
+                </div>
+              </div>
+
+              <div
+                id="promo-max-discount-wrap"
+                style="display: none"
+                class="form-group">
+                <label class="form-label">Remise max (DA)</label>
+                <input
+                  type="number"
+                  id="promo-max-discount"
+                  class="form-input"
+                  min="0"
+                  placeholder="Laisser vide = illimité" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Achat minimum (DA)</label>
+                <input
+                  type="number"
+                  id="promo-min-purchase"
+                  class="form-input"
+                  min="0"
+                  placeholder="0 = aucun minimum"
+                  value="0" />
+              </div>
+
+              <!-- Max uses for code type -->
+              <div id="promo-code-uses-wrap" style="display: none">
+                <div class="form-group">
+                  <label class="form-label">Limite d'utilisations</label>
+                  <select
+                    id="promo-code-uses-type"
+                    class="form-select"
+                    onchange="onCodeUsesChange()">
+                    <option value="5">5 utilisations</option>
+                    <option value="10">10 utilisations</option>
+                    <option value="20">20 utilisations</option>
+                    <option value="50">50 utilisations</option>
+                    <option value="custom">Personnalisé</option>
+                    <option value="infinity">Illimité ♾️</option>
+                  </select>
+                </div>
+                <div
+                  id="promo-code-uses-custom-wrap"
+                  style="display: none"
+                  class="form-group">
+                  <label class="form-label">Nombre max d'utilisations</label>
+                  <input
+                    type="number"
+                    id="promo-code-uses-custom"
+                    class="form-input"
+                    min="1"
+                    placeholder="Ex: 100" />
+                </div>
+              </div>
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr auto;
+                  gap: 12px;
+                  align-items: end;
+                  margin-bottom: 1rem;
+                ">
+                <div class="form-group" style="margin-bottom: 0">
+                  <label class="form-label">Date d'expiration</label>
+                  <input
+                    type="datetime-local"
+                    id="promo-expire"
+                    class="form-input" />
+                </div>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    color: var(--gray-500);
+                    cursor: pointer;
+                    margin-bottom: 0;
+                    padding-bottom: 2px;
+                  ">
+                  <input
+                    type="checkbox"
+                    id="promo-no-expire"
+                    onchange="toggleNoExpire()"
+                    style="width: 16px; height: 16px" />
+                  Sans expiration
+                </label>
+              </div>
+
+              <div style="display: flex; gap: 10px; margin-top: 1.5rem">
+                <button
+                  onclick="savePromo()"
+                  class="btn btn-primary"
+                  style="flex: 1">
+                  Enregistrer
+                </button>
+                <button
+                  onclick="closePromoModal()"
+                  class="btn btn-ghost"
+                  style="flex: 1">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- EDIT MODAL reuses the same overlay, controlled by promo-edit-id -->
         </main>
       </div>
     </div>
@@ -6933,8 +7253,6 @@
             const el = document.getElementById(id);
             if (el) el.textContent = val;
           };
-          set("stat-revenue", totalRevenue.toLocaleString() + " DA");
-          set("stat-revenue-sub", ORDERS.length + " commande(s)");
           // Profit = revenue - cost of sold items
           const totalCost = ORDERS.filter(
             (o) => o.status !== "cancelled",
@@ -6955,12 +7273,6 @@
             );
           }, 0);
           const profit = totalRevenue - totalCost;
-          set("stat-profit", profit.toLocaleString() + " DA");
-          set("stat-profit-sub", profit >= 0 ? "✅ Bénéfice" : "❌ Perte");
-          const profitCard = document.getElementById("stat-profit-card");
-          if (profitCard)
-            profitCard.style.borderTop =
-              profit >= 0 ? "3px solid var(--green)" : "3px solid #e53e3e";
           const shippedOrders = ORDERS.filter(
             (o) => o.status === "shipped",
           ).length;
@@ -6978,14 +7290,11 @@
               (ratingStats.count || ratingStats.total || 0) + " avis",
             );
           }
+          // Finance tab — 2 cards only
           const deliveredRevenue = ORDERS.filter(
             (o) => o.status !== "cancelled",
           ).reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
-          set("fin-total-orders", ORDERS.length);
           set("fin-revenue", deliveredRevenue.toLocaleString() + " DA");
-          set("fin-delivered", deliveredOrders);
-          set("fin-pending", pendingOrders);
-          set("fin-cancelled", cancelledOrders);
           set("fin-profit", profit.toLocaleString() + " DA");
           set("fin-profit-sub", profit >= 0 ? "✅ Bénéfice" : "❌ Perte");
           const finProfitCard = document.getElementById("fin-profit-card");
@@ -8239,6 +8548,7 @@
           .forEach((a) => a.classList.remove("active"));
         if (el) el.classList.add("active");
         if (tab === "finance") renderFinanceChart();
+        if (tab === "promos") loadPromos();
       }
 
       function showSection(cat) {
@@ -10311,6 +10621,314 @@
       });
       // Also render immediately if DOM already ready
       if (document.readyState !== "loading") renderPublicReviews();
+
+      // ══════════════════════════════════════════════════════
+      // PROMOS ADMIN JS
+      // ══════════════════════════════════════════════════════
+      let PROMOS = [];
+      let currentPromoType = "voucher";
+
+      async function promoFetch(path, opts = {}) {
+        const token = Auth.getToken
+          ? Auth.getToken()
+          : localStorage.getItem("mt_token") || "";
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = "Bearer " + token;
+        const res = await fetch(API_URL + "/promos" + path, {
+          ...opts,
+          headers,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur " + res.status);
+        return data;
+      }
+
+      async function loadPromos() {
+        try {
+          const [promos, stats] = await Promise.all([
+            promoFetch("/"),
+            promoFetch("/stats"),
+          ]);
+          PROMOS = promos;
+          document.getElementById("promo-stat-total").textContent = stats.total;
+          document.getElementById("promo-stat-active").textContent =
+            stats.active;
+          document.getElementById("promo-stat-expired").textContent =
+            stats.expired;
+          document.getElementById("promo-stat-pending").textContent =
+            stats.pending;
+          renderPromosTable();
+        } catch (e) {
+          showToast("Erreur chargement promos: " + e.message);
+        }
+      }
+
+      function renderPromosTable() {
+        const tbody = document.getElementById("promos-table-body");
+        if (!tbody) return;
+        if (!PROMOS.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-400);">Aucune promotion</td></tr>';
+          return;
+        }
+        tbody.innerHTML = PROMOS.map((p) => {
+          const isExpired = p.expire_at && new Date(p.expire_at) < new Date();
+          const usesLabel =
+            p.uses_max == null
+              ? p.uses_count + " / ∞"
+              : p.uses_count + " / " + p.uses_max;
+          const expireLabel = p.expire_at
+            ? new Date(p.expire_at).toLocaleDateString("fr-DZ", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+              })
+            : "♾️ Sans limite";
+          const discountLabel =
+            p.value_type === "percent"
+              ? p.value +
+                "%" +
+                (p.max_discount
+                  ? " (max " + p.max_discount.toLocaleString() + " DA)"
+                  : "")
+              : p.value.toLocaleString() + " DA";
+          const statusColor = !p.active
+            ? "#888"
+            : isExpired
+              ? "#e53e3e"
+              : "#1fad52";
+          const statusLabel = !p.active
+            ? "Inactif"
+            : isExpired
+              ? "Expiré"
+              : "Actif";
+          const typeBadge =
+            p.type === "voucher"
+              ? '<span style="background:#e9f7ef;color:#1fad52;padding:2px 8px;border-radius:20px;font-size:0.75rem;font-weight:700;">🎁 Bon</span>'
+              : '<span style="background:#f0f0ff;color:#534AB7;padding:2px 8px;border-radius:20px;font-size:0.75rem;font-weight:700;">🏷️ Code</span>';
+          return `<tr>
+            <td style="font-weight:600;">${p.name}</td>
+            <td>${typeBadge}</td>
+            <td style="font-family:monospace;font-weight:700;color:var(--gray-700);">${p.code || "—"}</td>
+            <td>${discountLabel}</td>
+            <td>${usesLabel}</td>
+            <td style="font-size:0.82rem;">${expireLabel}</td>
+            <td><span style="color:${statusColor};font-weight:700;">${statusLabel}</span></td>
+            <td style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button onclick="editPromo(${p.id})" style="padding:4px 10px;border:1px solid var(--gray-100);border-radius:6px;background:#fff;cursor:pointer;font-size:0.78rem;">✏️</button>
+              <button onclick="togglePromo(${p.id})" style="padding:4px 10px;border:1px solid var(--gray-100);border-radius:6px;background:#fff;cursor:pointer;font-size:0.78rem;">${p.active ? "⏸" : "▶️"}</button>
+              <button onclick="deletePromo(${p.id})" style="padding:4px 10px;border:1px solid #ffd5d5;border-radius:6px;background:#fff7f7;cursor:pointer;font-size:0.78rem;color:#e53e3e;">🗑️</button>
+            </td>
+          </tr>`;
+        }).join("");
+      }
+
+      function openPromoModal(promo = null) {
+        document.getElementById("promo-edit-id").value = promo ? promo.id : "";
+        document.getElementById("promo-modal-title").textContent = promo
+          ? "Modifier la Promotion"
+          : "Nouvelle Promotion";
+        selectPromoType(promo ? promo.type : "voucher");
+        document.getElementById("promo-name").value = promo?.name || "";
+        document.getElementById("promo-code").value = promo?.code || "";
+        document.getElementById("promo-value").value = promo?.value ?? "";
+        document.getElementById("promo-value-type").value =
+          promo?.value_type || "fixed";
+        document.getElementById("promo-max-discount").value =
+          promo?.max_discount ?? "";
+        document.getElementById("promo-min-purchase").value =
+          promo?.min_purchase ?? 0;
+        document.getElementById("promo-expire").value = promo?.expire_at
+          ? new Date(promo.expire_at).toISOString().slice(0, 16)
+          : "";
+        document.getElementById("promo-no-expire").checked = !promo?.expire_at;
+        if (!promo?.expire_at)
+          document.getElementById("promo-expire").disabled = true;
+
+        onValueTypeChange();
+
+        // set uses for voucher
+        if (promo?.type === "voucher") {
+          const sel = document.getElementById("promo-uses-type");
+          if (promo.uses_max == null) sel.value = "infinity";
+          else if ([1, 2, 3].includes(promo.uses_max))
+            sel.value = String(promo.uses_max);
+          else {
+            sel.value = "custom";
+            document.getElementById("promo-uses-custom").value = promo.uses_max;
+          }
+          onUsesTypeChange();
+        }
+        // set uses for code
+        if (promo?.type === "code") {
+          const sel = document.getElementById("promo-code-uses-type");
+          if (promo.uses_max == null) sel.value = "infinity";
+          else if ([5, 10, 20, 50].includes(promo.uses_max))
+            sel.value = String(promo.uses_max);
+          else {
+            sel.value = "custom";
+            document.getElementById("promo-code-uses-custom").value =
+              promo.uses_max;
+          }
+          onCodeUsesChange();
+        }
+
+        const overlay = document.getElementById("promo-modal-overlay");
+        overlay.style.display = "flex";
+      }
+
+      function closePromoModal() {
+        document.getElementById("promo-modal-overlay").style.display = "none";
+      }
+
+      function selectPromoType(type) {
+        currentPromoType = type;
+        const vBtn = document.getElementById("promo-type-voucher");
+        const cBtn = document.getElementById("promo-type-code");
+        const activeStyle =
+          "border:2px solid var(--green);background:var(--green-light);color:var(--gray-900);";
+        const inactiveStyle =
+          "border:2px solid var(--gray-100);background:#fff;color:var(--gray-500);";
+        vBtn.style.cssText += type === "voucher" ? activeStyle : inactiveStyle;
+        cBtn.style.cssText += type === "code" ? activeStyle : inactiveStyle;
+        document.getElementById("promo-code-fields").style.display =
+          type === "code" ? "" : "none";
+        document.getElementById("promo-voucher-fields").style.display =
+          type === "voucher" ? "" : "none";
+        document.getElementById("promo-code-uses-wrap").style.display =
+          type === "code" ? "" : "none";
+      }
+
+      function onUsesTypeChange() {
+        const val = document.getElementById("promo-uses-type").value;
+        document.getElementById("promo-uses-custom-wrap").style.display =
+          val === "custom" ? "" : "none";
+      }
+
+      function onCodeUsesChange() {
+        const val = document.getElementById("promo-code-uses-type").value;
+        document.getElementById("promo-code-uses-custom-wrap").style.display =
+          val === "custom" ? "" : "none";
+      }
+
+      function onValueTypeChange() {
+        const isPercent =
+          document.getElementById("promo-value-type").value === "percent";
+        document.getElementById("promo-value-label").textContent = isPercent
+          ? "Valeur (%) *"
+          : "Valeur (DA) *";
+        document.getElementById("promo-max-discount-wrap").style.display =
+          isPercent ? "" : "none";
+      }
+
+      function toggleNoExpire() {
+        const checked = document.getElementById("promo-no-expire").checked;
+        document.getElementById("promo-expire").disabled = checked;
+        if (checked) document.getElementById("promo-expire").value = "";
+      }
+
+      function getUsesMax() {
+        if (currentPromoType === "voucher") {
+          const v = document.getElementById("promo-uses-type").value;
+          if (v === "infinity") return null;
+          if (v === "custom")
+            return (
+              parseInt(document.getElementById("promo-uses-custom").value) ||
+              null
+            );
+          return parseInt(v);
+        } else {
+          const v = document.getElementById("promo-code-uses-type").value;
+          if (v === "infinity") return null;
+          if (v === "custom")
+            return (
+              parseInt(
+                document.getElementById("promo-code-uses-custom").value,
+              ) || null
+            );
+          return parseInt(v);
+        }
+      }
+
+      async function savePromo() {
+        const id = document.getElementById("promo-edit-id").value;
+        const payload = {
+          type: currentPromoType,
+          name: document.getElementById("promo-name").value.trim(),
+          code: document
+            .getElementById("promo-code")
+            .value.trim()
+            .toUpperCase(),
+          value: parseInt(document.getElementById("promo-value").value) || 0,
+          value_type: document.getElementById("promo-value-type").value,
+          max_discount:
+            document.getElementById("promo-max-discount").value || null,
+          min_purchase:
+            parseInt(document.getElementById("promo-min-purchase").value) || 0,
+          uses_max: getUsesMax(),
+          expire_at: document.getElementById("promo-expire").value || null,
+          active: 1,
+        };
+        if (!payload.name || payload.value <= 0) {
+          showToast("Remplissez tous les champs obligatoires");
+          return;
+        }
+        if (payload.type === "code" && !payload.code) {
+          showToast("Entrez un code promo");
+          return;
+        }
+        try {
+          if (id) {
+            await promoFetch("/" + id, {
+              method: "PUT",
+              body: JSON.stringify(payload),
+            });
+            showToast("✅ Promotion mise à jour");
+          } else {
+            await promoFetch("/", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            showToast("✅ Promotion créée");
+          }
+          closePromoModal();
+          loadPromos();
+        } catch (e) {
+          showToast("Erreur: " + e.message);
+        }
+      }
+
+      function editPromo(id) {
+        const p = PROMOS.find((x) => x.id === id);
+        if (p) openPromoModal(p);
+      }
+
+      async function togglePromo(id) {
+        try {
+          await promoFetch("/" + id + "/toggle", { method: "PATCH" });
+          loadPromos();
+        } catch (e) {
+          showToast("Erreur: " + e.message);
+        }
+      }
+
+      async function deletePromo(id) {
+        if (!confirm("Supprimer cette promotion ?")) return;
+        try {
+          await promoFetch("/" + id, { method: "DELETE" });
+          showToast("🗑️ Supprimée");
+          loadPromos();
+        } catch (e) {
+          showToast("Erreur: " + e.message);
+        }
+      }
+
+      // Close modal on overlay click
+      document
+        .getElementById("promo-modal-overlay")
+        ?.addEventListener("click", function (e) {
+          if (e.target === this) closePromoModal();
+        });
     </script>
   </body>
 </html>
