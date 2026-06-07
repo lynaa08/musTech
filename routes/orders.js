@@ -171,6 +171,9 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
         [item.id],
       );
       const stocks = JSON.parse(pRows[0]?.variant_stocks || "[]");
+      console.log(
+        `[STOCK DEBUG] Product ${item.id} - variant_stocks before: ${JSON.stringify(stocks)}, variantIndex: ${item.variantIndex}, qty: ${item.qty}`,
+      );
       // No Math.max(0, ...) — we allow negative to show how much was ordered past 0
       stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) - item.qty;
       const totalStock = stocks.reduce((a, b) => a + b, 0);
