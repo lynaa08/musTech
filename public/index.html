@@ -6006,8 +6006,12 @@
               placeholder="Description du produit..."></textarea>
           </div>
           <div class="form-group">
-            <label>Images du Produit (Max 5)</label>
-            <input type="file" id="ap-imgs" accept="image/*" multiple />
+            <label>Images du Produit (Max 5) — JPG, PNG, WEBP, AVIF</label>
+            <input
+              type="file"
+              id="ap-imgs"
+              accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/svg+xml"
+              multiple />
             <div
               id="ap-imgs-preview"
               style="
@@ -7878,38 +7882,39 @@
           const previewContainer = document.getElementById("ap-imgs-preview");
           previewContainer.innerHTML = "";
           previewContainer.style.display = "flex";
-          const allowed = [
-            "image/jpeg",
-            "image/jpg",
-            "image/png",
-            "image/webp",
-            "image/gif",
-            "image/avif",
-          ];
           const validFiles = Array.from(e.target.files).filter((f) => {
-            if (!allowed.includes(f.type)) {
-              showToast(`❌ Fichier ignoré : ${f.name} (format non supporté)`);
+            // Accept any image/* MIME type; reject clearly non-image files
+            if (!f.type.startsWith("image/")) {
+              showToast(`❌ Fichier ignoré : ${f.name} (images uniquement)`);
               return false;
             }
             return true;
           });
           if (validFiles.length !== e.target.files.length) {
-            // Replace file list with only valid files using DataTransfer
             const dt = new DataTransfer();
             validFiles.forEach((f) => dt.items.add(f));
             e.target.files = dt.files;
           }
+          // Use createObjectURL — works for all formats including AVIF, WEBP etc.
           for (let i = 0; i < validFiles.length && i < 15; i++) {
             const file = validFiles[i];
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-              const img = document.createElement("img");
-              img.src = ev.target.result;
-              img.style.cssText =
-                "height:60px;width:60px;border-radius:8px;object-fit:cover;";
-              previewContainer.appendChild(img);
+            const url = URL.createObjectURL(file);
+            const img = document.createElement("img");
+            img.src = url;
+            img.style.cssText =
+              "height:60px;width:60px;border-radius:8px;object-fit:cover;";
+            img.onerror = () => {
+              // Fallback: show a format badge if browser can't render preview
+              img.style.display = "none";
+              const badge = document.createElement("div");
+              badge.style.cssText =
+                "height:60px;width:60px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:var(--green-dark);text-align:center;padding:4px;";
+              badge.textContent = file.name.split(".").pop().toUpperCase();
+              previewContainer.appendChild(badge);
+              URL.revokeObjectURL(url);
             };
-            reader.readAsDataURL(file);
+            img.onload = () => URL.revokeObjectURL(url);
+            previewContainer.appendChild(img);
           }
         }
       });
