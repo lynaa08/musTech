@@ -164,21 +164,22 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
       ],
     );
 
-    // Decrement stock per variant
+    // Decrement stock per variant (allow negative to track over-ordered quantity)
     for (const item of enrichedItems) {
       const { rows: pRows } = await db.query(
         "SELECT variant_stocks FROM products WHERE id = $1",
         [item.id],
       );
       const stocks = JSON.parse(pRows[0]?.variant_stocks || "[]");
-      stocks[item.variantIndex] = Math.max(
-        0,
-        (stocks[item.variantIndex] || 0) - item.qty,
-      );
+      // No Math.max(0, ...) — we allow negative to show how much was ordered past 0
+      stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) - item.qty;
       const totalStock = stocks.reduce((a, b) => a + b, 0);
+
+      // If total stock is now <= 0, mark product as out_of_stock
+      const newStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
       await db.query(
-        "UPDATE products SET variant_stocks = $1, stock = $2 WHERE id = $3",
-        [JSON.stringify(stocks), totalStock, item.id],
+        "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
+        [JSON.stringify(stocks), totalStock, newStatus, item.id],
       );
     }
 

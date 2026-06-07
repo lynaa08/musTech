@@ -90,6 +90,16 @@ async function initDB() {
     ALTER TABLE products ADD COLUMN IF NOT EXISTS variant_stocks TEXT NOT NULL DEFAULT '[0]';
   `);
 
+  // Add status column to products if it doesn't exist (migration)
+  await pool.query(`
+    ALTER TABLE products ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'in_stock';
+  `);
+
+  // Sync status for existing products based on current stock
+  await pool.query(`
+    UPDATE products SET status = CASE WHEN stock <= 0 THEN 'out_of_stock' ELSE 'in_stock' END;
+  `);
+
   // Seed categories if empty
   const { rows: catRows } = await pool.query(
     "SELECT COUNT(*) as c FROM categories",
