@@ -19,7 +19,7 @@ router.get("/", adminMiddleware, async (req, res) => {
       recent,
     ] = await Promise.all([
       q("SELECT COUNT(*) as c FROM orders"),
-      q("SELECT SUM(total) as s FROM orders WHERE status != 'cancelled'"),
+      q("SELECT SUM(subtotal) as s FROM orders WHERE status != 'cancelled'"),
       q("SELECT COUNT(*) as c FROM products WHERE active = 1"),
       q("SELECT COUNT(*) as c FROM users WHERE role = 'user'"),
       q("SELECT COUNT(*) as c FROM orders WHERE status = 'pending'"),
