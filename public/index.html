@@ -1320,27 +1320,37 @@
       .stat-card {
         background: #fff;
         border-radius: var(--radius);
-        padding: 1.25rem 1.5rem;
+        padding: 1.1rem 1.25rem 1rem;
         border: 1px solid var(--gray-100);
         position: relative;
         overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.045);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(0, 0, 0, 0.09);
       }
       .stat-card::after {
         content: "";
         position: absolute;
-        right: -20px;
-        top: -20px;
-        width: 80px;
-        height: 80px;
+        right: -16px;
+        top: -16px;
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
         background: var(--green-light);
-        opacity: 0.5;
+        opacity: 0.45;
       }
       .stat-card .label {
-        font-size: 0.8rem;
+        font-size: 0.72rem;
         color: var(--gray-500);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
       }
       .stat-card .value {
         font-family:
@@ -1349,15 +1359,19 @@
           system-ui,
           -apple-system,
           sans-serif;
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 800;
         color: var(--gray-900);
+        line-height: 1;
       }
       .stat-card .change {
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         color: var(--green-dark);
         font-weight: 600;
-        margin-top: 0.25rem;
+        margin-top: 0.3rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
       }
       .stat-card .change.down {
         color: #ff4b6e;
@@ -2114,11 +2128,21 @@
 
         /* MISC */
         .stats-grid {
-          grid-template-columns: 1fr 1fr;
-          gap: 0.5rem;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 0.6rem;
         }
         .stat-card {
-          padding: 1rem;
+          padding: 0.85rem 1rem 0.75rem;
+          border-radius: 12px;
+        }
+        .stat-card .label {
+          font-size: 0.65rem;
+        }
+        .stat-card .value {
+          font-size: 1.6rem;
+        }
+        .stat-card .change {
+          font-size: 0.65rem;
         }
         .toast {
           left: 1rem;
@@ -3561,7 +3585,7 @@
             <div
               class="stats-grid"
               style="
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
                 margin-bottom: 1.5rem;
               ">
               <div class="stat-card" style="border-top: 3px solid #7f77dd">
@@ -3585,15 +3609,6 @@
                   class="value"
                   id="promo-stat-expired"
                   style="color: #a32d2d">
-                  —
-                </div>
-              </div>
-              <div class="stat-card" style="border-top: 3px solid #ef9f27">
-                <div class="label">En Attente</div>
-                <div
-                  class="value"
-                  id="promo-stat-pending"
-                  style="color: #ba7517">
                   —
                 </div>
               </div>
@@ -3671,45 +3686,7 @@
               </h2>
 
               <input type="hidden" id="promo-edit-id" value="" />
-
-              <!-- Type selector -->
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 10px;
-                  margin-bottom: 1.25rem;
-                ">
-                <button
-                  id="promo-type-voucher"
-                  onclick="selectPromoType('voucher')"
-                  style="
-                    padding: 0.75rem;
-                    border-radius: 10px;
-                    border: 2px solid var(--green);
-                    background: var(--green-light);
-                    font-weight: 700;
-                    cursor: pointer;
-                    font-size: 0.85rem;
-                  ">
-                  🎁 Bon de Réduction
-                </button>
-                <button
-                  id="promo-type-code"
-                  onclick="selectPromoType('code')"
-                  style="
-                    padding: 0.75rem;
-                    border-radius: 10px;
-                    border: 2px solid var(--gray-100);
-                    background: #fff;
-                    font-weight: 700;
-                    cursor: pointer;
-                    font-size: 0.85rem;
-                    color: var(--gray-500);
-                  ">
-                  🏷️ Code Promo
-                </button>
-              </div>
+              <input type="hidden" id="promo-current-type" value="code" />
 
               <div class="form-group">
                 <label class="form-label">Nom / Description *</label>
@@ -10728,7 +10705,7 @@
         document.getElementById("promo-modal-title").textContent = promo
           ? "Modifier la Promotion"
           : "Nouvelle Promotion";
-        selectPromoType(promo ? promo.type : "voucher");
+        selectPromoType("code");
         document.getElementById("promo-name").value = promo?.name || "";
         document.getElementById("promo-code").value = promo?.code || "";
         document.getElementById("promo-value").value = promo?.value ?? "";
@@ -10782,21 +10759,10 @@
       }
 
       function selectPromoType(type) {
-        currentPromoType = type;
-        const vBtn = document.getElementById("promo-type-voucher");
-        const cBtn = document.getElementById("promo-type-code");
-        const activeStyle =
-          "border:2px solid var(--green);background:var(--green-light);color:var(--gray-900);";
-        const inactiveStyle =
-          "border:2px solid var(--gray-100);background:#fff;color:var(--gray-500);";
-        vBtn.style.cssText += type === "voucher" ? activeStyle : inactiveStyle;
-        cBtn.style.cssText += type === "code" ? activeStyle : inactiveStyle;
-        document.getElementById("promo-code-fields").style.display =
-          type === "code" ? "" : "none";
-        document.getElementById("promo-voucher-fields").style.display =
-          type === "voucher" ? "" : "none";
-        document.getElementById("promo-code-uses-wrap").style.display =
-          type === "code" ? "" : "none";
+        currentPromoType = "code";
+        document.getElementById("promo-code-fields").style.display = "";
+        document.getElementById("promo-voucher-fields").style.display = "none";
+        document.getElementById("promo-code-uses-wrap").style.display = "";
       }
 
       function onUsesTypeChange() {
