@@ -6685,7 +6685,7 @@
         const badgeHTML = p.badge
           ? `<span class="product-badge ${p.badge === "Sale" ? "sale" : ""}">${p.badge}</span>`
           : "";
-        const isOutOfStock = p.status === "out_of_stock" || p.stock <= 0;
+        const isOutOfStock = p.stock <= 0;
         const stockBadgeHTML = isOutOfStock
           ? `<span class="product-badge out-of-stock" style="top:${p.badge ? "38px" : "10px"}">Rupture</span>`
           : "";
@@ -6952,8 +6952,8 @@
           <td>${p.price.toLocaleString()} DA</td>
           <td>${p.stock > 0 ? p.stock : `<span style="color:#e53e3e;font-weight:700;">${p.stock}</span>`}</td>
           <td>
-            <button onclick="toggleProductStock(${p.id}, ${p.stock})" style="border:none;cursor:pointer;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:700;background:${p.status === "out_of_stock" || p.stock <= 0 ? "#fee2e2" : "var(--green-light)"};color:${p.status === "out_of_stock" || p.stock <= 0 ? "#e53e3e" : "var(--green)"};">
-              ${p.status === "out_of_stock" || p.stock <= 0 ? `○ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}` : "● En stock"}
+            <button onclick="toggleProductStock(${p.id}, ${p.stock})" style="border:none;cursor:pointer;padding:0.3rem 0.75rem;border-radius:20px;font-size:0.78rem;font-weight:700;background:${p.stock <= 0 ? "#fee2e2" : "var(--green-light)"};color:${p.stock <= 0 ? "#e53e3e" : "var(--green)"};">
+              ${p.stock <= 0 ? `○ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}` : "● En stock"}
             </button>
           </td>
           <td><div class="action-btns">
@@ -8483,7 +8483,7 @@
           PRODUCT_DESCS[p.id] || "";
         document.getElementById("pm-qty").textContent = 1;
         document.getElementById("pm-stock").textContent =
-          p.status === "out_of_stock" || p.stock <= 0
+          p.stock <= 0
             ? `✗ Out of Stock${p.stock < 0 ? " (" + p.stock + ")" : ""}`
             : p.stock > 10
               ? `✓ En stock (${p.stock})`
