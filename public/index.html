@@ -3104,14 +3104,32 @@
               <div class="stat-card">
                 <div class="label">Chiffre d'Affaires</div>
                 <div class="value" id="stat-revenue">0 DA</div>
-                <div class="change" id="stat-revenue-sub">
-                  Total des commandes
-                </div>
+                <div class="change" id="stat-revenue-sub">Sans livraison</div>
+              </div>
+              <div class="stat-card" id="stat-profit-card">
+                <div class="label">Profit Net</div>
+                <div class="value" id="stat-profit">— DA</div>
+                <div class="change" id="stat-profit-sub">CA - coût d'achat</div>
               </div>
               <div class="stat-card">
                 <div class="label">Total Commandes</div>
                 <div class="value" id="stat-orders">0</div>
                 <div class="change" id="stat-orders-sub">Toutes statuts</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">En Attente</div>
+                <div class="value" id="stat-pending">0</div>
+                <div class="change" style="color: #f59e0b">À traiter</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Livrées</div>
+                <div class="value" id="stat-delivered">0</div>
+                <div class="change" style="color: var(--green)">Commandes</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Annulées</div>
+                <div class="value" id="stat-cancelled">0</div>
+                <div class="change" style="color: #e53e3e">Commandes</div>
               </div>
               <div class="stat-card">
                 <div class="label">Total Produits</div>
@@ -3122,13 +3140,6 @@
                 <div class="label">Note Moyenne</div>
                 <div class="value" id="stat-rating">—</div>
                 <div class="change" id="stat-rating-sub">Aucun avis</div>
-              </div>
-              <div class="stat-card" id="stat-profit-card">
-                <div class="label">Profit Net</div>
-                <div class="value" id="stat-profit">— DA</div>
-                <div class="change" id="stat-profit-sub">
-                  Revenus - coût d'achat
-                </div>
               </div>
             </div>
             <div class="admin-table-card">
@@ -3433,24 +3444,34 @@
             </div>
             <div class="stats-grid">
               <div class="stat-card">
+                <div class="label">Chiffre d'Affaires</div>
+                <div class="value" id="fin-revenue">0 DA</div>
+                <div class="change">Sans livraison</div>
+              </div>
+              <div class="stat-card" id="fin-profit-card">
+                <div class="label">Profit Net</div>
+                <div class="value" id="fin-profit">— DA</div>
+                <div class="change" id="fin-profit-sub">CA - coût d'achat</div>
+              </div>
+              <div class="stat-card">
                 <div class="label">Total Commandes</div>
                 <div class="value" id="fin-total-orders">0</div>
                 <div class="change">Commandes</div>
               </div>
               <div class="stat-card">
-                <div class="label">Chiffre d'Affaires</div>
-                <div class="value" id="fin-revenue">0 DA</div>
-                <div class="change">Total</div>
+                <div class="label">En Attente</div>
+                <div class="value" id="fin-pending">0</div>
+                <div class="change" style="color: #f59e0b">À traiter</div>
               </div>
               <div class="stat-card">
                 <div class="label">Livrées</div>
                 <div class="value" id="fin-delivered">0</div>
-                <div class="change">Commandes</div>
+                <div class="change" style="color: var(--green)">Commandes</div>
               </div>
               <div class="stat-card">
-                <div class="label">En Attente</div>
-                <div class="value" id="fin-pending">0</div>
-                <div class="change down">À traiter</div>
+                <div class="label">Annulées</div>
+                <div class="value" id="fin-cancelled">0</div>
+                <div class="change" style="color: #e53e3e">Commandes</div>
               </div>
             </div>
             <div class="admin-table-card">
@@ -3465,17 +3486,23 @@
                   ">
                   <button
                     class="btn btn-primary"
-                    style="font-size: 0.82rem; padding: 0.4rem 1rem">
+                    id="period-daily"
+                    style="font-size: 0.82rem; padding: 0.4rem 1rem"
+                    onclick="renderFinanceChart('daily')">
                     Quotidien
                   </button>
                   <button
                     class="btn btn-ghost"
-                    style="font-size: 0.82rem; padding: 0.4rem 1rem">
+                    id="period-weekly"
+                    style="font-size: 0.82rem; padding: 0.4rem 1rem"
+                    onclick="renderFinanceChart('weekly')">
                     Hebdomadaire
                   </button>
                   <button
                     class="btn btn-ghost"
-                    style="font-size: 0.82rem; padding: 0.4rem 1rem">
+                    id="period-monthly"
+                    style="font-size: 0.82rem; padding: 0.4rem 1rem"
+                    onclick="renderFinanceChart('monthly')">
                     Mensuel
                   </button>
                 </div>
@@ -6821,9 +6848,17 @@
             ratingsRes.status === "fulfilled" ? ratingsRes.value : null;
 
           // Compute stats directly from real data
-          const totalRevenue = ORDERS.reduce((s, o) => s + (o.total || 0), 0);
+          const totalRevenue = ORDERS.filter(
+            (o) => o.status !== "cancelled",
+          ).reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
           const pendingOrders = ORDERS.filter(
             (o) => o.status === "pending",
+          ).length;
+          const deliveredOrders = ORDERS.filter(
+            (o) => o.status === "delivered",
+          ).length;
+          const cancelledOrders = ORDERS.filter(
+            (o) => o.status === "cancelled",
           ).length;
 
           const set = (id, val) => {
@@ -6833,7 +6868,9 @@
           set("stat-revenue", totalRevenue.toLocaleString() + " DA");
           set("stat-revenue-sub", ORDERS.length + " commande(s)");
           // Profit = revenue - cost of sold items
-          const totalCost = ORDERS.reduce((sum, o) => {
+          const totalCost = ORDERS.filter(
+            (o) => o.status !== "cancelled",
+          ).reduce((sum, o) => {
             const items = Array.isArray(o.items)
               ? o.items
               : JSON.parse(o.items || "[]");
@@ -6858,6 +6895,9 @@
               profit >= 0 ? "3px solid var(--green)" : "3px solid #e53e3e";
           set("stat-orders", ORDERS.length);
           set("stat-orders-sub", pendingOrders + " en attente");
+          set("stat-pending", pendingOrders);
+          set("stat-delivered", deliveredOrders);
+          set("stat-cancelled", cancelledOrders);
           set("stat-products", PRODUCTS.length);
           if (ratingStats && ratingStats.average) {
             set("stat-rating", Number(ratingStats.average).toFixed(1) + " / 5");
@@ -6867,15 +6907,19 @@
             );
           }
           const deliveredRevenue = ORDERS.filter(
-            (o) => o.status === "delivered",
-          ).reduce((s, o) => s + (o.total || 0), 0);
-          const deliveredCount = ORDERS.filter(
-            (o) => o.status === "delivered",
-          ).length;
+            (o) => o.status !== "cancelled",
+          ).reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
           set("fin-total-orders", ORDERS.length);
           set("fin-revenue", deliveredRevenue.toLocaleString() + " DA");
-          set("fin-delivered", deliveredCount);
+          set("fin-delivered", deliveredOrders);
           set("fin-pending", pendingOrders);
+          set("fin-cancelled", cancelledOrders);
+          set("fin-profit", profit.toLocaleString() + " DA");
+          set("fin-profit-sub", profit >= 0 ? "✅ Bénéfice" : "❌ Perte");
+          const finProfitCard = document.getElementById("fin-profit-card");
+          if (finProfitCard)
+            finProfitCard.style.borderTop =
+              profit >= 0 ? "3px solid var(--green)" : "3px solid #e53e3e";
 
           // Dashboard orders
           const t1 = document.getElementById("admin-orders-table");
@@ -7935,26 +7979,89 @@
       }
 
       // FINANCE CHART
-      function renderFinanceChart() {
+      let currentPeriod = "daily";
+      function renderFinanceChart(period) {
+        period = period || currentPeriod;
+        currentPeriod = period;
+
+        // Update button styles
+        ["daily", "weekly", "monthly"].forEach((p) => {
+          const btn = document.getElementById("period-" + p);
+          if (btn) {
+            btn.className = p === period ? "btn btn-primary" : "btn btn-ghost";
+            btn.style.fontSize = "0.82rem";
+            btn.style.padding = "0.4rem 1rem";
+          }
+        });
+
         const bars = document.getElementById("finance-bars");
         const labels = document.getElementById("finance-labels");
         if (!bars) return;
-        const days = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
-        const vals = [42000, 58000, 35000, 72000, 88000, 110000, 48000];
-        const max = Math.max(...vals);
-        bars.innerHTML = vals
-          .map((v, i) => {
-            const h = Math.round((v / max) * 140);
+
+        const orders = ORDERS.filter((o) => o.status !== "cancelled");
+        let data = [];
+
+        if (period === "daily") {
+          // Last 7 days
+          for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().slice(0, 10);
+            const label = d.toLocaleDateString("fr-DZ", { weekday: "short" });
+            const total = orders
+              .filter((o) => (o.created_at || "").slice(0, 10) === key)
+              .reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+            data.push({ label, total });
+          }
+        } else if (period === "weekly") {
+          // Last 6 weeks
+          for (let i = 5; i >= 0; i--) {
+            const start = new Date();
+            start.setDate(start.getDate() - i * 7 - 6);
+            const end = new Date();
+            end.setDate(end.getDate() - i * 7);
+            const label = "S-" + (5 - i + 1);
+            const total = orders
+              .filter((o) => {
+                const d = new Date(o.created_at);
+                return d >= start && d <= end;
+              })
+              .reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+            data.push({ label, total });
+          }
+        } else {
+          // Last 6 months
+          for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const y = d.getFullYear();
+            const m = d.getMonth();
+            const label = d.toLocaleDateString("fr-DZ", { month: "short" });
+            const total = orders
+              .filter((o) => {
+                const od = new Date(o.created_at);
+                return od.getFullYear() === y && od.getMonth() === m;
+              })
+              .reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+            data.push({ label, total });
+          }
+        }
+
+        const max = Math.max(...data.map((d) => d.total), 1);
+        bars.innerHTML = data
+          .map((d, i) => {
+            const h = Math.max(4, Math.round((d.total / max) * 140));
+            const isMax = d.total === max && d.total > 0;
             return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-      <span style="font-size:0.65rem;color:var(--gray-500)">${(v / 1000).toFixed(0)}K</span>
-      <div style="width:100%;height:${h}px;background:${i === 5 ? "var(--green)" : "var(--green-light)"};border-radius:6px 6px 0 0;transition:all 0.5s"></div>
-    </div>`;
+            <span style="font-size:0.65rem;color:var(--gray-500)">${d.total > 0 ? (d.total / 1000).toFixed(0) + "K" : "0"}</span>
+            <div style="width:100%;height:${h}px;background:${isMax ? "var(--green)" : "var(--green-light)"};border-radius:6px 6px 0 0;transition:all 0.5s"></div>
+          </div>`;
           })
           .join("");
-        labels.innerHTML = days
+        labels.innerHTML = data
           .map(
             (d) =>
-              `<div style="flex:1;text-align:center;font-size:0.72rem;color:var(--gray-500);font-weight:600">${d}</div>`,
+              `<div style="flex:1;text-align:center;font-size:0.72rem;color:var(--gray-500);font-weight:600">${d.label}</div>`,
           )
           .join("");
       }
