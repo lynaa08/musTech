@@ -7061,7 +7061,11 @@
           const promoRow = document.getElementById("checkout-promo-row");
           if (promoRow) promoRow.style.display = "none";
         }
-        if (id === "add-product-modal") resetApIconPicker();
+        if (id === "add-product-modal") {
+          resetApIconPicker();
+          restoreCustomCatPills("ap");
+          restoreCustomCatPills("ep");
+        }
       }
       function updateMarginDisplay(prefix) {
         const price =
@@ -7511,6 +7515,8 @@
         // Populate pill multiselect for edit modal
         const epCatVal = Array.isArray(p.cat) ? p.cat : p.cat ? [p.cat] : [];
         document.getElementById("ep-cat").value = epCatVal.join(",");
+        // Restore saved custom cats first, then apply active state
+        restoreCustomCatPills("ep");
         document.querySelectorAll("#ep-cat-pills .cat-pill").forEach((btn) => {
           btn.classList.toggle("active", epCatVal.includes(btn.dataset.val));
           const x = btn.querySelector(".pill-remove");
@@ -7933,7 +7939,17 @@
         e.preventDefault();
         // btn is the cat-pill element; remove only this one pill
         const pill = btn.closest ? btn.closest(".cat-pill") : btn;
-        if (pill) pill.remove();
+        if (pill) {
+          // Remove from localStorage if it was a custom cat
+          const val = pill.dataset.val;
+          if (val) {
+            const saved = getCustomCats().filter(
+              (c) => c.toLowerCase() !== val.toLowerCase(),
+            );
+            localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(saved));
+          }
+          pill.remove();
+        }
         const container = document.getElementById(prefix + "-cat-pills");
         const vals = Array.from(
           container.querySelectorAll(".cat-pill.active"),
@@ -7977,6 +7993,8 @@
             val +
             `<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'${prefix}')" style="display:inline-flex;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span><span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'${prefix}')" title="Supprimer" role="button">✕</span>`;
           container.appendChild(btn);
+          // ── Save to localStorage so custom cats survive refresh ──
+          saveCustomCats(val);
         }
         input.value = "";
         // Update hidden input
@@ -7984,6 +8002,48 @@
           container.querySelectorAll(".cat-pill.active"),
         ).map((b) => b.dataset.val);
         document.getElementById(prefix + "-cat").value = vals.join(",");
+      }
+
+      // ── CUSTOM CATEGORY PERSISTENCE ───────────────────────────
+      const CUSTOM_CATS_KEY = "mt_custom_cats";
+
+      function saveCustomCats(newCat) {
+        const saved = getCustomCats();
+        if (!saved.map((c) => c.toLowerCase()).includes(newCat.toLowerCase())) {
+          saved.push(newCat);
+          localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(saved));
+        }
+      }
+
+      function getCustomCats() {
+        try {
+          return JSON.parse(localStorage.getItem(CUSTOM_CATS_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
+      function restoreCustomCatPills(prefix) {
+        const container = document.getElementById(prefix + "-cat-pills");
+        if (!container) return;
+        const customCats = getCustomCats();
+        customCats.forEach((val) => {
+          const alreadyExists = Array.from(
+            container.querySelectorAll(".cat-pill"),
+          ).some((b) => b.dataset.val.toLowerCase() === val.toLowerCase());
+          if (alreadyExists) return;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cat-pill";
+          btn.dataset.val = val;
+          btn.onclick = function () {
+            toggleCatPill(this, prefix);
+          };
+          btn.innerHTML =
+            val +
+            `<span class="pill-remove" onclick="removeCatPill(event,this.parentNode,'${prefix}')" style="display:none;margin-left:4px;font-size:0.75rem;line-height:1;vertical-align:middle;">✕</span><span class="pill-delete" onclick="deleteCatPill(event,this.closest('.cat-pill'),'${prefix}')" title="Supprimer" role="button">✕</span>`;
+          container.appendChild(btn);
+        });
       }
 
       function renderVariantStockFields(prefix) {
