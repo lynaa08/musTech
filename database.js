@@ -108,6 +108,15 @@ async function initDB() {
     ALTER TABLE orders ADD COLUMN IF NOT EXISTS pinned INTEGER NOT NULL DEFAULT 0;
   `);
 
+  // ── MIGRATION: Add sort_order to products ────────────────────────
+  await pool.query(`
+    ALTER TABLE products ADD COLUMN IF NOT EXISTS sort_order INTEGER;
+  `);
+  // Initialize sort_order for existing products that don't have it yet
+  await pool.query(`
+    UPDATE products SET sort_order = id WHERE sort_order IS NULL;
+  `);
+
   // Sync status for existing products based on current stock
   await pool.query(`
     UPDATE products SET status = CASE WHEN stock <= 0 THEN 'out_of_stock' ELSE 'in_stock' END;

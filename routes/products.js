@@ -64,7 +64,7 @@ router.get("/", async (req, res) => {
       params.push(`%${search}%`);
       query += ` AND name ILIKE $${params.length}`;
     }
-    query += " ORDER BY created_at DESC";
+    query += " ORDER BY sort_order ASC NULLS LAST, created_at DESC";
     const { rows } = await db.query(query, params);
     res.json(rows.map(parseProduct));
   } catch (err) {
@@ -76,7 +76,7 @@ router.get("/", async (req, res) => {
 router.get("/admin/all", adminMiddleware, async (req, res) => {
   try {
     const { rows } = await db.query(
-      "SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC",
+      "SELECT * FROM products WHERE active = 1 ORDER BY sort_order ASC NULLS LAST, created_at DESC",
     );
     res.json(rows.map(parseProduct));
   } catch (err) {
@@ -144,9 +144,15 @@ router.post(
       const uploadedFiles = req.files ? req.files.map((f) => f.path) : [];
       const primaryImg = uploadedFiles[0] || null;
 
+      // New products go to top: assign sort_order lower than current minimum
+      const { rows: minRow } = await db.query(
+        "SELECT COALESCE(MIN(sort_order), 1) - 1 AS new_order FROM products WHERE active = 1",
+      );
+      const newSortOrder = minRow[0].new_order;
+
       const { rows } = await db.query(
-        `INSERT INTO products (name,cat,price,old_price,cost_price,icon,img,images,variants,variant_prices,variant_stocks,stock,badge,description)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
+        `INSERT INTO products (name,cat,price,old_price,cost_price,icon,img,images,variants,variant_prices,variant_stocks,stock,badge,description,sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *`,
         [
           name,
           cat,
@@ -162,14 +168,13 @@ router.post(
           totalStock,
           badge || null,
           description || null,
+          newSortOrder,
         ],
       );
-      res
-        .status(201)
-        .json({
-          ...parseProduct(rows[0]),
-          uploadWarning: req.uploadError || undefined,
-        });
+      res.status(201).json({
+        ...parseProduct(rows[0]),
+        uploadWarning: req.uploadError || undefined,
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -274,6 +279,28 @@ router.delete("/:id", adminMiddleware, async (req, res) => {
       req.params.id,
     ]);
     res.json({ message: "Produit supprimé" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── PATCH /api/products/reorder ── (admin) ────────────────
+router.patch("/reorder", adminMiddleware, async (req, res) => {
+  try {
+    const { order } = req.body;
+    if (!Array.isArray(order) || order.length === 0)
+      return res.status(400).json({ error: "order must be a non-empty array" });
+
+    const ids = order.map((o) => parseInt(o.id));
+    const sortOrders = order.map((o) => parseInt(o.sort_order));
+
+    await db.query(
+      `UPDATE products SET sort_order = data.sort_order
+       FROM (SELECT UNNEST($1::int[]) AS id, UNNEST($2::int[]) AS sort_order) AS data
+       WHERE products.id = data.id`,
+      [ids, sortOrders],
+    );
+    res.json({ message: "Order saved" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

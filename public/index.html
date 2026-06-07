@@ -7313,6 +7313,7 @@
       }
 
       // ── PRODUCT PIN / ORDER (admin only) ─────────────────────
+      // ── PIN ORDER: stored in DB via sort_order, localStorage as cache ──
       const PIN_ORDER_KEY = "mt_pin_order"; // [{id, rank}] sorted by rank asc
 
       function getPinOrder() {
@@ -7329,7 +7330,18 @@
         const entry = getPinOrder().find((e) => e.id === id);
         return entry ? entry.rank : 0;
       }
-      function togglePin(id) {
+
+      // Persist current PRODUCTS order to the server
+      async function persistProductOrder() {
+        try {
+          const order = PRODUCTS.map((p, i) => ({ id: p.id, sort_order: i }));
+          await ProductsAPI.reorder(order);
+        } catch (e) {
+          console.warn("Could not save product order:", e.message);
+        }
+      }
+
+      async function togglePin(id) {
         let order = getPinOrder();
         const idx = order.findIndex((e) => e.id === id);
         if (idx >= 0) {
@@ -7344,6 +7356,8 @@
         }
         savePinOrder(order);
         applyPinOrder();
+        // ✅ Persist to DB so all clients and refreshes see the same order
+        await persistProductOrder();
       }
       function applyPinOrder() {
         const order = getPinOrder();
@@ -7398,19 +7412,19 @@
             ? rawOrders
             : rawOrders?.orders || ORDERS || [];
           if (productsRes.status === "fulfilled") {
+            // Server already returns products in sort_order (DB-persisted).
+            // Sync localStorage cache so pin buttons show correct state.
             PRODUCTS = productsRes.value;
-            // Apply saved pin order immediately
-            const _pinOrder = getPinOrder();
-            if (_pinOrder.length > 0) {
-              const _pinnedIds = _pinOrder
-                .sort((a, b) => a.rank - b.rank)
-                .map((e) => e.id);
-              const _pinned = _pinnedIds
-                .map((id) => PRODUCTS.find((p) => p.id === id))
-                .filter(Boolean);
-              const _rest = PRODUCTS.filter((p) => !_pinnedIds.includes(p.id));
-              PRODUCTS = [..._pinned, ..._rest];
-            }
+            const pinCache = PRODUCTS.map((p, i) => ({
+              id: p.id,
+              rank: i + 1,
+            })).filter((_, i) => {
+              // Only cache products that were explicitly pinned (at front)
+              // We treat the first N products that differ from id-order as pinned
+              return false; // reset cache — server is the source of truth
+            });
+            // Clear stale localStorage pin cache so it matches server order
+            localStorage.removeItem("mt_pin_order");
           }
           const ratingStats =
             ratingsRes.status === "fulfilled" ? ratingsRes.value : null;

@@ -95,6 +95,12 @@ const ProductsAPI = {
   },
 
   delete: (id) => apiFetch("/products/" + id, { method: "DELETE" }),
+
+  reorder: (order) =>
+    apiFetch("/products/reorder", {
+      method: "PATCH",
+      body: JSON.stringify({ order }),
+    }),
 };
 
 // ── ORDERS API ────────────────────────────────────────────
