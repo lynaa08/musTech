@@ -85,6 +85,14 @@ async function initDB() {
     );
   `);
 
+  // Add promo columns to orders if they don't exist (migration)
+  await pool.query(
+    `ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo_code TEXT;`,
+  );
+  await pool.query(
+    `ALTER TABLE orders ADD COLUMN IF NOT EXISTS promo_discount INTEGER NOT NULL DEFAULT 0;`,
+  );
+
   // Add variant_stocks column if it doesn't exist (migration)
   await pool.query(`
     ALTER TABLE products ADD COLUMN IF NOT EXISTS variant_stocks TEXT NOT NULL DEFAULT '[0]';

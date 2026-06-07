@@ -3623,7 +3623,7 @@
                     <tr>
                       <th>Nom</th>
                       <th>Type</th>
-                      <th>Code </th>
+                      <th>Code / Valeur</th>
                       <th>Remise</th>
                       <th>Utilisations</th>
                       <th>Expire</th>
@@ -7301,7 +7301,7 @@
         })()}</td>
         <td>${o.customer}</td>
         <td>${o.wilaya}</td>
-        <td><strong>${(o.total || 0).toLocaleString()} DA</strong></td>
+        <td><strong>${(o.total || 0).toLocaleString()} DA</strong>${o.promo_code ? `<br><span style="font-size:0.68rem;color:#1fad52;font-weight:600;">🏷️ ${o.promo_code} (-${(o.promo_discount || 0).toLocaleString()} DA)</span>` : ""}</td>
         <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
         <td><div class="action-btns">
           <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
@@ -7763,6 +7763,9 @@
       <div class="order-row"><span>Téléphone</span><span>${o.phone}</span></div>
       <div class="order-row"><span>Wilaya</span><span>${o.wilaya}</span></div>
       <div class="order-row"><span>Articles</span><span style="text-align:right;line-height:1.6">${itemsDisplay}</span></div>
+      <div class="order-row"><span>Sous-total</span><span>${(o.subtotal || 0).toLocaleString()} DA</span></div>
+      <div class="order-row"><span>Livraison</span><span>${(o.shipping || 0).toLocaleString()} DA</span></div>
+      ${o.promo_code ? `<div class="order-row" style="color:#1fad52;font-weight:700;"><span>🏷️ Code promo (${o.promo_code})</span><span>-${(o.promo_discount || 0).toLocaleString()} DA</span></div>` : ""}
       <div class="order-row total"><span>Total</span><span>${(o.total || 0).toLocaleString()} DA</span></div>
       <div class="order-row"><span>Statut</span><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></div>
     </div>`;

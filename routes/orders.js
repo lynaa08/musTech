@@ -78,6 +78,8 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
       notes,
       items,
       shipping,
+      promo_code,
+      promo_discount,
     } = req.body;
 
     const validationError = validateOrderInput({
@@ -134,7 +136,12 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
     const shippingPrice = wRows[0]
       ? wRows[0].shipping_price
       : parseInt(shipping) || 0;
-    const total = calculatedSubtotal + shippingPrice;
+    const validPromoDiscount = Math.min(
+      parseInt(promo_discount) || 0,
+      calculatedSubtotal,
+    );
+    const total =
+      Math.max(0, calculatedSubtotal - validPromoDiscount) + shippingPrice;
     const orderRef = await generateRef();
 
     let userId = null;
@@ -147,8 +154,8 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
     }
 
     const { rows: inserted } = await db.query(
-      `INSERT INTO orders (order_ref,user_id,customer,phone,wilaya,address,items,subtotal,shipping,total,notes)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      `INSERT INTO orders (order_ref,user_id,customer,phone,wilaya,address,items,subtotal,shipping,total,notes,promo_code,promo_discount)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
       [
         orderRef,
         userId,
@@ -161,6 +168,8 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
         shippingPrice,
         total,
         notes ? notes.trim().substring(0, 500) : null,
+        promo_code ? promo_code.trim().toUpperCase().substring(0, 20) : null,
+        validPromoDiscount,
       ],
     );
 
