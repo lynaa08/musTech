@@ -3100,46 +3100,114 @@
             <div class="admin-header">
               <h1>Tableau de Bord</h1>
             </div>
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="label">Chiffre d'Affaires</div>
-                <div class="value" id="stat-revenue">0 DA</div>
-                <div class="change" id="stat-revenue-sub">Sans livraison</div>
-              </div>
-              <div class="stat-card" id="stat-profit-card">
-                <div class="label">Profit Net</div>
-                <div class="value" id="stat-profit">— DA</div>
-                <div class="change" id="stat-profit-sub">CA - coût d'achat</div>
-              </div>
-              <div class="stat-card">
+            <!-- 5 Cards Commandes -->
+            <p
+              style="
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--gray-500);
+                margin: 0 0 0.75rem 0.1rem;
+              ">
+              Commandes
+            </p>
+            <div
+              class="stats-grid"
+              style="
+                grid-template-columns: repeat(5, 1fr);
+                margin-bottom: 1.25rem;
+              ">
+              <div class="stat-card" style="border-top: 3px solid #7f77dd">
                 <div class="label">Total Commandes</div>
-                <div class="value" id="stat-orders">0</div>
-                <div class="change" id="stat-orders-sub">Toutes statuts</div>
+                <div class="value" id="stat-orders" style="color: #534ab7">
+                  0
+                </div>
+                <div
+                  class="change"
+                  id="stat-orders-sub"
+                  style="color: var(--gray-500)">
+                  Tous statuts
+                </div>
               </div>
-              <div class="stat-card">
+              <div class="stat-card" style="border-top: 3px solid #ef9f27">
                 <div class="label">En Attente</div>
-                <div class="value" id="stat-pending">0</div>
-                <div class="change" style="color: #f59e0b">À traiter</div>
+                <div class="value" id="stat-pending" style="color: #ba7517">
+                  0
+                </div>
+                <div class="change" style="color: #ba7517">À traiter</div>
               </div>
-              <div class="stat-card">
+              <div class="stat-card" style="border-top: 3px solid #639922">
                 <div class="label">Livrées</div>
-                <div class="value" id="stat-delivered">0</div>
-                <div class="change" style="color: var(--green)">Commandes</div>
+                <div class="value" id="stat-delivered" style="color: #3b6d11">
+                  0
+                </div>
+                <div class="change" style="color: #3b6d11">Commandes</div>
               </div>
-              <div class="stat-card">
+              <div class="stat-card" style="border-top: 3px solid #e24b4a">
                 <div class="label">Annulées</div>
-                <div class="value" id="stat-cancelled">0</div>
-                <div class="change" style="color: #e53e3e">Commandes</div>
+                <div class="value" id="stat-cancelled" style="color: #a32d2d">
+                  0
+                </div>
+                <div class="change" style="color: #a32d2d">Commandes</div>
               </div>
-              <div class="stat-card">
-                <div class="label">Total Produits</div>
-                <div class="value" id="stat-products">0</div>
-                <div class="change">En catalogue</div>
+              <div class="stat-card" style="border-top: 3px solid #378add">
+                <div class="label">Expédiées</div>
+                <div class="value" id="stat-shipped" style="color: #185fa5">
+                  0
+                </div>
+                <div class="change" style="color: #185fa5">En transit</div>
               </div>
-              <div class="stat-card">
-                <div class="label">Note Moyenne</div>
-                <div class="value" id="stat-rating">—</div>
-                <div class="change" id="stat-rating-sub">Aucun avis</div>
+            </div>
+            <!-- 2 Cards Finance -->
+            <p
+              style="
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--gray-500);
+                margin: 0 0 0.75rem 0.1rem;
+              ">
+              Finance
+            </p>
+            <div
+              class="stats-grid"
+              style="
+                grid-template-columns: repeat(2, 1fr);
+                margin-bottom: 2rem;
+              ">
+              <div class="stat-card" style="border-top: 3px solid #1d9e75">
+                <div class="label">
+                  Chiffre d'Affaires
+                  <span style="font-weight: 400; color: var(--gray-400)"
+                    >(hors livraison)</span
+                  >
+                </div>
+                <div class="value" id="stat-revenue" style="color: #0f6e56">
+                  0 DA
+                </div>
+                <div
+                  class="change"
+                  id="stat-revenue-sub"
+                  style="color: var(--gray-500)">
+                  Commandes non annulées
+                </div>
+              </div>
+              <div
+                class="stat-card"
+                id="stat-profit-card"
+                style="border-top: 3px solid #7f77dd">
+                <div class="label">Profit Net</div>
+                <div class="value" id="stat-profit" style="color: #534ab7">
+                  — DA
+                </div>
+                <div
+                  class="change"
+                  id="stat-profit-sub"
+                  style="color: var(--gray-500)">
+                  CA − coût d'achat
+                </div>
               </div>
             </div>
             <div class="admin-table-card">
@@ -3489,21 +3557,21 @@
                     id="period-daily"
                     style="font-size: 0.82rem; padding: 0.4rem 1rem"
                     onclick="renderFinanceChart('daily')">
-                    Quotidien
+                    Daily
                   </button>
                   <button
                     class="btn btn-ghost"
                     id="period-weekly"
                     style="font-size: 0.82rem; padding: 0.4rem 1rem"
                     onclick="renderFinanceChart('weekly')">
-                    Hebdomadaire
+                    Weekly
                   </button>
                   <button
                     class="btn btn-ghost"
                     id="period-monthly"
                     style="font-size: 0.82rem; padding: 0.4rem 1rem"
                     onclick="renderFinanceChart('monthly')">
-                    Mensuel
+                    Monthly
                   </button>
                 </div>
                 <div
@@ -6893,11 +6961,15 @@
           if (profitCard)
             profitCard.style.borderTop =
               profit >= 0 ? "3px solid var(--green)" : "3px solid #e53e3e";
+          const shippedOrders = ORDERS.filter(
+            (o) => o.status === "shipped",
+          ).length;
           set("stat-orders", ORDERS.length);
-          set("stat-orders-sub", pendingOrders + " en attente");
+          set("stat-orders-sub", ORDERS.length + " commande(s)");
           set("stat-pending", pendingOrders);
           set("stat-delivered", deliveredOrders);
           set("stat-cancelled", cancelledOrders);
+          set("stat-shipped", shippedOrders);
           set("stat-products", PRODUCTS.length);
           if (ratingStats && ratingStats.average) {
             set("stat-rating", Number(ratingStats.average).toFixed(1) + " / 5");
