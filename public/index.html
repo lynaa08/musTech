@@ -111,8 +111,19 @@
         align-items: center;
         gap: 0.5rem;
       }
-      .nav-logo span {
-        color: var(--green-dark);
+      .nav-logo .logo-full {
+        display: block;
+      }
+      .nav-logo .logo-icon {
+        display: none;
+      }
+      @media (max-width: 600px) {
+        .nav-logo .logo-full {
+          display: none !important;
+        }
+        .nav-logo .logo-icon {
+          display: block !important;
+        }
       }
       .nav-logo .dot {
         width: 8px;
@@ -2525,11 +2536,10 @@
         onclick="showPage('home')"
         style="text-decoration: none">
         <svg
+          class="logo-full"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="30 10 220 70"
-          width="210"
-          height="66"
-          style="display: block">
+          style="display: block; width: 148px; height: 46px">
           <defs>
             <linearGradient
               id="iconGrad2nav"
@@ -2613,6 +2623,56 @@
             stroke-width="1.5"
             stroke-linecap="round"
             opacity="0.5" />
+        </svg>
+        <svg
+          class="logo-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="30 10 62 72"
+          style="display: none; width: 36px; height: 36px">
+          <defs>
+            <linearGradient
+              id="iconGrad2mob"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%">
+              <stop offset="0%" style="stop-color: #3ecf6e; stop-opacity: 1" />
+              <stop
+                offset="100%"
+                style="stop-color: #1fad52; stop-opacity: 1" />
+            </linearGradient>
+          </defs>
+          <polygon
+            points="60,14 88,30 88,62 60,78 32,62 32,30"
+            fill="#111118" />
+          <polygon
+            points="60,14 88,30 88,62 60,78 32,62 32,30"
+            fill="none"
+            stroke="url(#iconGrad2mob)"
+            stroke-width="2" />
+          <text
+            x="55"
+            y="57"
+            font-family="Arial Black,sans-serif"
+            font-size="26"
+            font-weight="900"
+            fill="url(#iconGrad2mob)"
+            text-anchor="middle"
+            letter-spacing="-1">
+            M
+          </text>
+          <text
+            x="75"
+            y="54"
+            font-family="Arial Black,sans-serif"
+            font-size="11"
+            font-weight="900"
+            fill="white"
+            text-anchor="middle"
+            opacity="0.95"
+            transform="rotate(-35, 75, 54)">
+            T
+          </text>
         </svg>
       </a>
       <ul class="nav-links">
