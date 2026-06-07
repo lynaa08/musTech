@@ -7302,8 +7302,12 @@
             JSON.stringify(p.variantPrices || [p.price]),
           );
           await ProductsAPI.update(id, fd);
-          PRODUCTS = await ProductsAPI.getAll();
-          renderAdmin();
+          // Reload from admin route to keep cost_price
+          const fresh = await fetch(API_URL + "/products/admin/all", {
+            headers: { Authorization: "Bearer " + Auth.getToken() },
+          });
+          PRODUCTS = await fresh.json();
+          await loadAdminData();
           showToast(currentStock > 0 ? "Mis en rupture !" : "Remis en stock !");
         } catch (e) {
           showToast("Erreur: " + e.message);

@@ -1760,6 +1760,7 @@
                 variantLabel: Array.isArray(product.variants) ? (product.variants[i] || '') : '',
                 variant: i,
                 qty,
+                outOfStock: (product.variantStocks?.[i] ?? product.stock ?? 0) < qty,
               }))
               .filter((item) => item.qty > 0)
           : [
@@ -1769,6 +1770,7 @@
                 variantLabel: Array.isArray(product.variants) ? (product.variants[currentVariant] || '') : '',
                 variant: currentVariant,
                 qty: Math.max(1, currentQty),
+                outOfStock: (product.variantStocks?.[currentVariant] ?? product.stock ?? 0) < Math.max(1, currentQty),
               },
             ];
 
