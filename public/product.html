@@ -969,7 +969,10 @@
                   type="tel"
                   id="co-phone"
                   class="form-input"
-                  placeholder="+213 ..." />
+                  placeholder="0558210430"
+                  oninput="validateCoPhone(this)"
+                  onblur="validateCoPhone(this)" />
+                <span id="co-phone-error" style="display:none;color:#e53e3e;font-size:0.75rem;margin-top:0.25rem;">Numéro invalide. Formats acceptés : 0558210430, +213558210430 ou +2130558210430</span>
               </div>
               <div class="form-group">
                 <label class="form-label">Wilaya *</label>
@@ -1694,6 +1697,29 @@
         setTimeout(() => toast.classList.remove("show"), 3000);
       }
 
+      function normalizeAlgerianPhone(phone) {
+        const p = phone.replace(/\s/g, "");
+        if (/^\+2130[5-7]\d{8}$/.test(p)) return "0" + p.slice(4);
+        if (/^\+213[5-7]\d{8}$/.test(p)) return "0" + p.slice(3);
+        if (/^0[5-7]\d{8}$/.test(p)) return p;
+        return null;
+      }
+
+      function validateCoPhone(input) {
+        const errorEl = document.getElementById("co-phone-error");
+        const normalized = normalizeAlgerianPhone(input.value.trim());
+        if (input.value.trim() === "") {
+          input.classList.remove("input-error", "input-valid");
+          if (errorEl) errorEl.style.display = "none";
+        } else if (!normalized) {
+          input.style.borderColor = "#e53e3e";
+          if (errorEl) errorEl.style.display = "block";
+        } else {
+          input.style.borderColor = "#38a169";
+          if (errorEl) errorEl.style.display = "none";
+        }
+      }
+
       async function placeOrder() {
         const name = document.getElementById("co-name").value.trim();
         const phone = document.getElementById("co-phone").value.trim();
@@ -1702,8 +1728,17 @@
         const wilaya_id =
           wilEl.options[wilEl.selectedIndex]?.dataset.id || null;
 
+        const phoneNorm = normalizeAlgerianPhone(phone);
         if (!phone || !wilaya) {
           showToast("Téléphone et Wilaya sont obligatoires");
+          return;
+        }
+        if (!phoneNorm) {
+          showToast("Numéro invalide ! Ex: 0558210430 ou +213558210430");
+          const phoneEl = document.getElementById("co-phone");
+          if (phoneEl) { phoneEl.style.borderColor = "#e53e3e"; phoneEl.focus(); }
+          const errEl = document.getElementById("co-phone-error");
+          if (errEl) errEl.style.display = "block";
           return;
         }
 
@@ -1747,7 +1782,7 @@
 
         const orderData = {
           customer: name || phone,
-          phone,
+          phone: phoneNorm,
           wilaya,
           wilaya_id: wilaya_id || null,
           shipping,

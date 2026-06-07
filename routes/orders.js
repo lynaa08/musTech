@@ -7,6 +7,37 @@ const {
   optionalAuth,
 } = require("../middleware/auth");
 
+// ── RATE LIMITER COMMANDES (uniquement sur POST) ──────────
+const _ipRequests = new Map();
+function orderRateLimiter(req, res, next) {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "unknown";
+  const now = Date.now();
+  const timestamps = (_ipRequests.get(ip) || []).filter(
+    (t) => now - t < 3600000,
+  );
+  if (timestamps.length >= 5) {
+    return res
+      .status(429)
+      .json({ error: "Trop de commandes. Réessayez dans une heure." });
+  }
+  timestamps.push(now);
+  _ipRequests.set(ip, timestamps);
+  next();
+}
+
+// Normalise un numéro algérien vers 0XXXXXXXXX
+// Accepte: 0558210430 / +213558210430 / +2130558210430
+function normalizeAlgerianPhone(phone) {
+  const p = phone.replace(/\s/g, "");
+  if (/^\+2130[5-7]\d{8}$/.test(p)) return "0" + p.slice(4);
+  if (/^\+213[5-7]\d{8}$/.test(p)) return "0" + p.slice(3);
+  if (/^0[5-7]\d{8}$/.test(p)) return p;
+  return null;
+}
+
 async function generateRef() {
   const { rows } = await db.query("SELECT COUNT(*) as c FROM orders");
   return "#MT-" + String(parseInt(rows[0].c) + 1).padStart(4, "0");
@@ -15,9 +46,9 @@ async function generateRef() {
 function validateOrderInput({ customer, phone, wilaya, items }) {
   if (!customer || typeof customer !== "string" || customer.trim().length < 2)
     return "Nom invalide (minimum 2 caractères).";
-  const phoneClean = phone?.replace(/\s/g, "");
-  if (!phoneClean || !/^(05|06|07)\d{8}$/.test(phoneClean))
-    return "Numéro de téléphone invalide (ex: 0555123456).";
+  const phoneClean = normalizeAlgerianPhone(phone || "");
+  if (!phoneClean)
+    return "Numéro de téléphone invalide (ex: 0558210430, +213558210430 ou +2130558210430).";
   if (!wilaya || typeof wilaya !== "string" || wilaya.trim().length < 2)
     return "Wilaya invalide.";
   if (!Array.isArray(items) || items.length === 0 || items.length > 20)
@@ -36,7 +67,7 @@ function validateOrderInput({ customer, phone, wilaya, items }) {
 }
 
 // ── POST /api/orders ──────────────────────────────────────
-router.post("/", optionalAuth, async (req, res) => {
+router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
   try {
     const {
       customer,
@@ -125,7 +156,7 @@ router.post("/", optionalAuth, async (req, res) => {
         orderRef,
         userId,
         customer.trim().substring(0, 100),
-        phone.replace(/\s/g, ""),
+        normalizeAlgerianPhone(phone) || phone.replace(/\s/g, ""),
         wilaya.trim().substring(0, 100),
         address ? address.trim().substring(0, 300) : null,
         JSON.stringify(enrichedItems),
@@ -176,11 +207,9 @@ router.get("/track/:ref", async (req, res) => {
       [ref],
     );
     if (!rows[0])
-      return res
-        .status(404)
-        .json({
-          error: "Commande introuvable. Vérifiez le numéro (ex: #MT-0001).",
-        });
+      return res.status(404).json({
+        error: "Commande introuvable. Vérifiez le numéro (ex: #MT-0001).",
+      });
     const o = rows[0];
     res.json({ ...o, items: JSON.parse(o.items) });
   } catch (err) {
