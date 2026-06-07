@@ -2129,33 +2129,54 @@
         window.location.href = 'index.html#open-cart';
       }
 
-      function renderCartModal() {
+      async function renderCartModal() {
         const container = document.getElementById('cart-items-list');
         const summary   = document.getElementById('cart-summary-box');
         const titleEl   = document.getElementById('cart-modal-title');
         const cart = loadCart();
         const count = cart.reduce((s,i) => s + i.qty, 0);
         if (titleEl) titleEl.textContent = `Votre Panier (${count} article${count!==1?'s':''})`;
+
         if (cart.length === 0) {
           container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--gray-400);font-size:0.9rem;">Votre panier est vide.</div>';
           if (summary) summary.style.display = 'none';
           return;
         }
+
+        // Fetch all products to get names, icons and prices correctly
+        let allProducts = [];
+        try { allProducts = await ProductsAPI.getAll(); } catch(e) {}
+
         let subtotal = 0;
         container.innerHTML = cart.map(item => {
-          const priceEach = item.price || 0;
-          const total = priceEach * item.qty;
-          subtotal += total;
-          const label = item.variantLabel && item.variantLabel !== 'Standard' ? ` (${item.variantLabel})` : '';
+          // Try to find product from API data first, fallback to stored data
+          const p = allProducts.find(x => x.id === item.id);
+          const name = p ? p.name : (item.name || 'Produit');
+          const icon = p ? (p.icon || '📦') : '📦';
+          let priceEach = 0;
+          if (p) {
+            const vPrices = typeof p.variantPrices === 'string'
+              ? JSON.parse(p.variantPrices || '[]')
+              : (p.variantPrices || [p.price || 0]);
+            priceEach = vPrices[item.variant] ?? vPrices[0] ?? p.price ?? 0;
+          } else {
+            priceEach = item.price || 0;
+          }
+          const lineTotal = priceEach * item.qty;
+          subtotal += lineTotal;
+          const variantLabel = item.variantLabel && item.variantLabel !== 'Standard' ? item.variantLabel : (p && p.variants ? (typeof p.variants === 'string' ? JSON.parse(p.variants||'[]') : p.variants)[item.variant] : null);
           return `
             <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid var(--gray-100);">
+              <div style="width:48px;height:48px;background:var(--green-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">${icon}</div>
               <div style="flex:1;min-width:0;">
-                <div style="font-weight:700;font-size:0.88rem;">${item.name}${label}</div>
-                <div style="font-size:0.75rem;color:var(--gray-500);">× ${item.qty}${priceEach ? ' · ' + (priceEach*item.qty).toLocaleString() + ' DA' : ''}</div>
+                <div style="font-weight:700;font-size:0.88rem;">${name}</div>
+                <div style="font-size:0.75rem;color:var(--gray-500);">${variantLabel || ''} × ${item.qty}</div>
               </div>
+              <div style="font-weight:700;color:var(--green-dark);font-size:0.9rem;">${lineTotal.toLocaleString()} DA</div>
               <button onclick="removeFromSharedCart(${item.id}, ${item.variant})" style="background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:1.1rem;padding:0 0.25rem;">✕</button>
             </div>`;
         }).join('');
+
         if (document.getElementById('cart-subtotal-val'))
           document.getElementById('cart-subtotal-val').textContent = subtotal.toLocaleString() + ' DA';
         if (document.getElementById('cart-total-val'))
@@ -2164,9 +2185,8 @@
       }
 
       function removeFromSharedCart(id, variant) {
-        const cart = loadCart();
-        const updated = cart.filter(c => !(c.id === id && c.variant === variant));
-        saveSharedCart(updated);
+        const cart = loadCart().filter(c => !(c.id === id && c.variant === variant));
+        saveSharedCart(cart);
         updateCartBadge();
         renderCartModal();
       }
@@ -2181,7 +2201,7 @@
         }
       }
 
-      // Open cart modal if redirected from product page
+      // Open cart modal if redirected here with hash
       if (window.location.hash === '#open-cart') {
         window.addEventListener('load', () => openCartModal());
       }

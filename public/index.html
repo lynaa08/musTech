@@ -7878,8 +7878,29 @@
           const previewContainer = document.getElementById("ap-imgs-preview");
           previewContainer.innerHTML = "";
           previewContainer.style.display = "flex";
-          for (let i = 0; i < e.target.files.length && i < 15; i++) {
-            const file = e.target.files[i];
+          const allowed = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+            "image/gif",
+            "image/avif",
+          ];
+          const validFiles = Array.from(e.target.files).filter((f) => {
+            if (!allowed.includes(f.type)) {
+              showToast(`❌ Fichier ignoré : ${f.name} (format non supporté)`);
+              return false;
+            }
+            return true;
+          });
+          if (validFiles.length !== e.target.files.length) {
+            // Replace file list with only valid files using DataTransfer
+            const dt = new DataTransfer();
+            validFiles.forEach((f) => dt.items.add(f));
+            e.target.files = dt.files;
+          }
+          for (let i = 0; i < validFiles.length && i < 15; i++) {
+            const file = validFiles[i];
             const reader = new FileReader();
             reader.onload = (ev) => {
               const img = document.createElement("img");
@@ -7937,16 +7958,23 @@
       function deleteCatPill(e, btn, prefix) {
         e.stopPropagation();
         e.preventDefault();
-        // btn is the cat-pill element; remove only this one pill
         const pill = btn.closest ? btn.closest(".cat-pill") : btn;
         if (pill) {
-          // Remove from localStorage if it was a custom cat
           const val = pill.dataset.val;
           if (val) {
+            // Remove from custom cats list
             const saved = getCustomCats().filter(
               (c) => c.toLowerCase() !== val.toLowerCase(),
             );
             localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(saved));
+            // Add to deleted blocklist so hardcoded pills don't reappear on refresh
+            const deleted = getDeletedCats();
+            if (
+              !deleted.map((c) => c.toLowerCase()).includes(val.toLowerCase())
+            ) {
+              deleted.push(val);
+              localStorage.setItem(DELETED_CATS_KEY, JSON.stringify(deleted));
+            }
           }
           pill.remove();
         }
@@ -8006,6 +8034,7 @@
 
       // ── CUSTOM CATEGORY PERSISTENCE ───────────────────────────
       const CUSTOM_CATS_KEY = "mt_custom_cats";
+      const DELETED_CATS_KEY = "mt_deleted_cats";
 
       function saveCustomCats(newCat) {
         const saved = getCustomCats();
@@ -8013,6 +8042,11 @@
           saved.push(newCat);
           localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(saved));
         }
+        // If re-adding a previously deleted cat, undelete it
+        const deleted = getDeletedCats().filter(
+          (c) => c.toLowerCase() !== newCat.toLowerCase(),
+        );
+        localStorage.setItem(DELETED_CATS_KEY, JSON.stringify(deleted));
       }
 
       function getCustomCats() {
@@ -8023,14 +8057,35 @@
         }
       }
 
+      function getDeletedCats() {
+        try {
+          return JSON.parse(localStorage.getItem(DELETED_CATS_KEY) || "[]");
+        } catch {
+          return [];
+        }
+      }
+
       function restoreCustomCatPills(prefix) {
         const container = document.getElementById(prefix + "-cat-pills");
         if (!container) return;
+        const deletedCats = getDeletedCats().map((c) => c.toLowerCase());
+
+        // Hide hardcoded pills that were deleted by user
+        container.querySelectorAll(".cat-pill[data-val]").forEach((pill) => {
+          if (deletedCats.includes((pill.dataset.val || "").toLowerCase())) {
+            pill.remove();
+          }
+        });
+
+        // Add custom cats (that aren't deleted)
         const customCats = getCustomCats();
         customCats.forEach((val) => {
+          if (deletedCats.includes(val.toLowerCase())) return;
           const alreadyExists = Array.from(
             container.querySelectorAll(".cat-pill"),
-          ).some((b) => b.dataset.val.toLowerCase() === val.toLowerCase());
+          ).some(
+            (b) => (b.dataset.val || "").toLowerCase() === val.toLowerCase(),
+          );
           if (alreadyExists) return;
           const btn = document.createElement("button");
           btn.type = "button";
