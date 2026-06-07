@@ -1734,7 +1734,7 @@
           return;
         }
         if (!phoneNorm) {
-          showToast("Numéro invalide ! ");
+          showToast("Numéro invalide ! Ex: 0558210430 ou +213558210430");
           const phoneEl = document.getElementById("co-phone");
           if (phoneEl) { phoneEl.style.borderColor = "#e53e3e"; phoneEl.focus(); }
           const errEl = document.getElementById("co-phone-error");
