@@ -7562,6 +7562,28 @@
         );
       }
 
+      // Helper function to get the next status in the workflow
+      function getNextStatus(currentStatus) {
+        const workflow = {
+          pending: "shipped", // pending → shipped (Expédier)
+          shipped: "delivered", // shipped → delivered (Livrer)
+          delivered: "delivered", // already delivered, no change
+          cancelled: "cancelled", // cancelled, no change
+        };
+        return workflow[currentStatus] || "shipped";
+      }
+
+      // Helper function to get the action button label based on current status
+      function getActionLabel(currentStatus) {
+        const labels = {
+          pending: "📦 Expédier", // Ship it
+          shipped: "✓ Livrer", // Deliver it
+          delivered: "✓ Livré", // Already delivered (disabled)
+          cancelled: "❌ Annulée", // Cancelled (disabled)
+        };
+        return labels[currentStatus] || "Expédier";
+      }
+
       async function populateAdminTables() {
         try {
           const [ordersRes, productsRes, ratingsRes] = await Promise.allSettled(
@@ -7718,7 +7740,7 @@
         <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
         <td><div class="action-btns">
           <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
-          <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'shipped')">Expédier</button>
+          <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'${getNextStatus(o.status)}')">${getActionLabel(o.status)}</button>
           <button class="action-btn action-del" onclick="deleteOrder(${o.id})">Supprimer</button>
         </div></td>
       </tr>`,
@@ -9351,19 +9373,30 @@
       function filterCat(el, cat) {
         const allChip = document.querySelector(".cat-chip[data-cat='all']");
         if (cat === "all") {
+          // Click "Tous" → clear all, show all products
           _activeCats.clear();
           document
             .querySelectorAll(".cat-chip")
             .forEach((c) => c.classList.remove("active"));
           el.classList.add("active");
         } else {
+          // Single-select: clear previous selection, select only this one
           if (allChip) allChip.classList.remove("active");
+
+          // Check if this category is already selected
           if (_activeCats.has(cat)) {
-            _activeCats.delete(cat);
-            el.classList.remove("active");
-            if (_activeCats.size === 0 && allChip)
-              allChip.classList.add("active");
+            // Click same category again → deselect it, show all
+            _activeCats.clear();
+            document
+              .querySelectorAll(".cat-chip")
+              .forEach((c) => c.classList.remove("active"));
+            if (allChip) allChip.classList.add("active");
           } else {
+            // Click new category → clear previous, select only this one
+            _activeCats.clear();
+            document
+              .querySelectorAll(".cat-chip")
+              .forEach((c) => c.classList.remove("active"));
             _activeCats.add(cat);
             el.classList.add("active");
           }
@@ -11168,7 +11201,7 @@
             <td><span class="status-badge status-${o.status}">${statusLabel(o.status)}</span></td>
             <td><div class="action-btns">
               <button class="action-btn action-view" onclick="viewOrder(${o.id})">Voir</button>
-              <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'delivered')">✓ Livré</button>
+              <button class="action-btn action-edit" onclick="changeOrderStatusById(${o.id},'${getNextStatus(o.status)}')">${getActionLabel(o.status)}</button>
               <button class="action-btn action-del" onclick="deleteOrder(${o.id})">🗑 Supprimer</button>
             </div></td>
           </tr>`,
