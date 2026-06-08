@@ -7136,7 +7136,7 @@
                     color: var(--gray-400, #aaa);
                     margin-top: 0.2rem;
                   ">
-                  JPG, PNG, WEBP — max 5 Mo chacune (15 max)
+                  JPG, PNG, WEBP, AVIF — max 5 Mo chacune (15 max)
                 </div>
                 <input
                   type="file"
@@ -7898,6 +7898,46 @@
         openModal("edit-product-modal");
       }
 
+      // ── AVIF → WebP CONVERTER ─────────────────────────────────
+      // Converts any image file (including AVIF) to WebP via canvas
+      // Returns a Promise<File[]> — safe to use with FormData
+      function convertFilesToWebP(files) {
+        return Promise.all(
+          Array.from(files).map((file) => {
+            // Already a supported format — no conversion needed
+            if (file.type !== "image/avif") return Promise.resolve(file);
+            return new Promise((resolve) => {
+              const url = URL.createObjectURL(file);
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                canvas.getContext("2d").drawImage(img, 0, 0);
+                URL.revokeObjectURL(url);
+                canvas.toBlob(
+                  (blob) => {
+                    const converted = new File(
+                      [blob],
+                      file.name.replace(/\.avif$/i, ".webp"),
+                      { type: "image/webp" },
+                    );
+                    resolve(converted);
+                  },
+                  "image/webp",
+                  0.92,
+                );
+              };
+              img.onerror = () => {
+                URL.revokeObjectURL(url);
+                resolve(file);
+              };
+              img.src = url;
+            });
+          }),
+        );
+      }
+
       async function saveEditProduct() {
         const id = parseInt(document.getElementById("ep-id").value);
         const name = document.getElementById("ep-name").value.trim();
@@ -7954,7 +7994,8 @@
         fd.append("cost_price", costPrice);
         fd.append("description", desc);
         if (imgInput && imgInput.files.length > 0) {
-          for (const file of imgInput.files) {
+          const converted = await convertFilesToWebP(imgInput.files);
+          for (const file of converted) {
             fd.append("images", file);
           }
         }
@@ -8528,8 +8569,9 @@
 
         const fileInput = document.getElementById("ap-imgs");
         if (fileInput && fileInput.files.length > 0) {
-          for (let i = 0; i < fileInput.files.length && i < 15; i++) {
-            fd.append("images", fileInput.files[i]);
+          const converted = await convertFilesToWebP(fileInput.files);
+          for (let i = 0; i < converted.length && i < 15; i++) {
+            fd.append("images", converted[i]);
           }
         }
 
