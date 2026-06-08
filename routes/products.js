@@ -33,15 +33,20 @@ function parseProduct(row) {
   const variants = JSON.parse(row.variants || '["Standard"]');
   const variantPrices = JSON.parse(row.variant_prices || "[0]");
   const variantStocks = JSON.parse(row.variant_stocks || "[]");
+  const variantPurchasePrices = JSON.parse(row.variant_purchase_prices || "[]");
 
   // Pad variant_stocks if missing entries
   while (variantStocks.length < variants.length) variantStocks.push(0);
+  // Pad variant_purchase_prices if missing entries
+  while (variantPurchasePrices.length < variants.length)
+    variantPurchasePrices.push(0);
 
   return {
     ...row,
     variants,
     variantPrices,
     variantStocks,
+    variantPurchasePrices,
     oldPrice: row.old_price,
     costPrice: row.cost_price || 0,
     img: row.img || null,
@@ -129,6 +134,7 @@ router.post(
         variants,
         variant_prices,
         variant_stocks,
+        variant_purchase_prices,
         badge,
         description,
       } = req.body;
@@ -144,6 +150,9 @@ router.post(
       const stocksArr = variant_stocks
         ? JSON.parse(variant_stocks)
         : variantsArr.map(() => 0);
+      const purchasePricesArr = variant_purchase_prices
+        ? JSON.parse(variant_purchase_prices)
+        : variantsArr.map(() => (cost_price ? parseInt(cost_price) : 0));
       const totalStock = stocksArr.reduce((a, b) => a + b, 0);
       const uploadedFiles = req.files ? req.files.map((f) => f.path) : [];
       const primaryImg = uploadedFiles[0] || null;
@@ -154,9 +163,16 @@ router.post(
       );
       const newSortOrder = minRow[0].new_order;
 
+      // Ensure variant_purchase_prices column exists (migration safety)
+      await db
+        .query(
+          `ALTER TABLE products ADD COLUMN IF NOT EXISTS variant_purchase_prices TEXT DEFAULT '[]'`,
+        )
+        .catch(() => {});
+
       const { rows } = await db.query(
-        `INSERT INTO products (name,cat,price,old_price,cost_price,icon,img,images,variants,variant_prices,variant_stocks,stock,badge,description,sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *`,
+        `INSERT INTO products (name,cat,price,old_price,cost_price,icon,img,images,variants,variant_prices,variant_stocks,variant_purchase_prices,stock,badge,description,sort_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,
         [
           name,
           cat,
@@ -169,6 +185,7 @@ router.post(
           JSON.stringify(variantsArr),
           JSON.stringify(pricesArr),
           JSON.stringify(stocksArr),
+          JSON.stringify(purchasePricesArr),
           totalStock,
           badge || null,
           description || null,
@@ -219,6 +236,7 @@ router.put(
         variants,
         variant_prices,
         variant_stocks,
+        variant_purchase_prices,
         badge,
         description,
       } = req.body;
@@ -231,6 +249,9 @@ router.put(
       const stocksArr = variant_stocks
         ? JSON.parse(variant_stocks)
         : JSON.parse(ex.variant_stocks || "[]");
+      const purchasePricesArr = variant_purchase_prices
+        ? JSON.parse(variant_purchase_prices)
+        : JSON.parse(ex.variant_purchase_prices || "[]");
       const totalStock = stocksArr.reduce((a, b) => a + b, 0);
 
       const existingImgs = JSON.parse(ex.images || "[]");
@@ -239,14 +260,22 @@ router.put(
         : [];
       const newFiles =
         req.files && req.files.length > 0 ? req.files.map((f) => f.path) : [];
-      const kept = existingImgs.filter((img) => !toRemove.includes(img));
+      // Use keptImages (ordered by admin) if provided; otherwise filter from existing
+      let kept;
+      if (req.body.keptImages) {
+        kept = JSON.parse(req.body.keptImages).filter(
+          (img) => !toRemove.includes(img),
+        );
+      } else {
+        kept = existingImgs.filter((img) => !toRemove.includes(img));
+      }
       const uploadedFiles = [...kept, ...newFiles].slice(0, 15);
       const primaryImg = uploadedFiles[0] || ex.img;
 
       const { rows } = await db.query(
         `UPDATE products SET name=$1,cat=$2,price=$3,old_price=$4,cost_price=$5,icon=$6,
-       img=$7,images=$8,variants=$9,variant_prices=$10,variant_stocks=$11,stock=$12,badge=$13,description=$14,status=$15
-       WHERE id=$16 RETURNING *`,
+       img=$7,images=$8,variants=$9,variant_prices=$10,variant_stocks=$11,variant_purchase_prices=$12,stock=$13,badge=$14,description=$15,status=$16
+       WHERE id=$17 RETURNING *`,
         [
           name || ex.name,
           cat || ex.cat,
@@ -259,6 +288,7 @@ router.put(
           JSON.stringify(variantsArr),
           JSON.stringify(pricesArr),
           JSON.stringify(stocksArr),
+          JSON.stringify(purchasePricesArr),
           totalStock,
           badge !== undefined ? badge : ex.badge,
           description !== undefined ? description : ex.description,

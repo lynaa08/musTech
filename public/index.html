@@ -7916,13 +7916,20 @@
           .value.split(",")
           .map((v) => v.trim())
           .filter(Boolean);
+        const variantPurchasePrices = p.variantPurchasePrices || [];
         if (epRenderedVariants.length > 1) {
           epRenderedVariants.forEach((_, i) => {
-            const el = document.getElementById("ep-stock-" + i);
-            if (el)
-              el.value =
+            const stockEl = document.getElementById("ep-stock-" + i);
+            if (stockEl)
+              stockEl.value =
                 variantStocks[i] !== undefined && variantStocks[i] !== null
                   ? variantStocks[i]
+                  : 0;
+            const purchaseEl = document.getElementById("ep-purchase-" + i);
+            if (purchaseEl)
+              purchaseEl.value =
+                variantPurchasePrices[i] !== undefined
+                  ? variantPurchasePrices[i]
                   : 0;
           });
         } else {
@@ -7942,20 +7949,12 @@
 
         const existingImgs =
           p.images && p.images.length > 0 ? p.images : p.img ? [p.img] : [];
-        const grid = document.getElementById("ep-current-imgs-grid");
-        const countEl = document.getElementById("ep-img-count");
-        if (existingImgs.length > 0 && grid && currentWrap) {
+        // Store in sortable array
+        window._epCurrentImages = [...existingImgs];
+
+        if (existingImgs.length > 0 && currentWrap) {
           currentWrap.style.display = "block";
-          grid.innerHTML = existingImgs
-            .map(
-              (src, i) => `
-            <div style="position:relative;width:80px;height:80px;" id="ep-img-slot-${i}">
-              <img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1.5px solid var(--gray-100);">
-              <button type="button" onclick="epRemoveExistingImg('${src}', ${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#ff4b6e;border:none;color:#fff;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
-            </div>`,
-            )
-            .join("");
-          if (countEl) countEl.textContent = "(" + existingImgs.length + ")";
+          epRenderCurrentImagesGrid();
         } else if (currentWrap) {
           currentWrap.style.display = "none";
         }
@@ -8044,6 +8043,17 @@
           variantStocks = [stock];
         }
 
+        // Read per-variant purchase prices
+        let variantPurchasePrices;
+        if (variants.length > 1) {
+          variantPurchasePrices = variants.map((_, i) => {
+            const el = document.getElementById("ep-purchase-" + i);
+            return el ? parseInt(el.value) || 0 : 0;
+          });
+        } else {
+          variantPurchasePrices = [costPrice];
+        }
+
         const desc = document.getElementById("ep-desc").value.trim();
         const imgInput = document.getElementById("ep-image");
 
@@ -8058,6 +8068,10 @@
         fd.append("variant_prices", JSON.stringify(variantPrices));
         fd.append("variant_stocks", JSON.stringify(variantStocks));
         fd.append("cost_price", costPrice);
+        fd.append(
+          "variant_purchase_prices",
+          JSON.stringify(variantPurchasePrices),
+        );
         fd.append("description", desc);
         if (imgInput && imgInput.files.length > 0) {
           const converted = await convertFilesToWebP(imgInput.files);
@@ -8065,6 +8079,9 @@
             fd.append("images", file);
           }
         }
+        // Send reordered existing images list
+        const keptOrdered = window._epCurrentImages || [];
+        fd.append("keptImages", JSON.stringify(keptOrdered));
         // Send list of removed existing images
         const removed = window._epRemovedImages || [];
         if (removed.length > 0) {
@@ -8095,17 +8112,19 @@
       function epRemoveExistingImg(src, idx) {
         window._epRemovedImages = window._epRemovedImages || [];
         window._epRemovedImages.push(src);
-        const slot = document.getElementById("ep-img-slot-" + idx);
-        if (slot) slot.remove();
-        const grid = document.getElementById("ep-current-imgs-grid");
-        const countEl = document.getElementById("ep-img-count");
-        if (grid && countEl) {
-          const remaining = grid.querySelectorAll(
-            "[id^='ep-img-slot-']",
-          ).length;
-          countEl.textContent = remaining > 0 ? "(" + remaining + ")" : "";
-          const wrap = document.getElementById("ep-current-img-wrap");
-          if (remaining === 0 && wrap) wrap.style.display = "none";
+        if (window._epCurrentImages) {
+          window._epCurrentImages = window._epCurrentImages.filter(
+            (s) => s !== src,
+          );
+        }
+        epRenderCurrentImagesGrid();
+        const wrap = document.getElementById("ep-current-img-wrap");
+        if (
+          window._epCurrentImages &&
+          window._epCurrentImages.length === 0 &&
+          wrap
+        ) {
+          wrap.style.display = "none";
         }
       }
 
@@ -8302,11 +8321,7 @@
       // ADD PRODUCT
       document.addEventListener("change", (e) => {
         if (e.target.id === "ap-imgs") {
-          const previewContainer = document.getElementById("ap-imgs-preview");
-          previewContainer.innerHTML = "";
-          previewContainer.style.display = "flex";
           const validFiles = Array.from(e.target.files).filter((f) => {
-            // Accept any image/* MIME type; reject clearly non-image files
             if (!f.type.startsWith("image/")) {
               showToast(`❌ Fichier ignoré : ${f.name} (images uniquement)`);
               return false;
@@ -8318,27 +8333,9 @@
             validFiles.forEach((f) => dt.items.add(f));
             e.target.files = dt.files;
           }
-          // Use createObjectURL — works for all formats including AVIF, WEBP etc.
-          for (let i = 0; i < validFiles.length && i < 15; i++) {
-            const file = validFiles[i];
-            const url = URL.createObjectURL(file);
-            const img = document.createElement("img");
-            img.src = url;
-            img.style.cssText =
-              "height:60px;width:60px;border-radius:8px;object-fit:cover;";
-            img.onerror = () => {
-              // Fallback: show a format badge if browser can't render preview
-              img.style.display = "none";
-              const badge = document.createElement("div");
-              badge.style.cssText =
-                "height:60px;width:60px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:var(--green-dark);text-align:center;padding:4px;";
-              badge.textContent = file.name.split(".").pop().toUpperCase();
-              previewContainer.appendChild(badge);
-              URL.revokeObjectURL(url);
-            };
-            img.onload = () => URL.revokeObjectURL(url);
-            previewContainer.appendChild(img);
-          }
+          // Store files in global array for sortable ordering
+          window._apImageFiles = validFiles.slice(0, 15);
+          renderApImagePreview();
         }
       });
 
@@ -8544,24 +8541,39 @@
           : [];
         // Save existing values before re-render
         const existing = {};
+        const existingPurchase = {};
         container
           .querySelectorAll("input[data-variant-stock]")
           .forEach((el) => {
             existing[el.dataset.variantStock] = el.value;
+          });
+        container
+          .querySelectorAll("input[data-variant-purchase]")
+          .forEach((el) => {
+            existingPurchase[el.dataset.variantPurchase] = el.value;
           });
         const singleEl = document.getElementById(prefix + "-stock");
         const existingSingle = singleEl ? singleEl.value : "";
         if (variants.length <= 1) {
           container.innerHTML = `<input type="number" id="${prefix}-stock" placeholder="Stock" value="${existingSingle}" style="width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--gray-100);border-radius:10px;font-family:inherit;font-size:0.9rem;" />`;
         } else {
-          container.innerHTML = variants
+          // Header row
+          container.innerHTML = `<div style="display:grid;grid-template-columns:130px 1fr 1fr;gap:0.5rem;margin-bottom:0.3rem;padding:0 0.1rem;">
+            <span style="font-size:0.72rem;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.04em;">Variante</span>
+            <span style="font-size:0.72rem;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.04em;">Stock</span>
+            <span style="font-size:0.72rem;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:0.04em;">🔒 Prix d'Achat</span>
+          </div>`;
+          container.innerHTML += variants
             .map(
               (v, i) => `
-            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
-              <span style="font-size:0.85rem;font-weight:700;color:var(--gray-700);min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${v}">${v}</span>
+            <div style="display:grid;grid-template-columns:130px 1fr 1fr;align-items:center;gap:0.5rem;margin-bottom:0.45rem;">
+              <span style="font-size:0.83rem;font-weight:700;color:var(--gray-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${v}">${v}</span>
               <input type="number" id="${prefix}-stock-${i}" data-variant-stock="${i}" placeholder="0"
                 value="${existing[i] !== undefined ? existing[i] : ""}"
-                style="flex:1;padding:0.55rem 0.75rem;border:1.5px solid var(--gray-100);border-radius:8px;font-family:inherit;font-size:0.88rem;" />
+                style="padding:0.5rem 0.65rem;border:1.5px solid var(--gray-100);border-radius:8px;font-family:inherit;font-size:0.85rem;width:100%;" />
+              <input type="number" id="${prefix}-purchase-${i}" data-variant-purchase="${i}" placeholder="Coût DA"
+                value="${existingPurchase[i] !== undefined ? existingPurchase[i] : ""}"
+                style="padding:0.5rem 0.65rem;border:1.5px solid #fcd34d;border-radius:8px;font-family:inherit;font-size:0.85rem;width:100%;background:#fffbeb;" />
             </div>`,
             )
             .join("");
@@ -8611,6 +8623,17 @@
           variantStocks = [stock];
         }
 
+        // Read per-variant purchase prices
+        let variantPurchasePrices;
+        if (variants.length > 1) {
+          variantPurchasePrices = variants.map((_, i) => {
+            const el = document.getElementById("ap-purchase-" + i);
+            return el ? parseInt(el.value) || 0 : 0;
+          });
+        } else {
+          variantPurchasePrices = [costPrice];
+        }
+
         // Validate
         if (!name || !price) {
           errEl.textContent =
@@ -8631,11 +8654,21 @@
         fd.append("variant_prices", JSON.stringify(variantPrices));
         fd.append("variant_stocks", JSON.stringify(variantStocks));
         fd.append("cost_price", costPrice);
+        fd.append(
+          "variant_purchase_prices",
+          JSON.stringify(variantPurchasePrices),
+        );
         if (desc) fd.append("description", desc);
 
-        const fileInput = document.getElementById("ap-imgs");
-        if (fileInput && fileInput.files.length > 0) {
-          const converted = await convertFilesToWebP(fileInput.files);
+        // Use sorted file array from drag-reorder (window._apImageFiles) if available
+        const apFiles =
+          window._apImageFiles ||
+          (() => {
+            const fi = document.getElementById("ap-imgs");
+            return fi ? Array.from(fi.files) : [];
+          })();
+        if (apFiles.length > 0) {
+          const converted = await convertFilesToWebP(apFiles);
           for (let i = 0; i < converted.length && i < 15; i++) {
             fd.append("images", converted[i]);
           }
@@ -8672,6 +8705,7 @@
           document.getElementById("ap-imgs-preview").style.display = "none";
           document.getElementById("ap-imgs-preview").innerHTML = "";
           document.getElementById("ap-imgs").value = "";
+          window._apImageFiles = [];
 
           closeModal("add-product-modal");
           showToast(`"${name}" ajouté avec succès !`);
@@ -8680,6 +8714,186 @@
           errEl.style.display = "block";
           showToast("Erreur: " + e.message);
         }
+      }
+
+      // ── SORTABLE IMAGE PREVIEW (Add Product) ────────────────
+      window._apImageFiles = window._apImageFiles || [];
+
+      function renderApImagePreview() {
+        const container = document.getElementById("ap-imgs-preview");
+        if (!container) return;
+        const files = window._apImageFiles;
+        if (!files || files.length === 0) {
+          container.style.display = "none";
+          container.innerHTML = "";
+          return;
+        }
+        container.style.display = "flex";
+        container.style.flexWrap = "wrap";
+        container.style.gap = "0.5rem";
+        container.style.marginTop = "0.5rem";
+        container.innerHTML = "";
+        files.forEach((file, idx) => {
+          const wrapper = document.createElement("div");
+          wrapper.dataset.idx = idx;
+          wrapper.draggable = true;
+          wrapper.style.cssText =
+            "position:relative;width:72px;height:72px;border-radius:10px;border:2px solid var(--gray-100);overflow:visible;cursor:grab;transition:box-shadow 0.15s,transform 0.15s;flex-shrink:0;";
+          wrapper.title = "Glisser pour réorganiser";
+
+          const url = URL.createObjectURL(file);
+          const img = document.createElement("img");
+          img.src = url;
+          img.style.cssText =
+            "width:72px;height:72px;object-fit:cover;border-radius:8px;display:block;pointer-events:none;";
+          img.onload = () => URL.revokeObjectURL(url);
+          img.onerror = () => {
+            img.style.display = "none";
+            const badge = document.createElement("div");
+            badge.style.cssText =
+              "width:72px;height:72px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;color:var(--green-dark);text-align:center;border-radius:8px;";
+            badge.textContent = file.name.split(".").pop().toUpperCase();
+            wrapper.insertBefore(badge, rmBtn);
+            URL.revokeObjectURL(url);
+          };
+
+          // Order badge
+          const badge = document.createElement("span");
+          badge.textContent = idx + 1;
+          badge.style.cssText =
+            "position:absolute;top:-6px;left:-6px;width:18px;height:18px;border-radius:50%;background:var(--green-dark,#2d6a4f);color:#fff;font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;";
+
+          // Remove btn
+          const rmBtn = document.createElement("button");
+          rmBtn.type = "button";
+          rmBtn.textContent = "✕";
+          rmBtn.style.cssText =
+            "position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#ff4b6e;border:none;color:#fff;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:2;";
+          rmBtn.onclick = (ev) => {
+            ev.stopPropagation();
+            window._apImageFiles.splice(idx, 1);
+            renderApImagePreview();
+          };
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(badge);
+          wrapper.appendChild(rmBtn);
+          container.appendChild(wrapper);
+
+          // Drag-to-reorder
+          let dragSrcIdx = null;
+          wrapper.addEventListener("dragstart", (ev) => {
+            dragSrcIdx = idx;
+            ev.dataTransfer.effectAllowed = "move";
+            wrapper.style.opacity = "0.5";
+            wrapper.style.transform = "scale(0.95)";
+          });
+          wrapper.addEventListener("dragend", () => {
+            wrapper.style.opacity = "";
+            wrapper.style.transform = "";
+          });
+          wrapper.addEventListener("dragover", (ev) => {
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "move";
+            wrapper.style.boxShadow = "0 0 0 3px var(--green,#2d6a4f)";
+          });
+          wrapper.addEventListener("dragleave", () => {
+            wrapper.style.boxShadow = "";
+          });
+          wrapper.addEventListener("drop", (ev) => {
+            ev.preventDefault();
+            wrapper.style.boxShadow = "";
+            const fromIdx = parseInt(
+              ev.dataTransfer.getData("text/plain") || dragSrcIdx,
+            );
+            const toIdx = idx;
+            if (fromIdx === toIdx) return;
+            const moved = window._apImageFiles.splice(fromIdx, 1)[0];
+            window._apImageFiles.splice(toIdx, 0, moved);
+            renderApImagePreview();
+          });
+          wrapper.addEventListener("dragstart", (ev) => {
+            ev.dataTransfer.setData("text/plain", idx);
+          });
+        });
+
+        // Hint label
+        if (files.length > 1) {
+          const hint = document.createElement("div");
+          hint.style.cssText =
+            "width:100%;font-size:0.7rem;color:var(--gray-400,#aaa);margin-top:0.15rem;";
+          hint.textContent =
+            "🔀 Glisser pour réorganiser — La 1ère image sera la principale";
+          container.appendChild(hint);
+        }
+      }
+
+      // ── SORTABLE IMAGE REORDER (Edit Product) ────────────────
+      function initEpImageSortable() {
+        const grid = document.getElementById("ep-current-imgs-grid");
+        if (!grid) return;
+        const items = Array.from(grid.children);
+        items.forEach((item, fromIdx) => {
+          item.draggable = true;
+          item.style.cursor = "grab";
+          item.title = "Glisser pour réorganiser";
+          item.addEventListener("dragstart", (ev) => {
+            ev.dataTransfer.setData("text/plain", fromIdx);
+            ev.dataTransfer.effectAllowed = "move";
+            item.style.opacity = "0.5";
+          });
+          item.addEventListener("dragend", () => {
+            item.style.opacity = "";
+          });
+          item.addEventListener("dragover", (ev) => {
+            ev.preventDefault();
+            item.style.boxShadow = "0 0 0 3px var(--green,#2d6a4f)";
+          });
+          item.addEventListener("dragleave", () => {
+            item.style.boxShadow = "";
+          });
+          item.addEventListener("drop", (ev) => {
+            ev.preventDefault();
+            item.style.boxShadow = "";
+            const srcIdx = parseInt(ev.dataTransfer.getData("text/plain"));
+            const destIdx = fromIdx;
+            if (srcIdx === destIdx) return;
+            // Reorder the _epCurrentImages array
+            if (!window._epCurrentImages) return;
+            const moved = window._epCurrentImages.splice(srcIdx, 1)[0];
+            window._epCurrentImages.splice(destIdx, 0, moved);
+            // Re-render the grid
+            epRenderCurrentImagesGrid();
+          });
+        });
+      }
+
+      function epRenderCurrentImagesGrid() {
+        const grid = document.getElementById("ep-current-imgs-grid");
+        const countEl = document.getElementById("ep-img-count");
+        if (!grid || !window._epCurrentImages) return;
+        const imgs = window._epCurrentImages;
+        grid.innerHTML = imgs
+          .map(
+            (src, i) => `
+          <div style="position:relative;width:80px;height:80px;" id="ep-img-slot-${i}">
+            <img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1.5px solid var(--gray-100);">
+            <span style="position:absolute;top:-5px;left:-5px;width:16px;height:16px;border-radius:50%;background:var(--green-dark,#2d6a4f);color:#fff;font-size:0.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:2;">${i + 1}</span>
+            <button type="button" onclick="epRemoveExistingImg('${src}', ${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#ff4b6e;border:none;color:#fff;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+          </div>`,
+          )
+          .join("");
+        if (countEl) countEl.textContent = "(" + imgs.length + ")";
+        // Add drag hint if multiple
+        if (imgs.length > 1) {
+          const hint = document.createElement("div");
+          hint.style.cssText =
+            "width:100%;font-size:0.7rem;color:var(--gray-400,#aaa);margin-top:0.3rem;";
+          hint.textContent =
+            "🔀 Glisser pour réorganiser — La 1ère image sera la principale";
+          grid.appendChild(hint);
+        }
+        setTimeout(initEpImageSortable, 50);
       }
 
       function triggerImgUpload(productId) {
