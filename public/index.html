@@ -7609,9 +7609,9 @@
             const el = document.getElementById(id);
             if (el) el.textContent = val;
           };
-          // Profit = revenue - cost of sold items
+          // Profit = revenue - cost of sold items (ONLY DELIVERED ORDERS)
           const totalCost = ORDERS.filter(
-            (o) => o.status !== "cancelled",
+            (o) => o.status === "delivered",
           ).reduce((sum, o) => {
             const items = Array.isArray(o.items)
               ? o.items
@@ -7628,7 +7628,13 @@
               }, 0)
             );
           }, 0);
-          const profit = totalRevenue - totalCost;
+
+          // Calculate revenue from delivered orders only (for profit calculation)
+          const deliveredRevenueForProfit = ORDERS.filter(
+            (o) => o.status === "delivered",
+          ).reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+
+          const profit = deliveredRevenueForProfit - totalCost;
           const shippedOrders = ORDERS.filter(
             (o) => o.status === "shipped",
           ).length;

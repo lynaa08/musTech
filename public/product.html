@@ -1501,7 +1501,7 @@
 
         // Variants — NO stock
         const varContainer = document.getElementById("variants-rows-container");
-        variantQtys = new Array(product.variants.length).fill(0);
+        variantQtys = new Array(product.variants.length).fill(1);
         varContainer.innerHTML = product.variants
           .map((v, i) => {
             const price = product.variantPrices[i] ?? product.variantPrices[0];
@@ -1513,7 +1513,7 @@
               </div>
               <div class="qty-ctrl">
                 <button class="qty-btn" onclick="changeVariantQty(${i},-1)">−</button>
-                <input class="qty-input" type="number" value="0" data-variant="${i}" readonly>
+                <input class="qty-input" type="number" value="1" data-variant="${i}" readonly>
                 <button class="qty-btn" onclick="changeVariantQty(${i},1)">+</button>
               </div>
             </div>`;
