@@ -655,23 +655,6 @@
         border-color: var(--green);
         box-shadow: 0 0 0 3px rgba(62, 207, 110, 0.15);
       }
-      .search-clear-btn {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--gray-300);
-        display: none;
-        padding: 0.25rem;
-        line-height: 1;
-        font-size: 1.1rem;
-      }
-      .search-clear-btn:hover {
-        color: var(--gray-700);
-      }
       .search-no-results {
         display: none;
         text-align: center;
@@ -2939,13 +2922,6 @@
               placeholder="Rechercher un produit…"
               oninput="handleClientSearch(this)"
               autocomplete="off" />
-            <button
-              class="search-clear-btn"
-              id="search-clear-btn"
-              onclick="clearClientSearch()"
-              title="Effacer">
-              ✕
-            </button>
           </div>
         </div>
       </div>
@@ -9205,8 +9181,6 @@
 
       function handleClientSearch(input) {
         _searchQuery = input.value.trim().toLowerCase();
-        const clearBtn = document.getElementById("search-clear-btn");
-        if (clearBtn) clearBtn.style.display = _searchQuery ? "block" : "none";
         applyClientSearch();
       }
 
@@ -9214,8 +9188,6 @@
         _searchQuery = "";
         const inp = document.getElementById("client-search-input");
         if (inp) inp.value = "";
-        const clearBtn = document.getElementById("search-clear-btn");
-        if (clearBtn) clearBtn.style.display = "none";
         applyClientSearch();
       }
 
