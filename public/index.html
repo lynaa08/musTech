@@ -5559,7 +5559,7 @@
                 placeholder="Facultatif" />
             </div>
           </div>
-          <div class="form-row">
+          <div class="form-row" id="ap-cost-price-row">
             <div class="form-group">
               <label>🔒 Prix d'Achat (DA)</label
               ><input
@@ -6436,7 +6436,7 @@
                 placeholder="Facultatif" />
             </div>
           </div>
-          <div class="form-row">
+          <div class="form-row" id="ep-cost-price-row">
             <div class="form-group">
               <label>🔒 Prix d'Achat (DA)</label
               ><input
@@ -8539,6 +8539,14 @@
               .map((v) => v.trim())
               .filter(Boolean)
           : [];
+
+        // Hide global Prix d'Achat when multiple variants (each variant has its own)
+        const costPriceRow = document.getElementById(
+          prefix + "-cost-price-row",
+        );
+        if (costPriceRow) {
+          costPriceRow.style.display = variants.length > 1 ? "none" : "";
+        }
         // Save existing values before re-render
         const existing = {};
         const existingPurchase = {};
