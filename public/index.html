@@ -626,7 +626,7 @@
       }
       .search-input-wrap svg {
         position: absolute;
-        left: 1rem;
+        right: 1rem;
         top: 50%;
         transform: translateY(-50%);
         color: var(--gray-500);
@@ -635,7 +635,7 @@
       }
       .search-input {
         width: 100%;
-        padding: 0.65rem 1rem 0.65rem 2.75rem;
+        padding: 0.65rem 2.75rem 0.65rem 1rem;
         border-radius: 50px;
         border: 1.5px solid var(--gray-100);
         background: #fff;
@@ -657,7 +657,7 @@
       }
       .search-clear-btn {
         position: absolute;
-        right: 0.75rem;
+        left: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
         background: none;
@@ -3942,6 +3942,7 @@
                     type="text"
                     id="promo-code"
                     class="form-input"
+                    placeholder="EX: SUMMER20"
                     maxlength="9"
                     oninput="
                       this.value = this.value
@@ -5115,6 +5116,7 @@
               <input
                 id="checkout-promo-input"
                 type="text"
+                placeholder="Ex: SUMMER20"
                 style="flex: 1; text-transform: uppercase"
                 oninput="this.value = this.value.toUpperCase()" />
               <button
