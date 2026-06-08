@@ -4323,7 +4323,7 @@
           </div>
         </div>
         <div class="footer-bottom">
-          <span>© 2026 Mus Tech. Tous droits réservés.</span>
+          <span>© 2025 Mus Tech. Tous droits réservés.</span>
           <span>Politique de Confidentialité · Conditions d'utilisation</span>
         </div>
       </div>
@@ -7965,13 +7965,20 @@
         }
 
         try {
-          await ProductsAPI.update(id, fd);
+          const result = await ProductsAPI.update(id, fd);
           PRODUCT_DESCS[id] = desc; // Mock update locally
           if (imgInput) imgInput.value = "";
           closeModal("edit-product-modal");
           await populateAdminTables();
           populateProducts();
-          showToast(`Produit modifié !`);
+          if (result.uploadWarning) {
+            showToast(
+              "⚠️ Produit modifié, mais l'image n'a pas pu être uploadée : " +
+                result.uploadWarning,
+            );
+          } else {
+            showToast("Produit modifié !");
+          }
         } catch (e) {
           showToast("Erreur: " + e.message);
         }
@@ -8011,6 +8018,22 @@
         _imgListenersAttached = true;
 
         const fileInput = document.getElementById("ep-image");
+        // Reset flag when modal closes so it re-attaches next time
+        const modal = document.getElementById("edit-product-modal");
+        if (modal && !modal._closeListenerAdded) {
+          modal._closeListenerAdded = true;
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) _imgListenersAttached = false;
+          });
+          const closeBtn = modal.querySelector(
+            "[onclick*=\"closeModal('edit-product-modal')\"]",
+          );
+          if (closeBtn) {
+            closeBtn.addEventListener("click", () => {
+              _imgListenersAttached = false;
+            });
+          }
+        }
         const dropZone = document.getElementById("ep-drop-zone");
         const newWrap = document.getElementById("ep-new-img-wrap");
         const grid = document.getElementById("ep-new-imgs-grid");
@@ -10837,7 +10860,7 @@
           doc.setFontSize(7.5);
           doc.setTextColor(150, 150, 150);
           doc.text(
-            "© 2026 Mus Tech — Alger, Algérie",
+            "© 2025 Mus Tech — Alger, Algérie",
             14,
             doc.internal.pageSize.height - 6,
           );

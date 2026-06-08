@@ -266,7 +266,10 @@ router.put(
           req.params.id,
         ],
       );
-      res.json(parseProduct(rows[0]));
+      res.json({
+        ...parseProduct(rows[0]),
+        uploadWarning: req.uploadError || undefined,
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
