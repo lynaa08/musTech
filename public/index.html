@@ -3718,7 +3718,7 @@
                   >
                 </div>
                 <div class="value" id="fin-revenue">0 DA</div>
-                <div class="change">Commandes non annulées</div>
+                <div class="change">Commandes livrées</div>
               </div>
               <div
                 class="stat-card"
@@ -3727,6 +3727,16 @@
                 <div class="label">Profit Net</div>
                 <div class="value" id="fin-profit">— DA</div>
                 <div class="change" id="fin-profit-sub">CA - coût d'achat</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #f59e0b">
+                <div class="label">Stock Total</div>
+                <div class="value" id="fin-stock-total">0 DA</div>
+                <div class="change">Valeur totale du stock</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #06b6d4">
+                <div class="label">Stock Expédiées</div>
+                <div class="value" id="fin-stock-shipped">0 DA</div>
+                <div class="change">Valeur du stock expédié</div>
               </div>
             </div>
             <div class="admin-table-card">
@@ -7636,13 +7646,41 @@
               (ratingStats.count || ratingStats.total || 0) + " avis",
             );
           }
-          // Finance tab — 2 cards only
+          // Finance tab — 4 cards now
           const deliveredRevenue = ORDERS.filter(
-            (o) => o.status !== "cancelled",
+            (o) => o.status === "delivered",
           ).reduce((s, o) => s + (o.subtotal || o.total || 0), 0);
+
+          // Calculate total stock value (all products in stock at cost price)
+          const totalStockValue = PRODUCTS.reduce((sum, p) => {
+            const costPrice = p.cost_price || p.costPrice || 0;
+            return sum + costPrice * (p.stock || 0);
+          }, 0);
+
+          // Calculate shipped stock value (products in shipped orders at cost price)
+          const shippedStockValue = ORDERS.filter(
+            (o) => o.status === "shipped",
+          ).reduce((s, o) => {
+            const items = Array.isArray(o.items)
+              ? o.items
+              : JSON.parse(o.items || "[]");
+            return (
+              s +
+              items.reduce((sum, it) => {
+                const prod = PRODUCTS.find(
+                  (pr) => pr.id === it.id || pr.id === it.product_id,
+                );
+                const costPrice = prod?.cost_price || prod?.costPrice || 0;
+                return sum + costPrice * (it.qty || 1);
+              }, 0)
+            );
+          }, 0);
+
           set("fin-revenue", deliveredRevenue.toLocaleString() + " DA");
           set("fin-profit", profit.toLocaleString() + " DA");
           set("fin-profit-sub", profit >= 0 ? "✅ Bénéfice" : "❌ Perte");
+          set("fin-stock-total", totalStockValue.toLocaleString() + " DA");
+          set("fin-stock-shipped", shippedStockValue.toLocaleString() + " DA");
           const finProfitCard = document.getElementById("fin-profit-card");
           if (finProfitCard)
             finProfitCard.style.borderTop =
