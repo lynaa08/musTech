@@ -674,7 +674,9 @@
         transition: opacity 0.15s;
         white-space: nowrap;
       }
-      .price-apply-btn:hover { opacity: 0.88; }
+      .price-apply-btn:hover {
+        opacity: 0.88;
+      }
       .search-input-wrap {
         position: relative;
         max-width: 480px;
@@ -3017,7 +3019,9 @@
               min="0"
               step="500" />
             <span class="price-unit">DA</span>
-            <button class="price-apply-btn" onclick="applyPriceFilter()">OK</button>
+            <button class="price-apply-btn" onclick="applyPriceFilter()">
+              OK
+            </button>
           </div>
         </div>
       </div>
@@ -7881,8 +7885,14 @@
                     stock !== null
                       ? `<span class="status-badge ${stock < 15 ? "status-pending" : "status-delivered"}">${stock < 15 ? "Stock Faible" : "En Stock"}</span>`
                       : "—";
+                  const imgHtml =
+                    prod && prod.img
+                      ? `<img src="${prod.img.startsWith("http") ? prod.img : "http://localhost:3001" + prod.img}" style="width:32px;height:32px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:0.5rem;">`
+                      : prod
+                        ? prod.icon || ""
+                        : "";
                   return `<tr>
-                  <td>${prod ? prod.icon || "" : ""} ${p.name}</td>
+                  <td>${imgHtml} ${p.name}</td>
                   <td>${cat}</td>
                   <td><strong>${p.qty}</strong> unités</td>
                   <td>${p.revenue.toLocaleString()} DA</td>
@@ -12095,9 +12105,10 @@
       document.addEventListener("DOMContentLoaded", function () {
         ["price-min-input", "price-max-input"].forEach(function (id) {
           const el = document.getElementById(id);
-          if (el) el.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") applyPriceFilter();
-          });
+          if (el)
+            el.addEventListener("keydown", function (e) {
+              if (e.key === "Enter") applyPriceFilter();
+            });
         });
       });
 
@@ -12105,12 +12116,20 @@
         const cards = document.querySelectorAll(".product-card");
         let shown = 0;
         cards.forEach(function (card) {
-          const priceEl = card.querySelector(".product-price, [class*='price']");
-          if (!priceEl) { card.style.display = ""; return; }
+          const priceEl = card.querySelector(
+            ".product-price, [class*='price']",
+          );
+          if (!priceEl) {
+            card.style.display = "";
+            return;
+          }
           // Extract numeric price from text (removes spaces, DA, etc.)
           const raw = priceEl.textContent.replace(/[^\d]/g, "");
           const price = parseFloat(raw);
-          if (isNaN(price)) { card.style.display = ""; return; }
+          if (isNaN(price)) {
+            card.style.display = "";
+            return;
+          }
           const aboveMin = _priceMin === null || price >= _priceMin;
           const belowMax = _priceMax === null || price <= _priceMax;
           card.style.display = aboveMin && belowMax ? "" : "none";
