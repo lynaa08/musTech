@@ -2588,6 +2588,7 @@
         display: flex;
       }
     </style>
+    <link rel="stylesheet" href="/advanced-search.css">
   </head>
   <body>
     <!-- NAVBAR -->
@@ -11981,6 +11982,130 @@
         ?.addEventListener("click", function (e) {
           if (e.target === this) closePromoModal();
         });
+    </script>
+    <script src="/advanced-search.js"></script>
+    <script>
+      // ── ADVANCED SEARCH INTEGRATION ─────────────────────────
+      // Connects the existing search bar + category chips to the backend API
+      // Replaces client-side filtering with server-side /api/search/advanced
+
+      let _advSearchTimer = null;
+      let _advActiveCat = "all";
+      let _advPriceMin = 0;
+      let _advPriceMax = 999999;
+      let _advInStock = false;
+      let _advSort = "newest";
+      let _advCurrentPage = 0;
+      const _advPageSize = 20;
+      let _advTotal = 0;
+
+      // Override the existing client search to use the API
+      window.handleClientSearch = function (input) {
+        _advCurrentPage = 0;
+        clearTimeout(_advSearchTimer);
+        _advSearchTimer = setTimeout(() => runAdvancedSearch(), 350);
+      };
+
+      // Override the existing category filter to use the API
+      window.filterCat = function (el, cat) {
+        const allChip = document.querySelector(".cat-chip[data-cat='all']");
+        document.querySelectorAll(".cat-chip").forEach((c) => c.classList.remove("active"));
+        if (cat === "all" || cat === _advActiveCat) {
+          _advActiveCat = "all";
+          if (allChip) allChip.classList.add("active");
+        } else {
+          _advActiveCat = cat;
+          el.classList.add("active");
+        }
+        _advCurrentPage = 0;
+        runAdvancedSearch();
+      };
+
+      async function runAdvancedSearch() {
+        const queryInput = document.getElementById("client-search-input");
+        const q = queryInput ? queryInput.value.trim() : "";
+
+        const params = new URLSearchParams();
+        if (q) params.append("q", q);
+        params.append("minPrice", _advPriceMin);
+        params.append("maxPrice", _advPriceMax);
+        if (_advActiveCat && _advActiveCat !== "all") params.append("categories", _advActiveCat);
+        if (_advInStock) params.append("inStock", "true");
+        params.append("sort", _advSort);
+        params.append("limit", _advPageSize);
+        params.append("offset", _advCurrentPage * _advPageSize);
+
+        try {
+          const fg = document.getElementById("featured-grid");
+          const sg = document.getElementById("shop-grid");
+          if (fg) fg.innerHTML = "<p style='color:var(--gray-400);padding:2rem;grid-column:1/-1;text-align:center;'>Chargement…</p>";
+
+          const res = await fetch(`/api/search/advanced?${params.toString()}`);
+          if (!res.ok) throw new Error("Search API error");
+          const data = await res.json();
+
+          _advTotal = data.total;
+          const products = data.products;
+
+          const html = products.length
+            ? products.map(renderProductCard).join("")
+            : "<p style='color:var(--gray-400);padding:2rem;grid-column:1/-1;text-align:center;'>Aucun produit trouvé.</p>";
+
+          if (fg) fg.innerHTML = html;
+          if (sg) sg.innerHTML = html;
+
+          // Update count display
+          const countEl = document.getElementById("products-count");
+          if (countEl && !q && _advActiveCat === "all") countEl.textContent = _advTotal;
+
+          // Show/hide no-results message
+          const noResults = document.getElementById("search-no-results");
+          if (noResults) noResults.style.display = products.length === 0 && q ? "block" : "none";
+
+          // Re-init interactive buttons on new cards
+          if (typeof initFavoriteButtons === "function") initFavoriteButtons();
+
+          // Render pagination
+          renderAdvPagination(data);
+        } catch (err) {
+          console.error("Advanced search failed, falling back to client search:", err);
+        }
+      }
+
+      function renderAdvPagination(data) {
+        // Inject pagination below featured-grid if needed
+        let pg = document.getElementById("adv-pagination");
+        if (!pg) {
+          pg = document.createElement("div");
+          pg.id = "adv-pagination";
+          pg.style.cssText = "display:flex;justify-content:center;gap:8px;padding:1.5rem 0;grid-column:1/-1;flex-wrap:wrap;";
+          const fg = document.getElementById("featured-grid");
+          if (fg && fg.parentNode) fg.parentNode.insertBefore(pg, fg.nextSibling);
+        }
+
+        const totalPages = Math.ceil(data.total / _advPageSize);
+        if (totalPages <= 1) { pg.innerHTML = ""; return; }
+
+        let btns = "";
+        if (_advCurrentPage > 0)
+          btns += `<button onclick="advGoToPage(${_advCurrentPage - 1})" style="padding:6px 14px;border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;background:var(--white);">← Préc</button>`;
+
+        for (let i = 0; i < totalPages; i++) {
+          const active = i === _advCurrentPage ? "background:var(--green);color:white;border-color:var(--green);" : "";
+          btns += `<button onclick="advGoToPage(${i})" style="padding:6px 12px;border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;${active}">${i + 1}</button>`;
+        }
+
+        if (_advCurrentPage < totalPages - 1)
+          btns += `<button onclick="advGoToPage(${_advCurrentPage + 1})" style="padding:6px 14px;border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;background:var(--white);">Suiv →</button>`;
+
+        pg.innerHTML = btns;
+      }
+
+      window.advGoToPage = function (page) {
+        _advCurrentPage = page;
+        runAdvancedSearch();
+        document.getElementById("featured-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
     </script>
   </body>
 </html>
