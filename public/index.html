@@ -613,13 +613,68 @@
       /* SEARCH BAR */
       .search-bar-wrapper {
         background: var(--off-white);
-        padding: 1.25rem 2rem 0;
+        padding: 1.25rem 2rem 1rem;
         border-bottom: none;
       }
       .search-bar-inner {
         max-width: 1200px;
         margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
       }
+      .price-filter-inline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .price-filter-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--gray-500);
+        white-space: nowrap;
+      }
+      .price-input {
+        width: 110px;
+        padding: 0.6rem 0.85rem;
+        border-radius: 50px;
+        border: 1.5px solid var(--gray-100);
+        background: #fff;
+        font-size: 0.875rem;
+        font-family: inherit;
+        color: var(--gray-700);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .price-input:focus {
+        border-color: var(--green);
+      }
+      .price-sep {
+        font-size: 0.9rem;
+        color: var(--gray-400);
+        font-weight: 500;
+      }
+      .price-unit {
+        font-size: 0.85rem;
+        color: var(--gray-500);
+        white-space: nowrap;
+      }
+      .price-apply-btn {
+        padding: 0.6rem 1.1rem;
+        background: var(--green);
+        border: none;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #145228;
+        cursor: pointer;
+        font-family: inherit;
+        transition: opacity 0.15s;
+        white-space: nowrap;
+      }
+      .price-apply-btn:hover { opacity: 0.88; }
       .search-input-wrap {
         position: relative;
         max-width: 480px;
@@ -2038,10 +2093,21 @@
 
         /* CATEGORIES */
         .search-bar-wrapper {
-          padding: 0.75rem 1rem 0;
+          padding: 0.75rem 1rem 0.75rem;
+        }
+        .search-bar-inner {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.6rem;
         }
         .search-input-wrap {
           max-width: 100%;
+        }
+        .price-filter-inline {
+          flex-wrap: wrap;
+        }
+        .price-input {
+          width: 90px;
         }
         .categories-bar {
           padding: 0.5rem 0;
@@ -2922,6 +2988,26 @@
               placeholder="Rechercher un produit…"
               oninput="handleClientSearch(this)"
               autocomplete="off" />
+          </div>
+          <div class="price-filter-inline">
+            <span class="price-filter-label">Prix :</span>
+            <input
+              type="number"
+              class="price-input"
+              id="price-min-input"
+              placeholder="Min"
+              min="0"
+              step="500" />
+            <span class="price-sep">—</span>
+            <input
+              type="number"
+              class="price-input"
+              id="price-max-input"
+              placeholder="Max"
+              min="0"
+              step="500" />
+            <span class="price-unit">DA</span>
+            <button class="price-apply-btn" onclick="applyPriceFilter()">OK</button>
           </div>
         </div>
       </div>
@@ -11981,6 +12067,59 @@
         ?.addEventListener("click", function (e) {
           if (e.target === this) closePromoModal();
         });
+    </script>
+    <script>
+      // ── PRICE FILTER ─────────────────────────────────────────
+      let _priceMin = null;
+      let _priceMax = null;
+
+      window.applyPriceFilter = function () {
+        const minVal = document.getElementById("price-min-input").value.trim();
+        const maxVal = document.getElementById("price-max-input").value.trim();
+        _priceMin = minVal !== "" ? parseFloat(minVal) : null;
+        _priceMax = maxVal !== "" ? parseFloat(maxVal) : null;
+        applyPriceToGrid();
+      };
+
+      // Also apply on Enter key in either input
+      document.addEventListener("DOMContentLoaded", function () {
+        ["price-min-input", "price-max-input"].forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") applyPriceFilter();
+          });
+        });
+      });
+
+      function applyPriceToGrid() {
+        const cards = document.querySelectorAll(".product-card");
+        let shown = 0;
+        cards.forEach(function (card) {
+          const priceEl = card.querySelector(".product-price, [class*='price']");
+          if (!priceEl) { card.style.display = ""; return; }
+          // Extract numeric price from text (removes spaces, DA, etc.)
+          const raw = priceEl.textContent.replace(/[^\d]/g, "");
+          const price = parseFloat(raw);
+          if (isNaN(price)) { card.style.display = ""; return; }
+          const aboveMin = _priceMin === null || price >= _priceMin;
+          const belowMax = _priceMax === null || price <= _priceMax;
+          card.style.display = aboveMin && belowMax ? "" : "none";
+          if (aboveMin && belowMax) shown++;
+        });
+
+        // Show no-results message if needed
+        const noResults = document.getElementById("search-no-results");
+        if (noResults) noResults.style.display = shown === 0 ? "block" : "none";
+      }
+
+      // Re-apply price filter whenever products reload (e.g. category switch)
+      const _origBuildCategoryChips = window.buildCategoryChips;
+      if (typeof _origBuildCategoryChips === "function") {
+        window.buildCategoryChips = function () {
+          _origBuildCategoryChips.apply(this, arguments);
+          setTimeout(applyPriceToGrid, 300);
+        };
+      }
     </script>
   </body>
 </html>
