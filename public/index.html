@@ -7750,22 +7750,52 @@
           // Full orders — render with current filters
           renderFilteredOrders();
 
-          // Top products (dashboard)
+          // Top products (dashboard) — calculé depuis les vraies commandes
           const t3 = document.getElementById("admin-products-table");
-          if (t3)
-            t3.innerHTML = PRODUCTS.slice(0, 5)
-              .map(
-                (p) => `
-      <tr>
-        <td>${p.icon} ${p.name}</td>
-        <td>${p.cat}</td>
-        <td>${p.price.toLocaleString()} DA</td>
-        <td>${p.reviews * 3}</td>
-        <td>${(p.price * p.reviews * 0.8).toFixed(0)} DA</td>
-        <td><span class="status-badge ${p.stock < 15 ? "status-pending" : "status-delivered"}">${p.stock < 15 ? "Stock Faible" : "En Stock"}</span></td>
-      </tr>`,
-              )
-              .join("");
+          if (t3) {
+            const salesMap = {};
+            ORDERS.filter((o) => o.status !== "cancelled").forEach((o) => {
+              const items = Array.isArray(o.items) ? o.items : [];
+              items.forEach((it) => {
+                if (!it.id) return;
+                if (!salesMap[it.id])
+                  salesMap[it.id] = {
+                    name: it.name || "—",
+                    qty: 0,
+                    revenue: 0,
+                  };
+                salesMap[it.id].qty += it.qty || 0;
+                salesMap[it.id].revenue += it.total || it.price * it.qty || 0;
+              });
+            });
+            const topProducts = Object.entries(salesMap)
+              .map(([id, d]) => ({ id: parseInt(id), ...d }))
+              .sort((a, b) => b.qty - a.qty)
+              .slice(0, 5);
+
+            if (topProducts.length === 0) {
+              t3.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:1.5rem;">Aucune vente enregistrée</td></tr>`;
+            } else {
+              t3.innerHTML = topProducts
+                .map((p) => {
+                  const prod = PRODUCTS.find((pr) => pr.id === p.id);
+                  const cat = prod ? prod.cat : "—";
+                  const stock = prod ? prod.stock : null;
+                  const stockBadge =
+                    stock !== null
+                      ? `<span class="status-badge ${stock < 15 ? "status-pending" : "status-delivered"}">${stock < 15 ? "Stock Faible" : "En Stock"}</span>`
+                      : "—";
+                  return `<tr>
+                  <td>${prod ? prod.icon || "" : ""} ${p.name}</td>
+                  <td>${cat}</td>
+                  <td><strong>${p.qty}</strong> unités</td>
+                  <td>${p.revenue.toLocaleString()} DA</td>
+                  <td>${stockBadge}</td>
+                </tr>`;
+                })
+                .join("");
+            }
+          }
 
           // Full products list
           const t4 = document.getElementById("admin-products-list");
