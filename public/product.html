@@ -1946,7 +1946,7 @@
             }).catch(() => {});
           }
           // Send admin email notification
-          sendAdminOrderEmail({ ...orderData, id: result.id, order_ref: result.order_ref, total: result.total });
+          // sendAdminOrderEmail({ ...orderData, id: result.id, order_ref: result.order_ref, total: result.total }); // TEMP DISABLED
           document.getElementById("checkout-form").style.display = "none";
           const box = document.getElementById("success-box");
           box.innerHTML = `
