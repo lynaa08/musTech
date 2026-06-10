@@ -7699,6 +7699,9 @@
             // Server already returns products in sort_order (DB-persisted).
             // Sync localStorage cache so pin buttons show correct state.
             PRODUCTS = productsRes.value;
+            PRODUCTS.forEach((p) => {
+              if (p.description) PRODUCT_DESCS[p.id] = p.description;
+            });
             const pinCache = PRODUCTS.map((p, i) => ({
               id: p.id,
               rank: i + 1,
@@ -8378,6 +8381,9 @@
             headers: { Authorization: "Bearer " + Auth.getToken() },
           });
           PRODUCTS = await fresh.json();
+          PRODUCTS.forEach((p) => {
+            if (p.description) PRODUCT_DESCS[p.id] = p.description;
+          });
           await populateAdminTables();
           showToast(currentStock > 0 ? "Mis en rupture !" : "Remis en stock !");
         } catch (e) {
@@ -9483,6 +9489,9 @@
           </div>`;
           try {
             PRODUCTS = await ProductsAPI.getAll();
+            PRODUCTS.forEach((p) => {
+              if (p.description) PRODUCT_DESCS[p.id] = p.description;
+            });
           } catch (e) {
             favGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--gray-400);">Erreur de chargement.</div>`;
             return;
@@ -11178,6 +11187,9 @@
         try {
           WILAYAS = await WilayasAPI.getAll();
           PRODUCTS = await ProductsAPI.getAll();
+          PRODUCTS.forEach((p) => {
+            if (p.description) PRODUCT_DESCS[p.id] = p.description;
+          });
           if (Auth.isLoggedIn()) {
             currentUser = Auth.getUser();
             loginUser(currentUser);
