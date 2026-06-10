@@ -7754,7 +7754,7 @@
           const t3 = document.getElementById("admin-products-table");
           if (t3) {
             const salesMap = {};
-            ORDERS.filter((o) => o.status !== "cancelled").forEach((o) => {
+            ORDERS.filter((o) => o.status === "delivered").forEach((o) => {
               const items = Array.isArray(o.items) ? o.items : [];
               items.forEach((it) => {
                 if (!it.id) return;

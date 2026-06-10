@@ -30,7 +30,7 @@ router.get("/", adminMiddleware, async (req, res) => {
       db.query(
         "SELECT id,order_ref,customer,wilaya,total,status,created_at FROM orders ORDER BY created_at DESC LIMIT 5",
       ),
-      db.query("SELECT items FROM orders WHERE status != 'cancelled'"),
+      db.query("SELECT items FROM orders WHERE status = 'delivered'"),
     ]);
 
     // Calculer les produits les plus vendus depuis les vraies commandes
