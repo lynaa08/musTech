@@ -2104,10 +2104,20 @@
           max-width: 100%;
         }
         .price-filter-inline {
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
+          width: 100%;
+        }
+        .price-filter-label {
+          display: none;
         }
         .price-input {
-          width: 90px;
+          flex: 1;
+          min-width: 0;
+          width: auto;
+        }
+        .price-apply-btn {
+          padding: 0.6rem 0.9rem;
+          flex-shrink: 0;
         }
         .categories-bar {
           padding: 0.5rem 0;
