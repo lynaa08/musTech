@@ -613,12 +613,86 @@
       /* SEARCH BAR */
       .search-bar-wrapper {
         background: var(--off-white);
-        padding: 1.25rem 2rem 0;
+        padding: 1.25rem 2rem 1.25rem;
         border-bottom: none;
       }
       .search-bar-inner {
         max-width: 1200px;
         margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .price-filter-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #fff;
+        border: 1.5px solid var(--gray-100);
+        border-radius: 50px;
+        padding: 0.5rem 1.25rem;
+        flex-shrink: 0;
+      }
+      .price-filter-label {
+        font-size: 0.825rem;
+        font-weight: 600;
+        color: var(--gray-500);
+        white-space: nowrap;
+      }
+      .price-range-track {
+        position: relative;
+        width: 160px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+      }
+      .price-range-track input[type=range] {
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        background: transparent;
+        pointer-events: none;
+        -webkit-appearance: none;
+        appearance: none;
+        outline: none;
+      }
+      .price-range-track input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--green);
+        border: 2px solid #fff;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+        pointer-events: all;
+        cursor: pointer;
+      }
+      .price-range-track input[type=range]::-webkit-slider-thumb:hover {
+        box-shadow: 0 0 0 4px rgba(62,207,110,0.18);
+      }
+      .price-range-fill {
+        position: absolute;
+        height: 4px;
+        background: var(--green);
+        border-radius: 2px;
+        pointer-events: none;
+      }
+      .price-range-bg {
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        background: var(--gray-100);
+        border-radius: 2px;
+      }
+      .price-range-values {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        white-space: nowrap;
+        min-width: 130px;
+        text-align: right;
       }
       .search-input-wrap {
         position: relative;
@@ -2038,10 +2112,24 @@
 
         /* CATEGORIES */
         .search-bar-wrapper {
-          padding: 0.75rem 1rem 0;
+          padding: 0.75rem 1rem 0.75rem;
         }
         .search-input-wrap {
           max-width: 100%;
+        }
+        .search-bar-inner {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.75rem;
+        }
+        .price-filter-wrap {
+          width: 100%;
+          box-sizing: border-box;
+          justify-content: space-between;
+        }
+        .price-range-track {
+          flex: 1;
+          max-width: 140px;
         }
         .categories-bar {
           padding: 0.5rem 0;
@@ -2923,6 +3011,17 @@
               placeholder="Rechercher un produit…"
               oninput="handleClientSearch(this)"
               autocomplete="off" />
+          </div>
+          <!-- PRICE RANGE FILTER -->
+          <div class="price-filter-wrap">
+            <span class="price-filter-label">Prix</span>
+            <div class="price-range-track" id="price-track">
+              <div class="price-range-bg"></div>
+              <div class="price-range-fill" id="price-fill"></div>
+              <input type="range" id="price-min" min="0" max="500000" value="0" step="500" oninput="updatePriceFilter()">
+              <input type="range" id="price-max" min="0" max="500000" value="500000" step="500" oninput="updatePriceFilter()">
+            </div>
+            <span class="price-range-values" id="price-values">0 – 500 000 DA</span>
           </div>
         </div>
       </div>
@@ -11986,27 +12085,77 @@
     <script src="/advanced-search.js"></script>
     <script>
       // ── ADVANCED SEARCH INTEGRATION ─────────────────────────
-      // Connects the existing search bar + category chips to the backend API
-      // Replaces client-side filtering with server-side /api/search/advanced
-
       let _advSearchTimer = null;
       let _advActiveCat = "all";
       let _advPriceMin = 0;
-      let _advPriceMax = 999999;
-      let _advInStock = false;
+      let _advPriceMax = 500000;
       let _advSort = "newest";
       let _advCurrentPage = 0;
       const _advPageSize = 20;
-      let _advTotal = 0;
 
-      // Override the existing client search to use the API
+      // Load real price range from DB on startup
+      async function initPriceRange() {
+        try {
+          const res = await fetch("/api/search/price-range");
+          if (!res.ok) return;
+          const { min, max } = await res.json();
+          _advPriceMin = min;
+          _advPriceMax = max;
+          const minEl = document.getElementById("price-min");
+          const maxEl = document.getElementById("price-max");
+          if (minEl) { minEl.min = min; minEl.max = max; minEl.value = min; }
+          if (maxEl) { maxEl.min = min; maxEl.max = max; maxEl.value = max; }
+          updatePriceFill();
+          updatePriceLabel();
+        } catch(e) {}
+      }
+
+      function updatePriceFill() {
+        const minEl = document.getElementById("price-min");
+        const maxEl = document.getElementById("price-max");
+        const fill  = document.getElementById("price-fill");
+        if (!minEl || !maxEl || !fill) return;
+        const rangeMin = parseFloat(minEl.min) || 0;
+        const rangeMax = parseFloat(minEl.max) || 500000;
+        const lo = (parseFloat(minEl.value) - rangeMin) / (rangeMax - rangeMin) * 100;
+        const hi = (parseFloat(maxEl.value) - rangeMin) / (rangeMax - rangeMin) * 100;
+        fill.style.left  = lo + "%";
+        fill.style.width = (hi - lo) + "%";
+      }
+
+      function updatePriceLabel() {
+        const minEl = document.getElementById("price-min");
+        const maxEl = document.getElementById("price-max");
+        const label = document.getElementById("price-values");
+        if (!label || !minEl || !maxEl) return;
+        const lo = parseInt(minEl.value).toLocaleString("fr-DZ");
+        const hi = parseInt(maxEl.value).toLocaleString("fr-DZ");
+        label.textContent = lo + " – " + hi + " DA";
+      }
+
+      window.updatePriceFilter = function() {
+        const minEl = document.getElementById("price-min");
+        const maxEl = document.getElementById("price-max");
+        // Prevent handles crossing
+        if (parseFloat(minEl.value) > parseFloat(maxEl.value)) {
+          if (event && event.target === minEl) minEl.value = maxEl.value;
+          else maxEl.value = minEl.value;
+        }
+        _advPriceMin = parseInt(minEl.value);
+        _advPriceMax = parseInt(maxEl.value);
+        updatePriceFill();
+        updatePriceLabel();
+        _advCurrentPage = 0;
+        clearTimeout(_advSearchTimer);
+        _advSearchTimer = setTimeout(() => runAdvancedSearch(), 400);
+      };
+
       window.handleClientSearch = function (input) {
         _advCurrentPage = 0;
         clearTimeout(_advSearchTimer);
         _advSearchTimer = setTimeout(() => runAdvancedSearch(), 350);
       };
 
-      // Override the existing category filter to use the API
       window.filterCat = function (el, cat) {
         const allChip = document.querySelector(".cat-chip[data-cat='all']");
         document.querySelectorAll(".cat-chip").forEach((c) => c.classList.remove("active"));
@@ -12024,13 +12173,11 @@
       async function runAdvancedSearch() {
         const queryInput = document.getElementById("client-search-input");
         const q = queryInput ? queryInput.value.trim() : "";
-
         const params = new URLSearchParams();
         if (q) params.append("q", q);
         params.append("minPrice", _advPriceMin);
         params.append("maxPrice", _advPriceMax);
-        if (_advActiveCat && _advActiveCat !== "all") params.append("categories", _advActiveCat);
-        if (_advInStock) params.append("inStock", "true");
+        if (_advActiveCat !== "all") params.append("categories", _advActiveCat);
         params.append("sort", _advSort);
         params.append("limit", _advPageSize);
         params.append("offset", _advCurrentPage * _advPageSize);
@@ -12044,9 +12191,7 @@
           if (!res.ok) throw new Error("Search API error");
           const data = await res.json();
 
-          _advTotal = data.total;
           const products = data.products;
-
           const html = products.length
             ? products.map(renderProductCard).join("")
             : "<p style='color:var(--gray-400);padding:2rem;grid-column:1/-1;text-align:center;'>Aucun produit trouvé.</p>";
@@ -12054,58 +12199,54 @@
           if (fg) fg.innerHTML = html;
           if (sg) sg.innerHTML = html;
 
-          // Update count display
           const countEl = document.getElementById("products-count");
-          if (countEl && !q && _advActiveCat === "all") countEl.textContent = _advTotal;
+          if (countEl && !q && _advActiveCat === "all") countEl.textContent = data.total;
 
-          // Show/hide no-results message
           const noResults = document.getElementById("search-no-results");
-          if (noResults) noResults.style.display = products.length === 0 && q ? "block" : "none";
+          if (noResults) noResults.style.display = products.length === 0 ? "block" : "none";
 
-          // Re-init interactive buttons on new cards
           if (typeof initFavoriteButtons === "function") initFavoriteButtons();
-
-          // Render pagination
           renderAdvPagination(data);
         } catch (err) {
-          console.error("Advanced search failed, falling back to client search:", err);
+          console.error("Advanced search failed:", err);
         }
       }
 
       function renderAdvPagination(data) {
-        // Inject pagination below featured-grid if needed
         let pg = document.getElementById("adv-pagination");
         if (!pg) {
           pg = document.createElement("div");
           pg.id = "adv-pagination";
-          pg.style.cssText = "display:flex;justify-content:center;gap:8px;padding:1.5rem 0;grid-column:1/-1;flex-wrap:wrap;";
+          pg.style.cssText = "display:flex;justify-content:center;gap:8px;padding:1.5rem 0;flex-wrap:wrap;";
           const fg = document.getElementById("featured-grid");
           if (fg && fg.parentNode) fg.parentNode.insertBefore(pg, fg.nextSibling);
         }
-
         const totalPages = Math.ceil(data.total / _advPageSize);
         if (totalPages <= 1) { pg.innerHTML = ""; return; }
-
         let btns = "";
         if (_advCurrentPage > 0)
-          btns += `<button onclick="advGoToPage(${_advCurrentPage - 1})" style="padding:6px 14px;border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;background:var(--white);">← Préc</button>`;
-
+          btns += `<button onclick="advGoToPage(${_advCurrentPage-1})" style="padding:6px 14px;border:1.5px solid var(--gray-100);border-radius:50px;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;background:#fff;color:var(--gray-700);">← Préc</button>`;
         for (let i = 0; i < totalPages; i++) {
-          const active = i === _advCurrentPage ? "background:var(--green);color:white;border-color:var(--green);" : "";
-          btns += `<button onclick="advGoToPage(${i})" style="padding:6px 12px;border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;${active}">${i + 1}</button>`;
+          const active = i === _advCurrentPage
+            ? "background:var(--green);color:#fff;border-color:var(--green);"
+            : "background:#fff;color:var(--gray-700);";
+          btns += `<button onclick="advGoToPage(${i})" style="padding:6px 13px;border:1.5px solid var(--gray-100);border-radius:50px;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;${active}">${i+1}</button>`;
         }
-
         if (_advCurrentPage < totalPages - 1)
-          btns += `<button onclick="advGoToPage(${_advCurrentPage + 1})" style="padding:6px 14px;border:1px solid var(--gray-100);border-radius:8px;cursor:pointer;background:var(--white);">Suiv →</button>`;
-
+          btns += `<button onclick="advGoToPage(${_advCurrentPage+1})" style="padding:6px 14px;border:1.5px solid var(--gray-100);border-radius:50px;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:600;background:#fff;color:var(--gray-700);">Suiv →</button>`;
         pg.innerHTML = btns;
       }
 
-      window.advGoToPage = function (page) {
+      window.advGoToPage = function(page) {
         _advCurrentPage = page;
         runAdvancedSearch();
         document.getElementById("featured-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
       };
+
+      // Init price range after products load
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(initPriceRange, 800);
+      });
     </script>
   </body>
 </html>
