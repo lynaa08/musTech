@@ -292,11 +292,62 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
     const allowed = ["pending", "shipped", "delivered", "cancelled"];
     if (!allowed.includes(status))
       return res.status(400).json({ error: "Statut invalide" });
-    const { rows } = await db.query("SELECT id FROM orders WHERE id = $1", [
-      req.params.id,
-    ]);
+
+    const { rows } = await db.query(
+      "SELECT id, status, items FROM orders WHERE id = $1",
+      [req.params.id],
+    );
     if (!rows[0])
       return res.status(404).json({ error: "Commande non trouvée" });
+
+    const order = rows[0];
+    const wasCancelled = order.status === "cancelled";
+    const willBeCancelled = status === "cancelled";
+
+    // Restaurer le stock si la commande est annulée (et n'était pas déjà annulée)
+    if (willBeCancelled && !wasCancelled) {
+      const items = JSON.parse(order.items);
+      for (const item of items) {
+        const { rows: pRows } = await db.query(
+          "SELECT variant_stocks FROM products WHERE id = $1",
+          [item.id],
+        );
+        if (!pRows[0]) continue;
+
+        const stocks = JSON.parse(pRows[0].variant_stocks || "[]");
+        stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) + item.qty;
+        const totalStock = stocks.reduce((a, b) => a + b, 0);
+        const newStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
+
+        await db.query(
+          "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
+          [JSON.stringify(stocks), totalStock, newStatus, item.id],
+        );
+      }
+    }
+
+    // Si la commande était annulée et on la réactive → re-décrémenter le stock
+    if (wasCancelled && !willBeCancelled) {
+      const items = JSON.parse(order.items);
+      for (const item of items) {
+        const { rows: pRows } = await db.query(
+          "SELECT variant_stocks FROM products WHERE id = $1",
+          [item.id],
+        );
+        if (!pRows[0]) continue;
+
+        const stocks = JSON.parse(pRows[0].variant_stocks || "[]");
+        stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) - item.qty;
+        const totalStock = stocks.reduce((a, b) => a + b, 0);
+        const newStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
+
+        await db.query(
+          "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
+          [JSON.stringify(stocks), totalStock, newStatus, item.id],
+        );
+      }
+    }
+
     await db.query("UPDATE orders SET status = $1 WHERE id = $2", [
       status,
       req.params.id,
