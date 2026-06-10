@@ -8300,11 +8300,22 @@
         _viewingOrderId = id;
         const itemsDisplay = Array.isArray(o.items)
           ? o.items
-              .map(
-                (i) =>
-                  `${i.name} ×${i.qty} (${(i.price || 0).toLocaleString()} DA)`,
-              )
-              .join("<br>")
+              .map((i) => {
+                const prod = PRODUCTS.find((pr) => pr.id === i.id);
+                const imgHtml =
+                  prod && prod.img
+                    ? `<img src="${prod.img.startsWith("http") ? prod.img : "http://localhost:3001" + prod.img}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;">`
+                    : `<div style="width:40px;height:40px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">${prod ? prod.icon || "📦" : "📦"}</div>`;
+                return `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0;border-bottom:1px solid var(--gray-100);">
+                ${imgHtml}
+                <div style="flex:1;">
+                  <div style="font-weight:600;font-size:0.85rem;">${i.name}</div>
+                  <div style="font-size:0.75rem;color:var(--gray-500);">${i.variant || ""} × ${i.qty} — ${(i.price || 0).toLocaleString()} DA</div>
+                </div>
+                <div style="font-weight:700;color:var(--green-dark);font-size:0.85rem;">${(i.total || i.price * i.qty || 0).toLocaleString()} DA</div>
+              </div>`;
+              })
+              .join("")
           : o.items || "—";
         document.getElementById("view-order-body").innerHTML = `
     <div class="order-summary">
@@ -8312,7 +8323,7 @@
       <div class="order-row"><span>Client</span><span>${o.customer}</span></div>
       <div class="order-row"><span>Téléphone</span><span>${o.phone}</span></div>
       <div class="order-row"><span>Wilaya</span><span>${o.wilaya}</span></div>
-      <div class="order-row"><span>Articles</span><span style="text-align:right;line-height:1.6">${itemsDisplay}</span></div>
+      <div class="order-row"><span>Articles</span><div style="flex:1;">${itemsDisplay}</div></div>
       <div class="order-row"><span>Sous-total</span><span>${(o.subtotal || 0).toLocaleString()} DA</span></div>
       <div class="order-row"><span>Livraison</span><span>${(o.shipping || 0).toLocaleString()} DA</span></div>
       ${o.promo_code ? `<div class="order-row" style="color:#1fad52;font-weight:700;"><span>🏷️ Code promo (${o.promo_code})</span><span>-${(o.promo_discount || 0).toLocaleString()} DA</span></div>` : ""}
@@ -9458,9 +9469,12 @@
             if (!p) return "";
             const price =
               (p.variantPrices[item.variant] ?? p.variantPrices[0]) * item.qty;
+            const imgHtml = p.img
+              ? `<img src="${p.img.startsWith("http") ? p.img : "http://localhost:3001" + p.img}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;">`
+              : `<div style="width:48px;height:48px;background:var(--green-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">${p.icon}</div>`;
             return `
     <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid var(--gray-100);">
-      <div style="width:48px;height:48px;background:var(--green-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">${p.icon}</div>
+      ${imgHtml}
       <div style="flex:1;min-width:0;">
         <div style="font-weight:700;font-size:0.88rem;">${p.name}</div>
         <div style="font-size:0.75rem;color:var(--gray-500);">${p.variants[item.variant]} × ${item.qty}</div>
@@ -10808,9 +10822,6 @@
       }
 
       function renderOrderCard(o) {
-        const itemNames = Array.isArray(o.items)
-          ? o.items.map((i) => (i.name || "Produit") + " ×" + i.qty).join(", ")
-          : o.items || "—";
         const dateStr = o.created_at
           ? new Date(o.created_at).toLocaleDateString("fr-DZ")
           : "—";
@@ -10818,6 +10829,22 @@
           typeof o.total === "number"
             ? o.total.toLocaleString() + " DA"
             : o.total || "—";
+        const itemsHtml =
+          Array.isArray(o.items) && o.items.length > 0
+            ? o.items
+                .map((i) => {
+                  const prod = PRODUCTS.find((pr) => pr.id === i.id);
+                  const imgHtml =
+                    prod && prod.img
+                      ? `<img src="${prod.img.startsWith("http") ? prod.img : "http://localhost:3001" + prod.img}" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0;">`
+                      : `<div style="width:36px;height:36px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">${prod ? prod.icon || "📦" : "📦"}</div>`;
+                  return `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
+                ${imgHtml}
+                <span style="font-size:0.82rem;color:var(--gray-700);">${i.name || "Produit"} <span style="color:var(--gray-400);">×${i.qty}</span></span>
+              </div>`;
+                })
+                .join("")
+            : `<div style="font-size:0.82rem;color:var(--gray-400);">—</div>`;
         return `
           <div style="border:1.5px solid var(--gray-100);border-radius:12px;padding:1rem;margin-bottom:0.75rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
@@ -10825,8 +10852,8 @@
               <span class="status-badge status-${o.status || "pending"}">${statusLabel(o.status || "pending")}</span>
             </div>
             <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.35rem;">📅 ${dateStr}</div>
-            <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.35rem;">📍 ${o.wilaya || "—"}</div>
-            <div style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem;">🛍 ${itemNames}</div>
+            <div style="font-size:0.82rem;color:var(--gray-700);margin-bottom:0.5rem;">📍 ${o.wilaya || "—"}</div>
+            <div style="margin-bottom:0.5rem;">${itemsHtml}</div>
             <div style="font-weight:800;color:var(--gray-900);font-size:1rem;">💰 ${total}</div>
           </div>`;
       }
