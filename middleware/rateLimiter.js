@@ -5,8 +5,6 @@ const {
 const Redis = require("ioredis");
 
 // ── CONNEXION REDIS ───────────────────────────────────────
-// Si REDIS_URL est défini (Railway), on utilise Redis.
-// Sinon, fallback sur la mémoire RAM (dev local).
 let redisClient = null;
 
 if (process.env.REDIS_URL) {
@@ -21,7 +19,7 @@ if (process.env.REDIS_URL) {
   );
 }
 
-// ── FACTORY : crée un limiter Redis ou Memory selon dispo ─
+// ── FACTORY ───────────────────────────────────────────────
 function createLimiter(opts) {
   if (redisClient) {
     return new RateLimiterRedis({ storeClient: redisClient, ...opts });
@@ -32,8 +30,7 @@ function createLimiter(opts) {
   return new RateLimiterMemory(opts);
 }
 
-// ── LIMITER LOGIN (anti brute-force) ──────────────────────
-// 10 tentatives / 15 min par IP
+// ── LIMITERS ──────────────────────────────────────────────
 const loginLimiter = createLimiter({
   keyPrefix: "rl_login",
   points: 10,
@@ -41,8 +38,6 @@ const loginLimiter = createLimiter({
   blockDuration: 15 * 60,
 });
 
-// ── LIMITER REGISTER (anti spam / énumération) ────────────
-// 5 créations de compte / heure par IP
 const registerLimiter = createLimiter({
   keyPrefix: "rl_register",
   points: 5,
@@ -50,8 +45,6 @@ const registerLimiter = createLimiter({
   blockDuration: 60 * 60,
 });
 
-// ── LIMITER COMMANDES ─────────────────────────────────────
-// 5 commandes / heure par IP
 const orderLimiter = createLimiter({
   keyPrefix: "rl_order",
   points: 5,
@@ -59,7 +52,15 @@ const orderLimiter = createLimiter({
   blockDuration: 60 * 60,
 });
 
-// ── MIDDLEWARE EXPRESS ────────────────────────────────────
+// FIX: rate limit avis — 3 avis max par heure par IP
+const ratingsLimiter = createLimiter({
+  keyPrefix: "rl_ratings",
+  points: 3,
+  duration: 60 * 60,
+  blockDuration: 60 * 60,
+});
+
+// ── MIDDLEWARE FACTORY ────────────────────────────────────
 function makeMiddleware(limiter, errorMsg) {
   return async (req, res, next) => {
     const ip =
@@ -87,5 +88,9 @@ module.exports = {
   orderRateLimiter: makeMiddleware(
     orderLimiter,
     "Trop de commandes. Réessayez dans une heure.",
+  ),
+  ratingsRateLimiter: makeMiddleware(
+    ratingsLimiter,
+    "Trop d'avis envoyés. Réessayez dans une heure.",
   ),
 };

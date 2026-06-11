@@ -3,15 +3,25 @@ const router = express.Router();
 const db = require("../database");
 const { adminMiddleware } = require("../middleware/auth");
 
+const ERR = (err, res) =>
+  res.status(500).json({
+    error:
+      process.env.NODE_ENV === "production"
+        ? "Erreur serveur interne"
+        : err.message,
+  });
+
+// ── GET /api/wilayas — public ─────────────────────────────
 router.get("/", async (req, res) => {
   try {
     const { rows } = await db.query("SELECT * FROM wilayas ORDER BY id");
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    ERR(err, res);
   }
 });
 
+// ── PUT /api/wilayas/:id — admin ──────────────────────────
 router.put("/:id", adminMiddleware, async (req, res) => {
   try {
     const { shipping_price, bureau_price, active } = req.body;
@@ -34,7 +44,7 @@ router.put("/:id", adminMiddleware, async (req, res) => {
     );
     res.json(updated[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    ERR(err, res);
   }
 });
 

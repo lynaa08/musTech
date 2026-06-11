@@ -3,6 +3,15 @@ const router = express.Router();
 const db = require("../database");
 const { adminMiddleware } = require("../middleware/auth");
 
+const ERR = (err, res) =>
+  res.status(500).json({
+    error:
+      process.env.NODE_ENV === "production"
+        ? "Erreur serveur interne"
+        : err.message,
+  });
+
+// ── GET /api/stats — admin ────────────────────────────────
 router.get("/", adminMiddleware, async (req, res) => {
   try {
     const q = (sql, p = []) => db.query(sql, p).then((r) => r.rows[0]);
@@ -34,7 +43,7 @@ router.get("/", adminMiddleware, async (req, res) => {
     ]);
 
     // Calculer les produits les plus vendus depuis les vraies commandes
-    const salesMap = {}; // { productId: { name, cat, price, qty, revenue } }
+    const salesMap = {};
     for (const row of allOrders.rows) {
       let items = [];
       try {
@@ -75,7 +84,7 @@ router.get("/", adminMiddleware, async (req, res) => {
       topProducts,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    ERR(err, res);
   }
 });
 

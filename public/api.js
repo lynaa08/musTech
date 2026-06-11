@@ -138,5 +138,3 @@ const RatingsAPI = {
 const StatsAPI = {
   get: () => apiFetch("/stats"),
 };
-
-console.log("✅ Mus Tech API helper loaded — connected to", API_URL);
