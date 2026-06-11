@@ -1,4 +1,7 @@
-const { RateLimiterRedis, RateLimiterMemory } = require("rate-limiter-flexible");
+const {
+  RateLimiterRedis,
+  RateLimiterMemory,
+} = require("rate-limiter-flexible");
 const Redis = require("ioredis");
 
 // ── CONNEXION REDIS ───────────────────────────────────────
@@ -14,7 +17,7 @@ if (process.env.REDIS_URL) {
 
   redisClient.on("connect", () => console.log("✅ Redis connecté"));
   redisClient.on("error", (err) =>
-    console.error("❌ Redis erreur:", err.message)
+    console.error("❌ Redis erreur:", err.message),
   );
 }
 
@@ -23,7 +26,9 @@ function createLimiter(opts) {
   if (redisClient) {
     return new RateLimiterRedis({ storeClient: redisClient, ...opts });
   }
-  console.warn(`⚠️  Rate limiter "${opts.keyPrefix}" en mode RAM (pas de Redis)`);
+  console.warn(
+    `⚠️  Rate limiter "${opts.keyPrefix}" en mode RAM (pas de Redis)`,
+  );
   return new RateLimiterMemory(opts);
 }
 
@@ -34,6 +39,15 @@ const loginLimiter = createLimiter({
   points: 10,
   duration: 15 * 60,
   blockDuration: 15 * 60,
+});
+
+// ── LIMITER REGISTER (anti spam / énumération) ────────────
+// 5 créations de compte / heure par IP
+const registerLimiter = createLimiter({
+  keyPrefix: "rl_register",
+  points: 5,
+  duration: 60 * 60,
+  blockDuration: 60 * 60,
 });
 
 // ── LIMITER COMMANDES ─────────────────────────────────────
@@ -64,10 +78,14 @@ function makeMiddleware(limiter, errorMsg) {
 module.exports = {
   loginRateLimiter: makeMiddleware(
     loginLimiter,
-    "Trop de tentatives de connexion. Réessayez dans 15 minutes."
+    "Trop de tentatives de connexion. Réessayez dans 15 minutes.",
+  ),
+  registerRateLimiter: makeMiddleware(
+    registerLimiter,
+    "Trop de créations de compte. Réessayez dans une heure.",
   ),
   orderRateLimiter: makeMiddleware(
     orderLimiter,
-    "Trop de commandes. Réessayez dans une heure."
+    "Trop de commandes. Réessayez dans une heure.",
   ),
 };

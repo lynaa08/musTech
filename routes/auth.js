@@ -3,27 +3,28 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../database");
-// FIX #5: Rate limiter Redis (persistant entre redémarrages)
-const { loginRateLimiter } = require("../middleware/rateLimiter");
+const {
+  loginRateLimiter,
+  registerRateLimiter,
+} = require("../middleware/rateLimiter");
 
+// FIX: JWT payload minimal — id + role uniquement (pas de PII)
 function signToken(user) {
-  // FIX #4: Expiry réduit à 1j (était 7j) pour limiter l'impact d'un token volé
   const expiry = user.role === "admin" ? "8h" : "1d";
-  return jwt.sign(
-    { id: user.id, email: user.email, name: user.name, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: expiry },
-  );
+  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: expiry,
+  });
 }
 
 // ── POST /api/auth/register ────────────────────────────────
-router.post("/register", async (req, res) => {
+// FIX: registerRateLimiter ajouté (anti-spam / énumération)
+router.post("/register", registerRateLimiter, async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
-    if (!name || !email || !password || password.length < 6)
+    if (!name || !email || !password || password.length < 8)
       return res
         .status(400)
-        .json({ error: "Champs invalides. Mot de passe min. 6 caractères." });
+        .json({ error: "Champs invalides. Mot de passe min. 8 caractères." });
 
     const existing = await db.query("SELECT id FROM users WHERE email = $1", [
       email.toLowerCase(),
@@ -48,14 +49,12 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -86,14 +85,12 @@ router.post("/login", loginRateLimiter, async (req, res) => {
       },
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -111,14 +108,12 @@ router.get(
         return res.status(404).json({ error: "Utilisateur non trouvé" });
       res.json(result.rows[0]);
     } catch (err) {
-      res
-        .status(500)
-        .json({
-          error:
-            process.env.NODE_ENV === "production"
-              ? "Erreur serveur interne"
-              : err.message,
-        });
+      res.status(500).json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
     }
   },
 );

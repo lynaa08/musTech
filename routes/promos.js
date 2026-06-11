@@ -1,7 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database");
-const { adminMiddleware } = require("../middleware/auth");
+const { adminMiddleware, authMiddleware } = require("../middleware/auth");
+
+const ERR = (e, res) =>
+  res.status(500).json({
+    error:
+      process.env.NODE_ENV === "production"
+        ? "Erreur serveur interne"
+        : e.message,
+  });
 
 // ── INIT TABLE ────────────────────────────────────────────
 async function initPromos() {
@@ -29,19 +37,28 @@ initPromos().catch(console.error);
 router.get("/", adminMiddleware, async (req, res) => {
   try {
     const { rows } = await db.query(
-      "SELECT * FROM promos ORDER BY created_at DESC"
+      "SELECT * FROM promos ORDER BY created_at DESC",
     );
     res.json(rows);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 // ── CREATE ────────────────────────────────────────────────
 router.post("/", adminMiddleware, async (req, res) => {
   try {
     const {
-      type, name, code, value, value_type = "fixed",
-      max_discount, min_purchase = 0,
-      uses_max, expire_at, active = 1
+      type,
+      name,
+      code,
+      value,
+      value_type = "fixed",
+      max_discount,
+      min_purchase = 0,
+      uses_max,
+      expire_at,
+      active = 1,
     } = req.body;
 
     if (!type || !name || value == null)
@@ -55,20 +72,23 @@ router.post("/", adminMiddleware, async (req, res) => {
         (type,name,code,value,value_type,max_discount,min_purchase,uses_max,expire_at,active)
        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
       [
-        type, name.trim(),
+        type,
+        name.trim(),
         type === "code" ? code.toUpperCase().trim() : null,
-        parseInt(value), value_type,
+        parseInt(value),
+        value_type,
         max_discount ? parseInt(max_discount) : null,
         parseInt(min_purchase) || 0,
         uses_max ? parseInt(uses_max) : null,
         expire_at || null,
-        active ? 1 : 0
-      ]
+        active ? 1 : 0,
+      ],
     );
     res.status(201).json(rows[0]);
   } catch (e) {
-    if (e.code === "23505") return res.status(400).json({ error: "Ce code existe déjà" });
-    res.status(500).json({ error: e.message });
+    if (e.code === "23505")
+      return res.status(400).json({ error: "Ce code existe déjà" });
+    ERR(e, res);
   }
 });
 
@@ -77,8 +97,14 @@ router.put("/:id", adminMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      name, value, value_type, max_discount,
-      min_purchase, uses_max, expire_at, active
+      name,
+      value,
+      value_type,
+      max_discount,
+      min_purchase,
+      uses_max,
+      expire_at,
+      active,
     } = req.body;
     const { rows } = await db.query(
       `UPDATE promos SET
@@ -86,18 +112,22 @@ router.put("/:id", adminMiddleware, async (req, res) => {
         min_purchase=$5, uses_max=$6, expire_at=$7, active=$8
        WHERE id=$9 RETURNING *`,
       [
-        name, parseInt(value), value_type,
+        name,
+        parseInt(value),
+        value_type,
         max_discount ? parseInt(max_discount) : null,
         parseInt(min_purchase) || 0,
         uses_max ? parseInt(uses_max) : null,
         expire_at || null,
         active ? 1 : 0,
-        id
-      ]
+        id,
+      ],
     );
     if (!rows[0]) return res.status(404).json({ error: "Non trouvé" });
     res.json(rows[0]);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 // ── TOGGLE ACTIVE ─────────────────────────────────────────
@@ -105,10 +135,12 @@ router.patch("/:id/toggle", adminMiddleware, async (req, res) => {
   try {
     const { rows } = await db.query(
       "UPDATE promos SET active = CASE WHEN active=1 THEN 0 ELSE 1 END WHERE id=$1 RETURNING *",
-      [req.params.id]
+      [req.params.id],
     );
     res.json(rows[0]);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 // ── DELETE ────────────────────────────────────────────────
@@ -116,7 +148,9 @@ router.delete("/:id", adminMiddleware, async (req, res) => {
   try {
     await db.query("DELETE FROM promos WHERE id=$1", [req.params.id]);
     res.json({ message: "Supprimé" });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 // ── VALIDATE (public — used by product.html) ──────────────
@@ -127,10 +161,11 @@ router.post("/validate", async (req, res) => {
 
     const { rows } = await db.query(
       "SELECT * FROM promos WHERE code=$1 AND type='code' AND active=1",
-      [code.toUpperCase().trim()]
+      [code.toUpperCase().trim()],
     );
     const promo = rows[0];
-    if (!promo) return res.status(404).json({ error: "Code invalide ou inactif" });
+    if (!promo)
+      return res.status(404).json({ error: "Code invalide ou inactif" });
 
     if (promo.expire_at && new Date(promo.expire_at) < new Date())
       return res.status(400).json({ error: "Code expiré" });
@@ -140,41 +175,51 @@ router.post("/validate", async (req, res) => {
 
     if (subtotal < promo.min_purchase)
       return res.status(400).json({
-        error: `Achat minimum requis : ${promo.min_purchase.toLocaleString()} DA`
+        error: `Achat minimum requis : ${promo.min_purchase.toLocaleString()} DA`,
       });
 
-    let discount = promo.value_type === "percent"
-      ? Math.round(subtotal * promo.value / 100)
-      : promo.value;
+    let discount =
+      promo.value_type === "percent"
+        ? Math.round((subtotal * promo.value) / 100)
+        : promo.value;
     if (promo.max_discount) discount = Math.min(discount, promo.max_discount);
     discount = Math.min(discount, subtotal);
 
     res.json({ valid: true, discount, promo });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 // ── USE (called when order is placed with a code) ─────────
-router.post("/use", async (req, res) => {
+// FIX: authMiddleware ajouté — endpoint n'est plus public
+router.post("/use", authMiddleware, async (req, res) => {
   try {
     const { code } = req.body;
     if (!code) return res.status(400).json({ error: "Code manquant" });
     await db.query(
       "UPDATE promos SET uses_count = uses_count + 1 WHERE code=$1",
-      [code.toUpperCase().trim()]
+      [code.toUpperCase().trim()],
     );
     res.json({ ok: true });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 // ── STATS (dashboard) ─────────────────────────────────────
 router.get("/stats", adminMiddleware, async (req, res) => {
   try {
-    const q = (sql, p=[]) => db.query(sql, p).then(r => r.rows[0]);
+    const q = (sql, p = []) => db.query(sql, p).then((r) => r.rows[0]);
     const [total, active, expired, pending] = await Promise.all([
       q("SELECT COUNT(*) c FROM promos"),
       q("SELECT COUNT(*) c FROM promos WHERE active=1"),
-      q("SELECT COUNT(*) c FROM promos WHERE expire_at IS NOT NULL AND expire_at < NOW()"),
-      q("SELECT COUNT(*) c FROM promos WHERE active=1 AND (expire_at IS NULL OR expire_at > NOW())"),
+      q(
+        "SELECT COUNT(*) c FROM promos WHERE expire_at IS NOT NULL AND expire_at < NOW()",
+      ),
+      q(
+        "SELECT COUNT(*) c FROM promos WHERE active=1 AND (expire_at IS NULL OR expire_at > NOW())",
+      ),
     ]);
     res.json({
       total: parseInt(total.c),
@@ -182,7 +227,9 @@ router.get("/stats", adminMiddleware, async (req, res) => {
       expired: parseInt(expired.c),
       pending: parseInt(pending.c),
     });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    ERR(e, res);
+  }
 });
 
 module.exports = router;

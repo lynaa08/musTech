@@ -8,15 +8,16 @@ const helmet = require("helmet");
 const app = express();
 
 // ── MIDDLEWARE ────────────────────────────────────────────
+// FIX: origines de dev uniquement hors production
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "https://mustech.shop",
   "https://www.mustech.shop",
-  "http://localhost:3001",
-  "http://127.0.0.1:5500",
+  ...(process.env.NODE_ENV !== "production"
+    ? ["http://localhost:3001", "http://127.0.0.1:5500"]
+    : []),
 ].filter(Boolean);
 
-// APRÈS
 app.use(
   helmet({
     contentSecurityPolicy: {
