@@ -11,12 +11,13 @@ const {
 // ── Cookie options ─────────────────────────────────────────
 // HttpOnly  : JavaScript ne peut JAMAIS lire ce cookie
 // Secure    : envoyé uniquement en HTTPS
-// SameSite  : bloque les requêtes cross-site (protection CSRF)
+// SameSite  : "none" requis pour les requêtes cross-origin
+//             (frontend mustech.shop ↔ backend railway.app)
 function cookieOptions(maxAgeMs) {
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: true,
+    sameSite: "none",
     maxAge: maxAgeMs,
     path: "/",
   };
@@ -123,8 +124,8 @@ router.post("/logout", (req, res) => {
   // Effacer le cookie côté serveur
   res.clearCookie("mt_auth", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: true,
+    sameSite: "none",
     path: "/",
   });
   res.json({ message: "Déconnecté avec succès" });
