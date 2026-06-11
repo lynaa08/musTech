@@ -8378,7 +8378,7 @@
           await ProductsAPI.update(id, fd);
           // Reload from admin route to keep cost_price
           const fresh = await fetch(API_URL + "/products/admin/all", {
-            headers: { Authorization: "Bearer " + Auth.getToken() },
+            credentials: "include",
           });
           PRODUCTS = await fresh.json();
           PRODUCTS.forEach((p) => {
@@ -10765,9 +10765,9 @@
         const pass = document.getElementById("reg-password").value;
         const err = document.getElementById("reg-error");
 
-        if (!name || !email || pass.length < 6) {
+        if (!name || !email || pass.length < 8) {
           err.textContent =
-            "Veuillez remplir tous les champs (mot de passe min. 6 caractères).";
+            "Veuillez remplir tous les champs (mot de passe min. 8 caractères).";
           err.style.display = "block";
           return;
         }
@@ -11190,8 +11190,10 @@
           PRODUCTS.forEach((p) => {
             if (p.description) PRODUCT_DESCS[p.id] = p.description;
           });
-          if (Auth.isLoggedIn()) {
-            currentUser = Auth.getUser();
+          // Vérification session via cookie HttpOnly (pas de localStorage)
+          const sessionUser = await AuthAPI.checkSession();
+          if (sessionUser) {
+            currentUser = sessionUser;
             loginUser(currentUser);
             if (currentUser && currentUser.role === "admin") {
               const ordersRes = await OrdersAPI.getAll();
@@ -11812,14 +11814,11 @@
       let currentPromoType = "voucher";
 
       async function promoFetch(path, opts = {}) {
-        const token = Auth.getToken
-          ? Auth.getToken()
-          : localStorage.getItem("mt_token") || "";
         const headers = { "Content-Type": "application/json" };
-        if (token) headers["Authorization"] = "Bearer " + token;
         const res = await fetch(API_URL + "/promos" + path, {
           ...opts,
           headers,
+          credentials: "include",
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erreur " + res.status);

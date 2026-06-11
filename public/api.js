@@ -1,36 +1,43 @@
 // ============================================================
 //  Mus Tech — API Helper
-//  Add this <script src="api.js"></script> to your HTML
-//  Set API_URL to your server address
+//  Auth via cookie HttpOnly — le token n'est JAMAIS
+//  accessible en JavaScript (protection XSS totale)
 // ============================================================
 
-// Change to your server IP/
 const API_URL = "https://mustech-production.up.railway.app/api";
 
-// ── TOKEN STORAGE ─────────────────────────────────────────
+// ── AUTH STATE (en mémoire uniquement — pas de localStorage) ─
+// On garde juste les infos non-sensibles de l'utilisateur
+// pour afficher son nom/rôle dans l'UI.
+// Le vrai token de sécurité est dans le cookie HttpOnly géré
+// par le navigateur — JS ne peut pas y toucher.
 const Auth = {
-  getToken: () => localStorage.getItem("mt_token"),
-  setToken: (t) => localStorage.setItem("mt_token", t),
-  removeToken: () => localStorage.removeItem("mt_token"),
-  getUser: () => {
-    try {
-      return JSON.parse(localStorage.getItem("mt_user"));
-    } catch {
-      return null;
-    }
+  _user: null,
+
+  getUser: () => Auth._user,
+  setUser: (u) => {
+    Auth._user = u;
   },
-  setUser: (u) => localStorage.setItem("mt_user", JSON.stringify(u)),
-  removeUser: () => localStorage.removeItem("mt_user"),
-  isLoggedIn: () => !!localStorage.getItem("mt_token"),
+  removeUser: () => {
+    Auth._user = null;
+  },
+  isLoggedIn: () => !!Auth._user,
+
+  // Compatibilité — plus de token côté JS
+  getToken: () => null,
 };
 
 // ── BASE FETCH ────────────────────────────────────────────
+// credentials: "include" envoie automatiquement le cookie
+// HttpOnly avec chaque requête — sans que JS voie le token
 async function apiFetch(endpoint, options = {}) {
-  const token = Auth.getToken();
   const headers = { "Content-Type": "application/json", ...options.headers };
-  if (token) headers["Authorization"] = "Bearer " + token;
 
-  const res = await fetch(API_URL + endpoint, { ...options, headers });
+  const res = await fetch(API_URL + endpoint, {
+    ...options,
+    headers,
+    credentials: "include", // ← envoie le cookie HttpOnly automatiquement
+  });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "Erreur serveur");
   return data;
@@ -43,7 +50,8 @@ const AuthAPI = {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
-    Auth.setToken(data.token);
+    // Le cookie est posé par le serveur automatiquement
+    // On garde juste les infos UI en mémoire
     Auth.setUser(data.user);
     return data.user;
   },
@@ -53,29 +61,47 @@ const AuthAPI = {
       method: "POST",
       body: JSON.stringify({ name, email, phone, password }),
     });
-    Auth.setToken(data.token);
     Auth.setUser(data.user);
     return data.user;
   },
 
-  logout() {
-    Auth.removeToken();
+  async logout() {
+    try {
+      // Demande au serveur d'effacer le cookie HttpOnly
+      await apiFetch("/auth/logout", { method: "POST" });
+    } catch {}
     Auth.removeUser();
+  },
+
+  // Vérifie la session au chargement de la page
+  async checkSession() {
+    try {
+      const user = await apiFetch("/auth/me");
+      Auth.setUser(user);
+      return user;
+    } catch {
+      Auth.removeUser();
+      return null;
+    }
   },
 };
 
 // ── PRODUCTS API ──────────────────────────────────────────
 const ProductsAPI = {
-  getAll: (cat) =>
-    apiFetch("/products" + (cat ? `?cat=${encodeURIComponent(cat)}` : "")),
+  getAll: (cat, search) => {
+    const params = new URLSearchParams();
+    if (cat) params.set("cat", cat);
+    if (search) params.set("search", search);
+    const qs = params.toString();
+    return apiFetch("/products" + (qs ? "?" + qs : ""));
+  },
   getOne: (id) => apiFetch("/products/" + id),
 
   async create(formData) {
-    const token = Auth.getToken();
     const res = await fetch(API_URL + "/products", {
       method: "POST",
-      headers: { Authorization: "Bearer " + token },
-      body: formData, // FormData for file upload
+      credentials: "include",
+      body: formData,
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Erreur");
@@ -83,10 +109,9 @@ const ProductsAPI = {
   },
 
   async update(id, formData) {
-    const token = Auth.getToken();
     const res = await fetch(API_URL + "/products/" + id, {
       method: "PUT",
-      headers: { Authorization: "Bearer " + token },
+      credentials: "include",
       body: formData,
     });
     const data = await res.json();
@@ -101,6 +126,8 @@ const ProductsAPI = {
       method: "PATCH",
       body: JSON.stringify({ order }),
     }),
+
+  getAdminAll: () => apiFetch("/products/admin/all"),
 };
 
 // ── ORDERS API ────────────────────────────────────────────
@@ -108,7 +135,14 @@ const OrdersAPI = {
   place: (orderData) =>
     apiFetch("/orders", { method: "POST", body: JSON.stringify(orderData) }),
   myOrders: () => apiFetch("/orders/my"),
-  getAll: (status) => apiFetch("/orders" + (status ? `?status=${status}` : "")),
+  getAll: (status, page, limit) => {
+    const params = new URLSearchParams();
+    if (status) params.set("status", status);
+    if (page) params.set("page", page);
+    if (limit) params.set("limit", limit);
+    const qs = params.toString();
+    return apiFetch("/orders" + (qs ? "?" + qs : ""));
+  },
   updateStatus: (id, status) =>
     apiFetch("/orders/" + id + "/status", {
       method: "PUT",

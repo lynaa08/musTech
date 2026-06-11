@@ -8,16 +8,42 @@ const {
   registerRateLimiter,
 } = require("../middleware/rateLimiter");
 
-// FIX: JWT payload minimal — id + role uniquement (pas de PII)
-function signToken(user) {
-  const expiry = user.role === "admin" ? "8h" : "1d";
-  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: expiry,
-  });
+// ── Cookie options ─────────────────────────────────────────
+// HttpOnly  : JavaScript ne peut JAMAIS lire ce cookie
+// Secure    : envoyé uniquement en HTTPS
+// SameSite  : bloque les requêtes cross-site (protection CSRF)
+function cookieOptions(maxAgeMs) {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: maxAgeMs,
+    path: "/",
+  };
 }
 
+// JWT payload minimal — id + role uniquement (pas de PII)
+function signToken(user) {
+  const isAdmin = user.role === "admin";
+  const expiresIn = isAdmin ? "8h" : "1d";
+  const maxAge = isAdmin ? 8 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+  const token = jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn },
+  );
+  return { token, maxAge };
+}
+
+const ERR = (err, res) =>
+  res.status(500).json({
+    error:
+      process.env.NODE_ENV === "production"
+        ? "Erreur serveur interne"
+        : err.message,
+  });
+
 // ── POST /api/auth/register ────────────────────────────────
-// FIX: registerRateLimiter ajouté (anti-spam / énumération)
 router.post("/register", registerRateLimiter, async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -38,8 +64,12 @@ router.post("/register", registerRateLimiter, async (req, res) => {
       [name, email.toLowerCase(), phone || null, hashed],
     );
     const user = result.rows[0];
+    const { token, maxAge } = signToken(user);
+
+    // Poser le cookie HttpOnly — le frontend ne voit jamais le token
+    res.cookie("mt_auth", token, cookieOptions(maxAge));
+
     res.status(201).json({
-      token: signToken(user),
       user: {
         id: user.id,
         name: user.name,
@@ -49,12 +79,7 @@ router.post("/register", registerRateLimiter, async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Erreur serveur interne"
-          : err.message,
-    });
+    ERR(err, res);
   }
 });
 
@@ -74,8 +99,12 @@ router.post("/login", loginRateLimiter, async (req, res) => {
         .status(401)
         .json({ error: "E-mail ou mot de passe incorrect." });
 
+    const { token, maxAge } = signToken(user);
+
+    // Poser le cookie HttpOnly
+    res.cookie("mt_auth", token, cookieOptions(maxAge));
+
     res.json({
-      token: signToken(user),
       user: {
         id: user.id,
         name: user.name,
@@ -85,13 +114,20 @@ router.post("/login", loginRateLimiter, async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Erreur serveur interne"
-          : err.message,
-    });
+    ERR(err, res);
   }
+});
+
+// ── POST /api/auth/logout ──────────────────────────────────
+router.post("/logout", (req, res) => {
+  // Effacer le cookie côté serveur
+  res.clearCookie("mt_auth", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+  });
+  res.json({ message: "Déconnecté avec succès" });
 });
 
 // ── GET /api/auth/me ───────────────────────────────────────
@@ -108,12 +144,7 @@ router.get(
         return res.status(404).json({ error: "Utilisateur non trouvé" });
       res.json(result.rows[0]);
     } catch (err) {
-      res.status(500).json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+      ERR(err, res);
     }
   },
 );

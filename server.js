@@ -4,11 +4,11 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
-// ── MIDDLEWARE ────────────────────────────────────────────
-// FIX: origines de dev uniquement hors production
+// ── CORS ──────────────────────────────────────────────────
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "https://mustech.shop",
@@ -70,11 +70,16 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    // ── IMPORTANT : autorise l'envoi des cookies cross-origin ──
+    credentials: true,
   }),
 );
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+
+// ── Cookie parser — lit les cookies HttpOnly ──────────────
+app.use(cookieParser());
 
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
