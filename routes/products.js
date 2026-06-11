@@ -75,9 +75,15 @@ router.get("/", async (req, res) => {
     }
     query += " ORDER BY sort_order ASC NULLS LAST, created_at DESC";
     const { rows } = await db.query(query, params);
-    res.json(rows.map(parseProduct));
+    // FIX #1: Ne jamais exposer les prix d'achat publiquement
+    res.json(rows.map(row => {
+      const p = parseProduct(row);
+      delete p.costPrice;
+      delete p.variantPurchasePrices;
+      return p;
+    }));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -89,7 +95,7 @@ router.get("/admin/all", adminMiddleware, async (req, res) => {
     );
     res.json(rows.map(parseProduct));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -101,9 +107,13 @@ router.get("/:id", async (req, res) => {
       [req.params.id],
     );
     if (!rows[0]) return res.status(404).json({ error: "Produit non trouvé" });
-    res.json(parseProduct(rows[0]));
+    // FIX #1: Ne jamais exposer les prix d'achat publiquement
+    const p = parseProduct(rows[0]);
+    delete p.costPrice;
+    delete p.variantPurchasePrices;
+    res.json(p);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -197,7 +207,7 @@ router.post(
         uploadWarning: req.uploadError || undefined,
       });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
     }
   },
 );
@@ -301,7 +311,7 @@ router.put(
         uploadWarning: req.uploadError || undefined,
       });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
     }
   },
 );
@@ -318,7 +328,7 @@ router.delete("/:id", adminMiddleware, async (req, res) => {
     ]);
     res.json({ message: "Produit supprimé" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -340,7 +350,7 @@ router.patch("/reorder", adminMiddleware, async (req, res) => {
     );
     res.json({ message: "Order saved" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -356,7 +366,7 @@ router.get("/categories/all", async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -372,7 +382,7 @@ router.post("/categories", adminMiddleware, async (req, res) => {
     );
     res.status(201).json(rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 
@@ -384,7 +394,7 @@ router.delete("/categories/:id", adminMiddleware, async (req, res) => {
     ]);
     res.json({ message: "Catégorie supprimée" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Erreur serveur interne' : err.message });
   }
 });
 

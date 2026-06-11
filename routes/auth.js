@@ -3,36 +3,16 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../database");
-
-// ── RATE LIMITER LOGIN (anti brute-force) ─────────────────
-const _loginAttempts = new Map();
-const LOGIN_MAX = 10;
-const LOGIN_WINDOW = 15 * 60 * 1000; // 15 minutes
-
-function loginRateLimiter(req, res, next) {
-  const ip =
-    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-    req.socket.remoteAddress ||
-    "unknown";
-  const now = Date.now();
-  const attempts = (_loginAttempts.get(ip) || []).filter(
-    (t) => now - t < LOGIN_WINDOW,
-  );
-  if (attempts.length >= LOGIN_MAX) {
-    return res.status(429).json({
-      error: "Trop de tentatives de connexion. Réessayez dans 15 minutes.",
-    });
-  }
-  attempts.push(now);
-  _loginAttempts.set(ip, attempts);
-  next();
-}
+// FIX #5: Rate limiter Redis (persistant entre redémarrages)
+const { loginRateLimiter } = require("../middleware/rateLimiter");
 
 function signToken(user) {
+  // FIX #4: Expiry réduit à 1j (était 7j) pour limiter l'impact d'un token volé
+  const expiry = user.role === "admin" ? "8h" : "1d";
   return jwt.sign(
     { id: user.id, email: user.email, name: user.name, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "7d" },
+    { expiresIn: expiry },
   );
 }
 
@@ -68,7 +48,14 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -99,7 +86,14 @@ router.post("/login", loginRateLimiter, async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -117,7 +111,14 @@ router.get(
         return res.status(404).json({ error: "Utilisateur non trouvé" });
       res.json(result.rows[0]);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res
+        .status(500)
+        .json({
+          error:
+            process.env.NODE_ENV === "production"
+              ? "Erreur serveur interne"
+              : err.message,
+        });
     }
   },
 );

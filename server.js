@@ -7,35 +7,6 @@ const helmet = require("helmet");
 
 const app = express();
 
-// ── RATE LIMITER COMMANDES ────────────────────────────────
-const _ipRequests = new Map();
-const RATE_LIMIT = 5;
-const RATE_WINDOW = 60 * 60 * 1000;
-
-function orderRateLimiter(req, res, next) {
-  const ip =
-    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-    req.socket.remoteAddress ||
-    "unknown";
-  const now = Date.now();
-  const timestamps = (_ipRequests.get(ip) || []).filter(
-    (t) => now - t < RATE_WINDOW,
-  );
-  if (timestamps.length >= RATE_LIMIT) {
-    return res
-      .status(429)
-      .json({ error: "Trop de commandes. Réessayez dans une heure." });
-  }
-  timestamps.push(now);
-  _ipRequests.set(ip, timestamps);
-  if (_ipRequests.size > 10000) {
-    for (const [key, val] of _ipRequests) {
-      if (val.every((t) => now - t > RATE_WINDOW)) _ipRequests.delete(key);
-    }
-  }
-  next();
-}
-
 // ── MIDDLEWARE ────────────────────────────────────────────
 const allowedOrigins = [
   process.env.FRONTEND_URL,

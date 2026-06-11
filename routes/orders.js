@@ -6,27 +6,8 @@ const {
   adminMiddleware,
   optionalAuth,
 } = require("../middleware/auth");
-
-// ── RATE LIMITER COMMANDES (uniquement sur POST) ──────────
-const _ipRequests = new Map();
-function orderRateLimiter(req, res, next) {
-  const ip =
-    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-    req.socket.remoteAddress ||
-    "unknown";
-  const now = Date.now();
-  const timestamps = (_ipRequests.get(ip) || []).filter(
-    (t) => now - t < 3600000,
-  );
-  if (timestamps.length >= 5) {
-    return res
-      .status(429)
-      .json({ error: "Trop de commandes. Réessayez dans une heure." });
-  }
-  timestamps.push(now);
-  _ipRequests.set(ip, timestamps);
-  next();
-}
+// FIX #5: Rate limiter Redis (persistant entre redémarrages)
+const { orderRateLimiter } = require("../middleware/rateLimiter");
 
 // Normalise un numéro algérien vers 0XXXXXXXXX
 // Accepte: 0558210430 / +213558210430 / +2130558210430
@@ -40,12 +21,17 @@ function normalizeAlgerianPhone(phone) {
 
 async function generateRef() {
   const { rows } = await db.query("SELECT COUNT(*) as c FROM orders");
-  return "#MT-" + String(parseInt(rows[0].c) + 1).padStart(4, "0");
+  // FIX #3: Suffixe aléatoire pour éviter les refs prédictibles
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return "#MT-" + String(parseInt(rows[0].c) + 1).padStart(4, "0") + "-" + rand;
 }
 
 function validateOrderInput({ customer, phone, wilaya, items }) {
   if (!customer || typeof customer !== "string" || customer.trim().length < 2)
     return "Nom invalide (minimum 2 caractères).";
+  // FIX #8: Filtrer les caractères spéciaux/HTML dans le nom client
+  if (/<[^>]*>/.test(customer))
+    return "Nom invalide (caractères non autorisés).";
   const phoneClean = normalizeAlgerianPhone(phone || "");
   if (!phoneClean)
     return "Numéro de téléphone invalide (ex: 0558210430, +213558210430 ou +2130558210430).";
@@ -180,9 +166,7 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
         [item.id],
       );
       const stocks = JSON.parse(pRows[0]?.variant_stocks || "[]");
-      console.log(
-        `[STOCK DEBUG] Product ${item.id} - variant_stocks before: ${JSON.stringify(stocks)}, variantIndex: ${item.variantIndex}, qty: ${item.qty}`,
-      );
+      // FIX #7: Log debug supprimé (exposait des données clients dans les logs Railway)
       // No Math.max(0, ...) — we allow negative to show how much was ordered past 0
       stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) - item.qty;
       const totalStock = stocks.reduce((a, b) => a + b, 0);
@@ -203,7 +187,14 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
       total_formatted: total.toLocaleString("fr-DZ") + " DA",
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -223,7 +214,14 @@ router.get("/track/:ref", async (req, res) => {
     const o = rows[0];
     res.json({ ...o, items: JSON.parse(o.items) });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -237,7 +235,14 @@ router.get("/my", authMiddleware, async (req, res) => {
     );
     res.json(rows.map((o) => ({ ...o, items: JSON.parse(o.items) })));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -269,7 +274,14 @@ router.get("/", adminMiddleware, async (req, res) => {
       pages: Math.ceil(total / parseInt(limit)),
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -282,7 +294,14 @@ router.get("/:id", adminMiddleware, async (req, res) => {
       return res.status(404).json({ error: "Commande non trouvée" });
     res.json({ ...rows[0], items: JSON.parse(rows[0].items) });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -354,7 +373,14 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
     ]);
     res.json({ message: "Statut mis à jour", status });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -396,7 +422,14 @@ router.put("/:id/pin", adminMiddleware, async (req, res) => {
       pinned: newPinnedStatus,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
@@ -410,7 +443,14 @@ router.delete("/:id", adminMiddleware, async (req, res) => {
     await db.query("DELETE FROM orders WHERE id = $1", [req.params.id]);
     res.json({ message: "Commande supprimée" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res
+      .status(500)
+      .json({
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Erreur serveur interne"
+            : err.message,
+      });
   }
 });
 
