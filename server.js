@@ -93,6 +93,9 @@ if (fs.existsSync(frontendPath)) {
 // ── INIT DATABASE ─────────────────────────────────────────
 require("./database");
 
+// ── IMPORT AUTH MIDDLEWARE ────────────────────────────────
+const { adminMiddleware } = require("./middleware/auth");
+
 // ── ROUTES ────────────────────────────────────────────────
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/products", require("./routes/products"));
@@ -108,6 +111,23 @@ app.get("/api/health", (req, res) => {
     status: "ok",
     message: "Mus Tech API is running 🚀",
     time: new Date().toISOString(),
+  });
+});
+
+// ── ADMIN ROUTE (Protected: requires authentication + admin role) ─
+app.get("/admin", (req, res, next) => {
+  const token = req.cookies?.mt_auth;
+  if (!token) {
+    return res.redirect("/");
+  }
+  // Use adminMiddleware to check auth + admin role
+  adminMiddleware(req, res, () => {
+    const adminPath = path.join(__dirname, "public", "admin.html");
+    if (fs.existsSync(adminPath)) {
+      res.sendFile(adminPath);
+    } else {
+      res.status(404).json({ error: "Admin page not found" });
+    }
   });
 });
 

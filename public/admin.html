@@ -2668,7 +2668,6 @@
     </style>
   </head>
   <body>
-    <!-- NAVBAR -->
     <nav id="main-nav">
       <a
         class="nav-logo"
@@ -2928,3370 +2927,1073 @@
       </div>
     </nav>
 
-    <!-- HOME PAGE -->
-    <div id="home-page" class="page-section active">
-      <!-- HERO -->
-      <section class="hero">
-        <div class="hero-inner">
-          <div class="hero-text">
-            <div class="hero-badge">Nouveautés 2026</div>
-            <h1>
-              Built for <em>Frames</em>.<br />Designed for <em>Legends</em>.
-            </h1>
-            <p class="hero-sub">
-              Your setup isn't just a machine — it's your identity. We deliver
-              the style, lighting, and detail that transform PCs into
-              masterpieces.
-            </p>
-            <div class="hero-ctas">
-              <button
-                class="btn btn-primary"
-                onclick="
-                  document
-                    .getElementById('featured-grid')
-                    .closest('.section')
-                    .scrollIntoView({ behavior: 'smooth', block: 'start' })
-                ">
-                Voir la Boutique →
-              </button>
-            </div>
-          </div>
-          <div class="hero-visual">
-            <div class="hero-carousel-wrapper" id="hero-carousel">
-              <!-- cards injected by JS -->
-              <div class="carousel-progress" id="carousel-progress"></div>
-              <div class="hero-carousel-dots" id="carousel-dots"></div>
-            </div>
-            <div class="hero-stat-row">
-              <div class="hero-stat">
-                <div class="num" id="products-count">0</div>
-                <div class="label">Produits</div>
-              </div>
-              <div class="hero-stat">
-                <div class="num">69</div>
-                <div class="label">Wilayas</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SEARCH BAR -->
-      <div class="search-bar-wrapper">
-        <div class="search-bar-inner">
-          <div class="search-input-wrap">
+    <div id="admin-page" class="page-section">
+      <div class="admin-layout">
+        <aside class="admin-sidebar">
+          <div class="admin-logo">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="17"
-              height="17"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              viewBox="30 10 62 72"
+              width="36"
+              height="36"
+              style="
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 8px;
+              ">
+              <defs>
+                <linearGradient id="aGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color: #3ecf6e" />
+                  <stop offset="100%" style="stop-color: #1fad52" />
+                </linearGradient>
+              </defs>
+              <polygon
+                points="60,14 88,30 88,62 60,78 32,62 32,30"
+                fill="#1a1a24" />
+              <polygon
+                points="60,14 88,30 88,62 60,78 32,62 32,30"
+                fill="none"
+                stroke="url(#aGrad2)"
+                stroke-width="3" />
+              <text
+                x="55"
+                y="57"
+                font-family="Arial Black,sans-serif"
+                font-size="26"
+                font-weight="900"
+                fill="url(#aGrad2)"
+                text-anchor="middle"
+                letter-spacing="-1">
+                M
+              </text>
+              <text
+                x="75"
+                y="54"
+                font-family="Arial Black,sans-serif"
+                font-size="11"
+                font-weight="900"
+                fill="white"
+                text-anchor="middle"
+                opacity="0.95"
+                transform="rotate(-35, 75, 54)">
+                T
+              </text>
             </svg>
-            <input
-              type="text"
-              class="search-input"
-              id="client-search-input"
-              placeholder="Rechercher un produit…"
-              oninput="handleClientSearch(this)"
-              autocomplete="off" />
+            <span
+              style="
+                color: #fff;
+                font-family:
+                  &quot;Outfit&quot;,
+                  &quot;Segoe UI&quot;,
+                  system-ui,
+                  -apple-system,
+                  sans-serif;
+                font-weight: 800;
+                font-size: 1.1rem;
+              "
+              >Mus<span style="color: #3ecf6e">Tech</span> Admin</span
+            >
           </div>
-          <div class="price-filter-inline">
-            <span class="price-filter-label">Prix :</span>
-            <input
-              type="number"
-              class="price-input"
-              id="price-min-input"
-              placeholder="Min"
-              min="0"
-              step="500" />
-            <span class="price-sep">—</span>
-            <input
-              type="number"
-              class="price-input"
-              id="price-max-input"
-              placeholder="Max"
-              min="0"
-              step="500" />
-            <span class="price-unit">DA</span>
-            <button class="price-apply-btn" onclick="applyPriceFilter()">
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- CATEGORIES -->
-      <div class="categories-bar">
-        <div class="categories-inner" id="categories-inner">
-          <div
-            class="cat-chip active"
-            data-cat="all"
-            onclick="filterCat(this, 'all')">
-            Tous les Produits
-          </div>
-          <!-- chips injected dynamically by buildCategoryChips() -->
-        </div>
-      </div>
-
-      <!-- ALL PRODUCTS -->
-      <section class="section">
-        <div class="section-inner">
-          <div class="section-header">
-            <h2>Tous les <span>Produits</span></h2>
-            <p>Notre catalogue complet</p>
-          </div>
-          <div class="product-grid" id="featured-grid"></div>
-          <div class="search-no-results" id="search-no-results">
-            <div class="no-results-icon">🔍</div>
+          <ul class="admin-nav">
+            <li>
+              <a
+                href="javascript:void(0)"
+                class="active"
+                onclick="showAdminTab('dashboard', this)"
+                >Tableau de Bord</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('orders', this)"
+                >Commandes</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('products', this)"
+                >Produits</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('shipping', this)"
+                >Livraison</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('finance', this)"
+                >Finances</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('reviews', this)"
+                >⭐ Avis Clients</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="showAdminTab('promos', this)"
+                >🎟️ Promotions</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showPage('home')" style="margin-top: 2rem"
+                >← Retour à la Boutique</a
+              >
+            </li>
+            <li>
+              <a
+                href="javascript:void(0)"
+                onclick="logout()"
+                style="color: #ff6b6b; margin-top: 0.5rem"
+                >Se Déconnecter</a
+              >
+            </li>
+          </ul>
+        </aside>
+        <main class="admin-content">
+          <!-- Mobile admin tab bar (visible only on small screens) -->
+          <nav class="admin-mobile-nav" id="admin-mobile-nav">
+            <a
+              href="javascript:void(0)"
+              class="active"
+              onclick="
+                showAdminTab('dashboard', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+              </svg>
+              Dashboard
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('orders', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+              </svg>
+              Commandes
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('products', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              Produits
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('shipping', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13" rx="1" />
+                <path d="M16 8h4l3 3v5h-7V8z" />
+                <circle cx="5.5" cy="18.5" r="2.5" />
+                <circle cx="18.5" cy="18.5" r="2.5" />
+              </svg>
+              Livraison
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('finance', this);
+                syncMobileNav(this);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              Finances
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('reviews', this);
+                syncMobileNav(this);
+              ">
+              ⭐ Avis
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="
+                showAdminTab('promos', this);
+                syncMobileNav(this);
+              ">
+              🎟️ Promos
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="showPage('home')"
+              style="
+                border-color: rgba(255, 255, 255, 0.2);
+                color: rgba(255, 255, 255, 0.4);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              Boutique
+            </a>
+            <a
+              href="javascript:void(0)"
+              onclick="logout()"
+              style="
+                border-color: rgba(255, 107, 107, 0.4);
+                color: rgba(255, 107, 107, 0.85);
+              ">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Déconnexion
+            </a>
+          </nav>
+          <div id="admin-dashboard" class="admin-tab">
+            <div class="admin-header">
+              <h1>Tableau de Bord</h1>
+            </div>
+            <!-- 5 Cards Commandes -->
             <p
               style="
-                font-size: 1.1rem;
+                font-size: 0.72rem;
                 font-weight: 600;
-                margin-bottom: 0.5rem;
-              ">
-              Aucun produit trouvé
-            </p>
-            <p>Essayez un autre mot-clé ou parcourez nos catégories.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- AVIS CLIENTS SECTION -->
-      <section
-        class="section"
-        style="
-          background: var(--off-white);
-          border-top: 1px solid var(--gray-100);
-        ">
-        <div class="section-inner">
-          <div class="section-header">
-            <h2>Ce que disent nos <span>Clients</span></h2>
-            <p>Avis vérifiés de notre communauté</p>
-          </div>
-          <div
-            id="public-reviews-grid"
-            style="
-              display: grid;
-              grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-              gap: 1.25rem;
-            "></div>
-          <div
-            id="public-reviews-empty"
-            style="
-              display: none;
-              text-align: center;
-              padding: 3rem;
-              color: var(--gray-500);
-            ">
-            <div style="font-size: 3rem; margin-bottom: 1rem">⭐</div>
-            <p>Soyez le premier à laisser un avis !</p>
-          </div>
-        </div>
-      </section>
-    </div>
-    <!-- END HOME PAGE -->
-
-    <!-- SHOP PAGE -->
-    <div id="shop-page" class="page-section">
-      <section class="section">
-        <div class="section-inner">
-          <div class="section-header">
-            <h2>Tous les <span>Produits</span></h2>
-          </div>
-          <div class="product-grid" id="shop-grid"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- FAVORITES PAGE -->
-    <div id="favorites-page" class="page-section">
-      <section class="section">
-        <div class="section-inner">
-          <div class="section-header">
-            <h2>Mes <span>Favoris</span></h2>
-          </div>
-          <div
-            id="favorites-empty"
-            style="
-              display: none;
-              text-align: center;
-              padding: 3rem 1rem;
-              color: var(--gray-500);
-            ">
-            <p style="font-size: 1.1rem; margin-bottom: 1rem">
-              Aucun produit favori
-            </p>
-            <p>Ajoutez vos produits préférés en cliquant sur le cœur</p>
-            <button
-              class="btn btn-primary"
-              onclick="showPage('shop')"
-              style="margin-top: 1.5rem">
-              Découvrir les Produits
-            </button>
-          </div>
-          <div class="product-grid" id="favorites-grid"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- ADMIN PAGE -->
-
-    <!-- FOOTER (only on non-admin pages) -->
-    <footer id="main-footer">
-      <div class="footer-inner">
-        <div class="footer-grid">
-          <div class="footer-brand">
-            <div class="logo">Mus<span style="color: #3ecf6e">Tech</span></div>
-            <p>
-              La première destination algérienne pour les composants PC et les
-              cosmétiques premium. Livraison rapide dans les 69 wilayas.
-            </p>
-            <div class="social-links">
-              <!-- Facebook -->
-              <a
-                class="social-btn"
-                href="#"
-                title="Facebook"
-                aria-label="Facebook">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="currentColor">
-                  <path
-                    d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-              </a>
-              <!-- Instagram -->
-              <a
-                class="social-btn"
-                href="https://www.instagram.com/mustech.shop?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                target="_blank"
-                title="Instagram"
-                aria-label="Instagram">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <circle cx="12" cy="12" r="4" />
-                  <circle
-                    cx="17.5"
-                    cy="6.5"
-                    r="1"
-                    fill="currentColor"
-                    stroke="none" />
-                </svg>
-              </a>
-              <!-- TikTok -->
-              <a
-                class="social-btn"
-                href="https://www.tiktok.com/@mustech.shop?_r=1&_t=ZS-9714MzDWypQ"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="TikTok"
-                aria-label="TikTok">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="currentColor">
-                  <path
-                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z" />
-                </svg>
-              </a>
-              <!-- YouTube -->
-              <a
-                class="social-btn"
-                href="#"
-                title="YouTube"
-                aria-label="YouTube">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="currentColor">
-                  <path
-                    d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
-                  <polygon
-                    points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"
-                    fill="white" />
-                </svg>
-              </a>
-            </div>
-          </div>
-          <div class="footer-col">
-            <h4>Boutique</h4>
-            <ul>
-              <li><a href="#">Pièces PC</a></li>
-              <li><a href="#">Cosmétiques PC</a></li>
-              <li><a href="#">Nouveautés</a></li>
-              <li><a href="#">Plus Vendus</a></li>
-              <li><a href="#">Promotions</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4>Aide</h4>
-            <ul>
-              <li>
-                <a
-                  href="#"
-                  onclick="
-                    openMyOrders();
-                    return false;
-                  "
-                  >Suivre ma Commande</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onclick="
-                    document
-                      .getElementById('public-reviews-grid')
-                      .scrollIntoView({ behavior: 'smooth' });
-                    return false;
-                  "
-                  >Retours</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onclick="
-                    openMyOrders();
-                    return false;
-                  "
-                  >Infos Livraison</a
-                >
-              </li>
-              <li><a href="#">FAQ</a></li>
-              <li><a href="tel:+213558210430">Contactez-nous</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4>Contact</h4>
-            <ul>
-              <li>
-                <a
-                  href="https://www.google.com/maps/search/Alger,+Algérie"
-                  target="_blank"
-                  rel="noopener"
-                  style="display: flex; align-items: center; gap: 0.5rem"
-                  ><svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  Alger, Algérie</a
-                >
-              </li>
-              <li>
-                <a
-                  href="tel:+213558210430"
-                  style="display: flex; align-items: center; gap: 0.5rem"
-                  ><svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path
-                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.4a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.69h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.09a16 16 0 0 0 6 6l1.27-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 17.42z" />
-                  </svg>
-                  0558210430</a
-                >
-              </li>
-              <li>
-                <a
-                  href="mailto:mus.softwares@gmail.com"
-                  style="display: flex; align-items: center; gap: 0.5rem"
-                  ><svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path
-                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                    <polyline points="22,6 12,13 2,6" />
-                  </svg>
-                  mus.softwares@gmail.com</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  style="display: flex; align-items: center; gap: 0.5rem"
-                  ><svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  9h – 20h Tous les jours</a
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span>© 2025 Mus Tech. Tous droits réservés.</span>
-          <span>Politique de Confidentialité · Conditions d'utilisation</span>
-        </div>
-      </div>
-    </footer>
-
-    <!-- PRODUCT DETAIL MODAL -->
-    <div class="modal-overlay" id="product-modal">
-      <div class="modal" style="max-width: 700px" id="product-modal-inner">
-        <div class="modal-header">
-          <h3 id="pm-title">Produit</h3>
-          <button class="modal-close" onclick="closeModal('product-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body" style="padding: 0">
-          <div
-            style="
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              gap: 0;
-              min-height: 360px;
-            ">
-            <!-- LEFT: visual -->
-            <div
-              style="
-                background: linear-gradient(
-                  135deg,
-                  var(--gray-50),
-                  var(--green-light)
-                );
-                display: flex;
-                flex-direction: column;
-                border-radius: 0 0 0 20px;
-                position: relative;
-              ">
-              <div
-                id="pm-img"
-                style="
-                  flex: 1;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 7rem;
-                  position: relative;
-                  min-height: 300px;
-                ">
-                <span id="pm-icon">🎮</span>
-                <span
-                  id="pm-badge-img"
-                  style="
-                    position: absolute;
-                    top: 14px;
-                    left: 14px;
-                    background: var(--green);
-                    color: #fff;
-                    font-size: 0.72rem;
-                    font-weight: 700;
-                    padding: 0.25rem 0.7rem;
-                    border-radius: 50px;
-                    display: none;
-                    z-index: 10;
-                  "></span>
-              </div>
-              <div
-                id="pm-thumbnails"
-                style="
-                  display: flex;
-                  gap: 0.5rem;
-                  justify-content: center;
-                  padding: 1rem;
-                  overflow-x: auto;
-                  min-height: 60px;
-                "></div>
-            </div>
-            <!-- RIGHT: info -->
-            <div
-              style="
-                padding: 1.75rem 1.75rem 1.5rem;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-              ">
-              <div>
-                <div
-                  id="pm-cat"
-                  style="
-                    font-size: 0.72rem;
-                    font-weight: 700;
-                    color: var(--green-dark);
-                    text-transform: uppercase;
-                    letter-spacing: 0.06em;
-                    margin-bottom: 0.4rem;
-                  "></div>
-                <h2
-                  id="pm-name"
-                  style="
-                    font-size: 1.35rem;
-                    font-weight: 800;
-                    margin-bottom: 0.4rem;
-                    line-height: 1.2;
-                  "></h2>
-                <div
-                  id="pm-desc"
-                  style="
-                    font-size: 0.875rem;
-                    color: var(--gray-500);
-                    line-height: 1.6;
-                    margin-bottom: 1.25rem;
-                  "></div>
-
-                <!-- VARIANTS -->
-                <div style="margin-bottom: 1.25rem">
-                  <div
-                    style="
-                      font-size: 0.8rem;
-                      font-weight: 700;
-                      color: var(--gray-700);
-                      margin-bottom: 0.5rem;
-                    ">
-                    Options
-                  </div>
-                  <div
-                    id="pm-variants"
-                    style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
-                </div>
-
-                <!-- PRICE -->
-                <div
-                  style="
-                    display: flex;
-                    align-items: baseline;
-                    gap: 0.6rem;
-                    margin-bottom: 1.25rem;
-                  ">
-                  <span
-                    id="pm-price"
-                    style="
-                      font-family:
-                        &quot;Outfit&quot;,
-                        &quot;Segoe UI&quot;,
-                        system-ui,
-                        -apple-system,
-                        sans-serif;
-                      font-size: 1.8rem;
-                      font-weight: 900;
-                      color: var(--gray-900);
-                    "></span>
-                  <span
-                    id="pm-old-price"
-                    style="
-                      font-size: 0.95rem;
-                      color: var(--gray-300);
-                      text-decoration: line-through;
-                      display: none;
-                    "></span>
-                  <span
-                    id="pm-stock"
-                    style="
-                      font-size: 0.78rem;
-                      font-weight: 600;
-                      color: var(--green-dark);
-                      margin-left: 0.25rem;
-                    "></span>
-                </div>
-
-                <!-- QTY -->
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    margin-bottom: 1.25rem;
-                  ">
-                  <span
-                    style="
-                      font-size: 0.8rem;
-                      font-weight: 700;
-                      color: var(--gray-700);
-                    "
-                    >Qté</span
-                  >
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      border: 1.5px solid var(--gray-100);
-                      border-radius: 50px;
-                      overflow: hidden;
-                    ">
-                    <button
-                      onclick="pmChangeQty(-1)"
-                      style="
-                        width: 34px;
-                        height: 34px;
-                        border: none;
-                        background: transparent;
-                        font-size: 1.1rem;
-                        cursor: pointer;
-                        color: var(--gray-700);
-                      ">
-                      −
-                    </button>
-                    <span
-                      id="pm-qty"
-                      style="
-                        width: 32px;
-                        text-align: center;
-                        font-weight: 700;
-                        font-size: 0.95rem;
-                      "
-                      >1</span
-                    >
-                    <button
-                      onclick="pmChangeQty(1)"
-                      style="
-                        width: 34px;
-                        height: 34px;
-                        border: none;
-                        background: transparent;
-                        font-size: 1.1rem;
-                        cursor: pointer;
-                        color: var(--gray-700);
-                      ">
-                      +
-                    </button>
-                  </div>
-                  <span
-                    id="pm-line-total"
-                    style="
-                      font-size: 0.9rem;
-                      font-weight: 700;
-                      color: var(--green-dark);
-                    "></span>
-                </div>
-              </div>
-
-              <!-- INLINE ORDER FORM -->
-              <div
-                id="pm-order-form"
-                style="display: flex; flex-direction: column; gap: 0.55rem">
-                <div
-                  style="
-                    font-size: 0.75rem;
-                    font-weight: 700;
-                    color: var(--gray-500);
-                    text-transform: uppercase;
-                    letter-spacing: 0.07em;
-                    margin-bottom: 0.1rem;
-                  ">
-                  Informations de livraison
-                </div>
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 0.5rem;
-                  ">
-                  <div>
-                    <label
-                      style="
-                        font-size: 0.75rem;
-                        font-weight: 600;
-                        color: var(--gray-700);
-                        display: block;
-                        margin-bottom: 0.25rem;
-                      "
-                      >Nom
-                      <span style="color: var(--gray-400); font-weight: 400"
-                        >(facultatif)</span
-                      ></label
-                    >
-                    <input
-                      id="pm-name"
-                      type="text"
-                      placeholder="Ahmed Benali"
-                      style="
-                        width: 100%;
-                        padding: 0.5rem 0.7rem;
-                        border: 1.5px solid var(--gray-100);
-                        border-radius: 8px;
-                        font-size: 0.85rem;
-                        font-family: inherit;
-                        outline: none;
-                        transition: border-color 0.2s;
-                      "
-                      onfocus="this.style.borderColor = 'var(--green)'"
-                      onblur="validatePmPhone(this)"
-                      oninput="validatePmPhone(this)" />
-                    <span
-                      id="pm-phone-error"
-                      style="
-                        display: none;
-                        color: #e53e3e;
-                        font-size: 0.75rem;
-                        margin-top: 0.2rem;
-                      "
-                      >Numéro invalide. Formats acceptés : 0558210430,
-                      +213558210430 ou +2130558210430</span
-                    >
-                  </div>
-                  <div>
-                    <label
-                      style="
-                        font-size: 0.75rem;
-                        font-weight: 600;
-                        color: var(--gray-700);
-                        display: block;
-                        margin-bottom: 0.25rem;
-                      "
-                      >Téléphone *</label
-                    >
-                    <input
-                      id="pm-phone"
-                      type="tel"
-                      placeholder="0558xxxxxx"
-                      style="
-                        width: 100%;
-                        padding: 0.5rem 0.7rem;
-                        border: 1.5px solid var(--gray-100);
-                        border-radius: 8px;
-                        font-size: 0.85rem;
-                        font-family: inherit;
-                        outline: none;
-                        transition: border-color 0.2s;
-                      "
-                      onfocus="this.style.borderColor = 'var(--green)'"
-                      onblur="validatePmPhone(this)"
-                      oninput="validatePmPhone(this)" />
-                    <span
-                      id="pm-phone-error"
-                      style="
-                        display: none;
-                        color: #e53e3e;
-                        font-size: 0.75rem;
-                        margin-top: 0.2rem;
-                      "
-                      >Numéro invalide. Formats acceptés : 0558210430,
-                      +213558210430 ou +2130558210430</span
-                    >
-                  </div>
-                </div>
-                <div>
-                  <label
-                    style="
-                      font-size: 0.75rem;
-                      font-weight: 600;
-                      color: var(--gray-700);
-                      display: block;
-                      margin-bottom: 0.25rem;
-                    "
-                    >Wilaya *</label
-                  >
-                  <select
-                    id="pm-wilaya"
-                    onchange="pmUpdateShipping()"
-                    style="
-                      width: 100%;
-                      padding: 0.5rem 0.7rem;
-                      border: 1.5px solid var(--gray-100);
-                      border-radius: 8px;
-                      font-size: 0.85rem;
-                      font-family: inherit;
-                      outline: none;
-                      background: #fff;
-                      transition: border-color 0.2s;
-                    "
-                    onfocus="this.style.borderColor = 'var(--green)'"
-                    onblur="this.style.borderColor = 'var(--gray-100)'">
-                    <option value="">-- Sélectionnez votre Wilaya --</option>
-                  </select>
-                </div>
-
-                <!-- TYPE DE LIVRAISON -->
-                <div>
-                  <label
-                    style="
-                      font-size: 0.75rem;
-                      font-weight: 600;
-                      color: var(--gray-700);
-                      display: block;
-                      margin-bottom: 0.35rem;
-                    "
-                    >Type de livraison *</label
-                  >
-                  <div style="display: flex; gap: 0.5rem">
-                    <div
-                      id="pm-del-domicile"
-                      onclick="setPmDelivery('domicile')"
-                      style="
-                        flex: 1;
-                        display: flex;
-                        align-items: center;
-                        gap: 0.5rem;
-                        padding: 0.6rem 0.75rem;
-                        border: 2px solid var(--green);
-                        border-radius: 10px;
-                        cursor: pointer;
-                        background: var(--green-light);
-                        transition: all 0.2s;
-                      ">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="var(--green-dark)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path
-                          d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                        <polyline points="9 22 9 12 15 12 15 22" />
-                      </svg>
-                      <div>
-                        <div
-                          style="
-                            font-size: 0.82rem;
-                            font-weight: 700;
-                            color: var(--green-dark);
-                          ">
-                          À Domicile
-                        </div>
-                        <div style="font-size: 0.68rem; color: var(--gray-500)">
-                          Livré chez vous
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      id="pm-del-bureau"
-                      onclick="setPmDelivery('bureau')"
-                      style="
-                        flex: 1;
-                        display: flex;
-                        align-items: center;
-                        gap: 0.5rem;
-                        padding: 0.6rem 0.75rem;
-                        border: 2px solid var(--gray-100);
-                        border-radius: 10px;
-                        cursor: pointer;
-                        background: #fff;
-                        transition: all 0.2s;
-                      ">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="var(--gray-500)"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" />
-                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-                        <line x1="12" y1="12" x2="12" y2="16" />
-                        <line x1="10" y1="14" x2="14" y2="14" />
-                      </svg>
-                      <div>
-                        <div
-                          style="
-                            font-size: 0.82rem;
-                            font-weight: 700;
-                            color: var(--gray-700);
-                          ">
-                          Au Bureau
-                        </div>
-                        <div style="font-size: 0.68rem; color: var(--gray-500)">
-                          Point de retrait
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <input type="hidden" id="pm-delivery-type" value="domicile" />
-                </div>
-
-                <!-- BUREAU SELECTOR (hidden by default) -->
-                <div
-                  id="pm-bureau-selector"
-                  style="display: none; flex-direction: column; gap: 0.4rem">
-                  <select
-                    id="pm-bureau-company"
-                    onchange="pmUpdateBureauOffices()"
-                    style="
-                      width: 100%;
-                      padding: 0.5rem 0.7rem;
-                      border: 1.5px solid var(--gray-100);
-                      border-radius: 8px;
-                      font-size: 0.85rem;
-                      font-family: inherit;
-                      outline: none;
-                      background: #fff;
-                    ">
-                    <option value="">-- Choisir la société --</option>
-                    <option value="yalidine">Yalidine Express</option>
-                    <option value="zaki">Zaki Express</option>
-                    <option value="procolis">Procolis</option>
-                    <option value="noest">Noest Express</option>
-                    <option value="eship">eShip</option>
-                    <option value="maystro">Maystro Delivery</option>
-                    <option value="dhlex">DHlex</option>
-                    <option value="guepex">Guepex</option>
-                  </select>
-                  <select
-                    id="pm-bureau-office"
-                    style="
-                      display: none;
-                      width: 100%;
-                      padding: 0.5rem 0.7rem;
-                      border: 1.5px solid var(--gray-100);
-                      border-radius: 8px;
-                      font-size: 0.85rem;
-                      font-family: inherit;
-                      outline: none;
-                      background: #fff;
-                    ">
-                    <option value="">-- Choisir le bureau --</option>
-                  </select>
-                </div>
-
-                <!-- DOMICILE ADDRESS -->
-                <div id="pm-domicile-fields">
-                  <label
-                    style="
-                      font-size: 0.75rem;
-                      font-weight: 600;
-                      color: var(--gray-700);
-                      display: block;
-                      margin-bottom: 0.25rem;
-                    "
-                    >Adresse
-                    <span style="color: var(--gray-400); font-weight: 400"
-                      >(facultatif)</span
-                    ></label
-                  >
-                  <input
-                    id="pm-address"
-                    type="text"
-                    placeholder="Rue, quartier, commune..."
-                    style="
-                      width: 100%;
-                      padding: 0.5rem 0.7rem;
-                      border: 1.5px solid var(--gray-100);
-                      border-radius: 8px;
-                      font-size: 0.85rem;
-                      font-family: inherit;
-                      outline: none;
-                      transition: border-color 0.2s;
-                    "
-                    onfocus="this.style.borderColor = 'var(--green)'"
-                    onblur="this.style.borderColor = 'var(--gray-100)'" />
-                </div>
-
-                <!-- mini total -->
-                <div
-                  id="pm-total-row"
-                  style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    background: var(--gray-50);
-                    border-radius: 8px;
-                    padding: 0.5rem 0.75rem;
-                    font-size: 0.85rem;
-                  ">
-                  <span style="color: var(--gray-500)"
-                    >Total (produit + livraison)</span
-                  >
-                  <span
-                    id="pm-grand-total"
-                    style="font-weight: 800; color: var(--green-dark)"
-                    >—</span
-                  >
-                </div>
-                <button
-                  class="btn btn-primary"
-                  id="pm-confirm-btn"
-                  style="
-                    width: 100%;
-                    justify-content: center;
-                    font-size: 0.95rem;
-                    padding: 0.75rem;
-                  "
-                  onclick="pmPlaceOrder()">
-                  Confirmer la Commande
-                </button>
-                <button
-                  class="btn btn-ghost"
-                  style="
-                    width: 100%;
-                    justify-content: center;
-                    font-size: 0.85rem;
-                  "
-                  onclick="pmAddToCart()">
-                  Ajouter au Panier
-                </button>
-              </div>
-              <!-- SUCCESS inside modal -->
-              <div
-                id="pm-success"
-                style="display: none; text-align: center; padding: 1.5rem 0">
-                <div
-                  style="
-                    width: 52px;
-                    height: 52px;
-                    background: var(--green);
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto 0.75rem;
-                  ">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#fff"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <div
-                  style="
-                    font-weight: 800;
-                    font-size: 1.1rem;
-                    color: var(--green-dark);
-                    margin-bottom: 0.3rem;
-                  ">
-                  Commande confirmée !
-                </div>
-                <div
-                  id="pm-success-ref"
-                  style="
-                    font-size: 0.85rem;
-                    color: var(--gray-500);
-                    margin-bottom: 1rem;
-                  "></div>
-                <button
-                  class="btn btn-ghost"
-                  style="font-size: 0.85rem"
-                  onclick="closeModal('product-modal')">
-                  Fermer
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CART MODAL -->
-    <div class="modal-overlay" id="cart-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3 id="cart-modal-title">Votre Panier (0 article)</h3>
-          <button class="modal-close" onclick="closeModal('cart-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body">
-          <div id="cart-items"></div>
-          <div class="order-summary" id="cart-summary" style="display: none">
-            <div class="order-row">
-              <span>Sous-total</span><span id="cart-subtotal">0 DA</span>
-            </div>
-            <div class="order-row total">
-              <span>Total</span><span id="cart-total">0 DA</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="
-              closeModal('cart-modal');
-              openModal('checkout-modal');
-            ">
-            Passer la Commande →
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CHECKOUT MODAL -->
-    <div class="modal-overlay" id="checkout-modal">
-      <div class="modal" style="max-width: 660px">
-        <div class="modal-header">
-          <h3>🧾 Commander</h3>
-          <button class="modal-close" onclick="closeModal('checkout-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- ITEMS -->
-          <div style="margin-bottom: 1.25rem">
-            <div
-              style="
-                font-size: 0.78rem;
-                font-weight: 700;
-                color: var(--gray-500);
-                text-transform: uppercase;
                 letter-spacing: 0.08em;
-                margin-bottom: 0.75rem;
-              ">
-              Articles commandés
-            </div>
-            <div id="checkout-items"></div>
-          </div>
-
-          <!-- CUSTOMER INFO -->
-          <div
-            style="
-              font-size: 0.78rem;
-              font-weight: 700;
-              color: var(--gray-500);
-              text-transform: uppercase;
-              letter-spacing: 0.08em;
-              margin-bottom: 0.75rem;
-            ">
-            Informations de livraison
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nom Complet</label
-              ><input
-                id="checkout-name"
-                type="text"
-                placeholder="Ahmed Benali" />
-            </div>
-            <div class="form-group">
-              <label>Numéro de Téléphone *</label
-              ><input id="checkout-phone" type="tel" placeholder="0558210430" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Wilaya *</label>
-            <select id="wilaya-select" onchange="updateShipping(this)">
-              <option value="" data-id="">
-                -- Sélectionnez votre Wilaya --
-              </option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Adresse Complète</label
-            ><input
-              id="checkout-address"
-              type="text"
-              placeholder="Rue, quartier, commune..." />
-          </div>
-          <div class="form-group">
-            <label>Remarques (facultatif)</label
-            ><textarea
-              id="checkout-notes"
-              rows="2"
-              placeholder="Instructions spéciales..."></textarea>
-          </div>
-
-          <!-- PROMO CODE -->
-          <div class="form-group" style="margin-top: 0.5rem">
-            <label>Code Promo</label>
-            <div style="display: flex; gap: 0.5rem">
-              <input
-                id="checkout-promo-input"
-                type="text"
-                placeholder="Ex: SUMMER20"
-                style="flex: 1; text-transform: uppercase"
-                oninput="this.value = this.value.toUpperCase()" />
-              <button
-                onclick="applyCheckoutPromo()"
-                style="
-                  padding: 0 1rem;
-                  background: var(--green);
-                  color: #fff;
-                  border: none;
-                  border-radius: 10px;
-                  font-weight: 700;
-                  cursor: pointer;
-                  white-space: nowrap;
-                  font-family: inherit;
-                  font-size: 0.85rem;
-                ">
-                Appliquer
-              </button>
-            </div>
-            <div
-              id="checkout-promo-feedback"
-              style="margin-top: 6px; font-size: 0.8rem; display: none"></div>
-          </div>
-
-          <!-- TOTALS -->
-          <div class="order-summary">
-            <div class="order-row">
-              <span>Sous-total</span><span id="checkout-subtotal">0 DA</span>
-            </div>
-            <div class="order-row shipping-row">
-              <span id="shipping-label">Livraison</span
-              ><span id="shipping-price">Choisir une wilaya</span>
-            </div>
-            <div
-              class="order-row"
-              id="checkout-promo-row"
-              style="display: none; color: #1fad52; font-weight: 700">
-              <span id="checkout-promo-label">🏷️ Code promo</span
-              ><span id="checkout-promo-amount">-0 DA</span>
-            </div>
-            <div class="order-row total">
-              <span>Total</span><span id="order-total">0 DA</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="placeOrder()">
-            Confirmer la Commande ✓
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- RATING MODAL (shown after order) -->
-    <div class="modal-overlay" id="rating-modal">
-      <div class="modal" style="max-width: 480px">
-        <div class="modal-header">
-          <h3>⭐ Donnez votre avis</h3>
-          <button class="modal-close" onclick="closeModal('rating-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body">
-          <div style="text-align: center; margin-bottom: 1.5rem">
-            <div
-              style="
-                font-size: 1rem;
+                text-transform: uppercase;
                 color: var(--gray-500);
-                margin-bottom: 1rem;
+                margin: 0 0 0.75rem 0.1rem;
               ">
-              Votre commande est confirmée ! Comment évaluez-vous votre
-              expérience ?
-            </div>
+              Commandes
+            </p>
             <div
-              id="rating-stars"
+              class="stats-grid"
               style="
-                display: flex;
-                justify-content: center;
-                gap: 0.5rem;
-                margin-bottom: 0.75rem;
+                grid-template-columns: repeat(5, 1fr);
+                margin-bottom: 1.25rem;
               ">
-              <button
-                class="star-btn"
-                data-val="1"
-                onclick="setRating(1)"
-                style="
-                  font-size: 2.2rem;
-                  background: none;
-                  border: none;
-                  cursor: pointer;
-                  transition: transform 0.15s;
-                ">
-                ☆
-              </button>
-              <button
-                class="star-btn"
-                data-val="2"
-                onclick="setRating(2)"
-                style="
-                  font-size: 2.2rem;
-                  background: none;
-                  border: none;
-                  cursor: pointer;
-                  transition: transform 0.15s;
-                ">
-                ☆
-              </button>
-              <button
-                class="star-btn"
-                data-val="3"
-                onclick="setRating(3)"
-                style="
-                  font-size: 2.2rem;
-                  background: none;
-                  border: none;
-                  cursor: pointer;
-                  transition: transform 0.15s;
-                ">
-                ☆
-              </button>
-              <button
-                class="star-btn"
-                data-val="4"
-                onclick="setRating(4)"
-                style="
-                  font-size: 2.2rem;
-                  background: none;
-                  border: none;
-                  cursor: pointer;
-                  transition: transform 0.15s;
-                ">
-                ☆
-              </button>
-              <button
-                class="star-btn"
-                data-val="5"
-                onclick="setRating(5)"
-                style="
-                  font-size: 2.2rem;
-                  background: none;
-                  border: none;
-                  cursor: pointer;
-                  transition: transform 0.15s;
-                ">
-                ☆
-              </button>
-            </div>
-            <div
-              id="rating-label"
-              style="
-                font-size: 0.88rem;
-                font-weight: 700;
-                color: var(--green-dark);
-                min-height: 1.2em;
-              "></div>
-          </div>
-          <div class="form-group">
-            <label>Commentaire (facultatif)</label>
-            <textarea
-              id="rating-comment"
-              rows="3"
-              placeholder="Partagez votre expérience d'achat..."
-              style="resize: vertical"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Votre prénom</label>
-            <input type="text" id="rating-name" placeholder="Ahmed" />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="submitRating()">
-            Envoyer mon avis ✓
-          </button>
-          <button
-            class="btn btn-ghost"
-            style="width: 100%; margin-top: 0.5rem"
-            onclick="closeModal('rating-modal')">
-            Non merci
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- LOGIN MODAL -->
-    <div class="modal-overlay" id="login-modal">
-      <div class="modal" style="max-width: 420px">
-        <div class="modal-header">
-          <h3 id="auth-modal-title">Connexion</h3>
-          <button class="modal-close" onclick="closeModal('login-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- TABS -->
-          <div
-            style="
-              display: flex;
-              gap: 0;
-              border: 1.5px solid var(--gray-100);
-              border-radius: 10px;
-              overflow: hidden;
-              margin-bottom: 1.25rem;
-            ">
-            <button
-              id="tab-login"
-              onclick="switchAuthTab('login')"
-              style="
-                flex: 1;
-                padding: 0.6rem;
-                font-weight: 700;
-                font-size: 0.85rem;
-                border: none;
-                cursor: pointer;
-                background: var(--green);
-                color: #fff;
-                transition: all 0.2s;
-              ">
-              Connexion
-            </button>
-            <button
-              id="tab-register"
-              onclick="switchAuthTab('register')"
-              style="
-                flex: 1;
-                padding: 0.6rem;
-                font-weight: 700;
-                font-size: 0.85rem;
-                border: none;
-                cursor: pointer;
-                background: #fff;
-                color: var(--gray-500);
-                transition: all 0.2s;
-              ">
-              Créer un compte
-            </button>
-          </div>
-
-          <!-- LOGIN FORM -->
-          <div id="form-login">
-            <div class="form-group">
-              <label>E-mail</label
-              ><input
-                type="email"
-                id="login-email"
-                placeholder="vous@email.com" />
-            </div>
-            <div class="form-group">
-              <label>Mot de passe</label>
-              <div style="position: relative">
-                <input
-                  type="password"
-                  id="login-password"
-                  placeholder="••••••••"
-                  style="
-                    padding-right: 2.5rem;
-                    width: 100%;
-                    box-sizing: border-box;
-                  " />
-                <button
-                  type="button"
-                  onclick="togglePassword('login-password', this)"
-                  style="
-                    position: absolute;
-                    right: 0.6rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    padding: 0;
-                    color: var(--gray-400, #9ca3af);
-                    display: flex;
-                    align-items: center;
-                  "
-                  aria-label="Afficher/masquer le mot de passe">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
-                </button>
+              <div class="stat-card" style="border-top: 3px solid #7f77dd">
+                <div class="label">Total Commandes</div>
+                <div class="value" id="stat-orders" style="color: #534ab7">
+                  0
+                </div>
+                <div
+                  class="change"
+                  id="stat-orders-sub"
+                  style="color: var(--gray-500)">
+                  Tous statuts
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #ef9f27">
+                <div class="label">En Attente</div>
+                <div class="value" id="stat-pending" style="color: #ba7517">
+                  0
+                </div>
+                <div class="change" style="color: #ba7517">À traiter</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #639922">
+                <div class="label">Livrées</div>
+                <div class="value" id="stat-delivered" style="color: #3b6d11">
+                  0
+                </div>
+                <div class="change" style="color: #3b6d11">Commandes</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #e24b4a">
+                <div class="label">Annulées</div>
+                <div class="value" id="stat-cancelled" style="color: #a32d2d">
+                  0
+                </div>
+                <div class="change" style="color: #a32d2d">Commandes</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #378add">
+                <div class="label">Expédiées</div>
+                <div class="value" id="stat-shipped" style="color: #185fa5">
+                  0
+                </div>
+                <div class="change" style="color: #185fa5">En transit</div>
               </div>
             </div>
-            <div
-              id="login-error"
-              style="
-                display: none;
-                color: #dc2626;
-                font-size: 0.82rem;
-                font-weight: 600;
-                padding: 0.5rem 0.75rem;
-                background: #fee2e2;
-                border-radius: 6px;
-              "></div>
-            <button
-              class="btn btn-primary"
-              style="width: 100%; margin-top: 0.5rem"
-              onclick="handleLogin()">
-              Se connecter
-            </button>
-          </div>
 
-          <!-- REGISTER FORM -->
-          <div id="form-register" style="display: none">
-            <div class="form-group">
-              <label>Nom Complet *</label
-              ><input type="text" id="reg-name" placeholder="Ahmed Benali" />
-            </div>
-            <div class="form-group">
-              <label>Téléphone</label
-              ><input type="tel" id="reg-phone" placeholder="0558210430" />
-            </div>
-            <div class="form-group">
-              <label>E-mail *</label
-              ><input
-                type="email"
-                id="reg-email"
-                placeholder="vous@email.com" />
-            </div>
-            <div class="form-group">
-              <label>Mot de passe * (min. 6 caractères)</label>
-              <div style="position: relative">
-                <input
-                  type="password"
-                  id="reg-password"
-                  placeholder="••••••••"
-                  style="
-                    padding-right: 2.5rem;
-                    width: 100%;
-                    box-sizing: border-box;
-                  " />
+            <div class="admin-table-card">
+              <div class="table-header">
+                <h3>Commandes Récentes</h3>
                 <button
-                  type="button"
-                  onclick="togglePassword('reg-password', this)"
-                  style="
-                    position: absolute;
-                    right: 0.6rem;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    padding: 0;
-                    color: var(--gray-400, #9ca3af);
-                    display: flex;
-                    align-items: center;
-                  "
-                  aria-label="Afficher/masquer le mot de passe">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
+                  class="btn btn-ghost"
+                  style="font-size: 0.8rem; padding: 0.4rem 0.9rem">
+                  Voir Tout
                 </button>
               </div>
-            </div>
-            <div
-              id="reg-error"
-              style="
-                display: none;
-                color: #dc2626;
-                font-size: 0.82rem;
-                font-weight: 600;
-                padding: 0.5rem 0.75rem;
-                background: #fee2e2;
-                border-radius: 6px;
-              "></div>
-            <button
-              class="btn btn-primary"
-              style="width: 100%; margin-top: 0.5rem"
-              onclick="handleRegister()">
-              Créer mon compte
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MY ORDERS MODAL -->
-    <div class="modal-overlay" id="my-orders-modal">
-      <div class="modal" style="max-width: 580px">
-        <div class="modal-header">
-          <h3>Mes Commandes</h3>
-          <button class="modal-close" onclick="closeModal('my-orders-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body" id="my-orders-body" style="padding: 1rem"></div>
-      </div>
-    </div>
-
-    <!-- ADD PRODUCT MODAL -->
-    <div class="modal-overlay" id="add-product-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3>➕ Ajouter un Produit</h3>
-          <button class="modal-close" onclick="closeModal('add-product-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body">
-          <div
-            id="add-product-error"
-            style="
-              display: none;
-              color: #dc2626;
-              font-size: 0.82rem;
-              font-weight: 600;
-              padding: 0.5rem 0.75rem;
-              background: #fee2e2;
-              border-radius: 6px;
-              margin-bottom: 0.75rem;
-            "></div>
-          <div class="form-group">
-            <label>Nom du Produit *</label
-            ><input type="text" id="ap-name" placeholder="ex. RTX 4070 Ti" />
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Prix de Vente (DA) *</label
-              ><input
-                type="number"
-                id="ap-price"
-                placeholder="82000"
-                oninput="updateMarginDisplay('ap')" />
-            </div>
-            <div class="form-group">
-              <label>Prix Remisé (DA)</label
-              ><input
-                type="number"
-                id="ap-old-price"
-                placeholder="Facultatif" />
-            </div>
-          </div>
-          <div class="form-row" id="ap-cost-price-row">
-            <div class="form-group">
-              <label>🔒 Prix d'Achat (DA)</label
-              ><input
-                type="number"
-                id="ap-cost-price"
-                placeholder="Coût réel (admin)"
-                oninput="updateMarginDisplay('ap')"
-                style="border-color: var(--gray-300); background: #fffbeb" />
-            </div>
-            <div
-              class="form-group"
-              style="display: flex; align-items: flex-end">
-              <span
-                id="ap-margin-display"
-                style="
-                  font-size: 0.8rem;
-                  color: var(--green);
-                  font-weight: 600;
-                  padding-bottom: 0.5rem;
-                "></span>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Catégorie(s) *</label>
-              <div
-                id="ap-cat-pills"
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 0.4rem;
-                  padding: 0.6rem;
-                  border: 1.5px solid var(--gray-100);
-                  border-radius: 10px;
-                  background: #fff;
-                  max-height: 160px;
-                  overflow-y: auto;
-                ">
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="PC Parts"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Pièces PC<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Cosmétiques PC"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Cosmétiques PC<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Écrans"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Écrans<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Claviers"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Claviers<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Souris"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Souris<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Pâte Thermique"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Pâte Thermique<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Boîtiers"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Boîtiers<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Processeurs"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Processeurs<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Cartes Graphiques"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Cartes Graphiques<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="RAM"
-                  onclick="toggleCatPill(this, 'ap')">
-                  RAM<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Stockage"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Stockage<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Alimentations"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Alimentations<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Refroidissement"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Refroidissement<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Cartes Mères"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Cartes Mères<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Câbles & Accessoires"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Câbles & Acc.<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Audio"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Audio<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Sièges & Bureau"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Sièges & Bureau<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Casques"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Casques<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="LED & Déco"
-                  onclick="toggleCatPill(this, 'ap')">
-                  LED & Déco<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Tapis"
-                  onclick="toggleCatPill(this, 'ap')">
-                  Tapis<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ap')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ap')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>N° Commande</th>
+                      <th>Client</th>
+                      <th>Wilaya</th>
+                      <th>Total</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-orders-table"></tbody>
+                </table>
               </div>
-              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem">
+            </div>
+            <div class="admin-table-card">
+              <div class="table-header"><h3>Produits les Plus Vendus</h3></div>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Produit</th>
+                      <th>Catégorie</th>
+                      <th>Ventes</th>
+                      <th>Revenus</th>
+                      <th>Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-products-table"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- ORDERS TAB -->
+          <div id="admin-orders" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Gestion des Commandes</h1>
+              <button class="btn btn-primary" onclick="exportPDF()">
+                Exporter PDF
+              </button>
+            </div>
+            <div class="admin-table-card">
+              <div class="filter-bar">
                 <input
                   type="text"
-                  id="ap-new-cat-input"
-                  class="form-input"
-                  placeholder="Nouvelle catégorie..."
-                  style="flex: 1; padding: 0.45rem 0.75rem; font-size: 0.85rem"
-                  onkeydown="
-                    if (event.key === 'Enter') {
-                      event.preventDefault();
-                      addCustomCatPill('ap');
-                    }
-                  " />
+                  class="filter-select"
+                  id="filter-search"
+                  placeholder="🔍 Rechercher client, tél, ref..."
+                  oninput="applyOrderFilters()"
+                  style="min-width: 180px" />
+                <select
+                  class="filter-select"
+                  id="filter-status"
+                  onchange="applyOrderFilters()">
+                  <option value="">Tous les Statuts</option>
+                  <option value="pending">En attente</option>
+                  <option value="shipped">Expédié</option>
+                  <option value="delivered">Livré</option>
+                  <option value="cancelled">Annulé</option>
+                </select>
+                <select
+                  class="filter-select"
+                  id="filter-wilaya"
+                  onchange="applyOrderFilters()">
+                  <option value="">Toutes les Wilayas</option>
+                </select>
+                <input
+                  type="date"
+                  class="filter-select"
+                  id="filter-date"
+                  onchange="applyOrderFilters()" />
                 <button
-                  type="button"
-                  onclick="addCustomCatPill('ap')"
-                  style="
-                    padding: 0.45rem 0.9rem;
-                    background: var(--green);
-                    color: #fff;
-                    border: none;
-                    border-radius: 8px;
-                    font-weight: 700;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    line-height: 1;
-                    transition: background 0.2s;
-                  "
-                  title="Ajouter catégorie">
-                  ＋
+                  class="btn btn-ghost"
+                  style="font-size: 0.8rem; padding: 0.4rem 0.9rem"
+                  onclick="clearOrderFilters()">
+                  ✕ Effacer
                 </button>
               </div>
-              <input type="hidden" id="ap-cat" />
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>N° Commande</th>
+                      <th>Client</th>
+                      <th>Téléphone</th>
+                      <th>Wilaya</th>
+                      <th>Articles</th>
+                      <th>Total</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="all-orders-table"></tbody>
+                </table>
+              </div>
             </div>
           </div>
-          <div class="form-group">
-            <label>Icône du Produit</label>
-            <input
-              type="text"
-              id="ap-icon"
-              placeholder="ex. 🖥️"
-              maxlength="4"
-              style="font-size: 1.5rem; width: 80px" />
+
+          <!-- REVIEWS TAB -->
+          <div id="admin-reviews" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Avis Clients</h1>
+            </div>
+            <div class="admin-table-card">
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Client</th>
+                      <th>Note</th>
+                      <th>Commentaire</th>
+                      <th>Date</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-reviews-table"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Variantes (séparées par des virgules)</label
-            ><input
-              type="text"
-              id="ap-variants"
-              placeholder="ex. Noir, Blanc, Argent"
-              oninput="renderVariantStockFields('ap')" />
+          <!-- PRODUCTS TAB -->
+          <div id="admin-products" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Produits</h1>
+              <button
+                class="btn btn-primary"
+                onclick="openModal('add-product-modal')">
+                + Ajouter un Produit
+              </button>
+            </div>
+            <div class="admin-table-card">
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Produit</th>
+                      <th>Catégorie</th>
+                      <th>Prix</th>
+                      <th>Stock</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-products-list"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Prix des Variantes (séparés par des virgules)</label
-            ><input
-              type="text"
-              id="ap-variant-prices"
-              placeholder="ex. 18500, 17500, 16000" />
-          </div>
-          <div class="form-group" id="ap-variant-stock-group">
-            <label>Stock par Variante *</label>
-            <div id="ap-variant-stock-rows">
-              <!-- Generated dynamically -->
+          <!-- SHIPPING TAB -->
+          <div id="admin-shipping" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Livraison par Wilaya</h1>
+              <button class="btn btn-primary" onclick="saveWilayas()">
+                Enregistrer les Modifications
+              </button>
+            </div>
+
+            <!-- Search bar -->
+            <div style="padding: 0 0 1rem 0">
               <input
-                type="number"
-                id="ap-stock"
-                placeholder="Stock (toutes variantes)"
+                type="text"
+                id="wilaya-search"
+                class="form-input"
+                placeholder="🔍 Rechercher une wilaya..."
+                oninput="filterWilayas()"
                 style="
-                  width: 100%;
-                  padding: 0.65rem 0.9rem;
+                  max-width: 320px;
+                  padding: 0.55rem 1rem;
+                  border-radius: 50px;
                   border: 1.5px solid var(--gray-100);
-                  border-radius: 10px;
+                  font-size: 0.88rem;
                   font-family: inherit;
-                  font-size: 0.9rem;
+                  outline: none;
                 " />
             </div>
-          </div>
-          <div class="form-group">
-            <label>Description</label
-            ><textarea
-              rows="3"
-              id="ap-desc"
-              placeholder="Description du produit..."></textarea>
-          </div>
-          <div class="form-group">
-            <label>Images du Produit (Max 5) — JPG, PNG, WEBP, AVIF</label>
-            <input
-              type="file"
-              id="ap-imgs"
-              accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/svg+xml"
-              multiple />
-            <div
-              id="ap-imgs-preview"
-              style="
-                margin-top: 0.5rem;
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                display: none;
-              "></div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="saveNewProduct()">
-            Enregistrer le Produit
-          </button>
-        </div>
-      </div>
-    </div>
 
-    <!-- ORDER CONFIRMATION -->
-    <div class="modal-overlay" id="confirm-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3>Commande Confirmée</h3>
-          <button class="modal-close" onclick="closeModal('confirm-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body" style="text-align: center; padding: 2rem">
-          <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem">
-            Merci pour votre commande !
-          </h2>
-          <p style="color: var(--gray-500); margin-bottom: 1.5rem">
-            Votre commande a été enregistrée. Vous recevrez un appel dans les
-            24h.
-          </p>
-          <div class="order-summary">
-            <div class="order-row">
-              <span>N° Commande</span
-              ><span
-                style="font-weight: 700; color: var(--green-dark)"
-                id="confirm-order-id"
-                >#MT-0001</span
-              >
-            </div>
-            <div class="order-row">
-              <span>Délai Estimé</span><span>2 à 5 jours ouvrables</span>
-            </div>
-            <div class="order-row total">
-              <span>Montant Total</span><span id="confirm-total">0 DA</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="
-              closeModal('confirm-modal');
-              openModal('rating-modal');
-            ">
-            Terminer & Évaluer →
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- RATING MODAL -->
-    <div class="modal-overlay" id="rating-modal">
-      <div class="modal" style="max-width: 420px">
-        <div class="modal-header">
-          <h3>Évaluez votre expérience</h3>
-          <button class="modal-close" onclick="closeModal('rating-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body" style="text-align: center; padding: 1.5rem">
-          <p style="color: var(--gray-500); margin-bottom: 1.5rem">
-            Comment évaluez-vous votre expérience sur Mus Tech ?
-          </p>
-          <div
-            id="star-row"
-            style="
-              display: flex;
-              justify-content: center;
-              gap: 0.5rem;
-              margin-bottom: 1.25rem;
-            ">
-            <span
-              class="star-btn"
-              onclick="setRating(1)"
-              style="
-                font-size: 2.5rem;
-                cursor: pointer;
-                transition: transform 0.15s;
-              "
-              >☆</span
-            >
-            <span
-              class="star-btn"
-              onclick="setRating(2)"
-              style="
-                font-size: 2.5rem;
-                cursor: pointer;
-                transition: transform 0.15s;
-              "
-              >☆</span
-            >
-            <span
-              class="star-btn"
-              onclick="setRating(3)"
-              style="
-                font-size: 2.5rem;
-                cursor: pointer;
-                transition: transform 0.15s;
-              "
-              >☆</span
-            >
-            <span
-              class="star-btn"
-              onclick="setRating(4)"
-              style="
-                font-size: 2.5rem;
-                cursor: pointer;
-                transition: transform 0.15s;
-              "
-              >☆</span
-            >
-            <span
-              class="star-btn"
-              onclick="setRating(5)"
-              style="
-                font-size: 2.5rem;
-                cursor: pointer;
-                transition: transform 0.15s;
-              "
-              >☆</span
-            >
-          </div>
-          <p
-            id="rating-label"
-            style="
-              font-size: 0.9rem;
-              color: var(--gray-500);
-              margin-bottom: 1rem;
-              min-height: 1.2em;
-            "></p>
-          <textarea
-            id="rating-comment"
-            rows="3"
-            placeholder="Commentaire (facultatif)..."
-            style="
-              width: 100%;
-              padding: 0.75rem;
-              border: 1.5px solid var(--gray-100);
-              border-radius: 10px;
-              font-family: inherit;
-              font-size: 0.875rem;
-              resize: none;
-              outline: none;
-              box-sizing: border-box;
-            "></textarea>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="submitRating()">
-            Envoyer mon avis ✓
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- EDIT PRODUCT MODAL -->
-    <div class="modal-overlay" id="edit-product-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3>Modifier le Produit</h3>
-          <button
-            class="modal-close"
-            onclick="closeModal('edit-product-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="ep-id" />
-          <div class="form-group">
-            <label>Nom du Produit *</label><input type="text" id="ep-name" />
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Prix de Vente (DA) *</label
-              ><input type="number" id="ep-price" />
-            </div>
-            <div class="form-group">
-              <label>Prix Remisé (DA)</label
-              ><input
-                type="number"
-                id="ep-old-price"
-                placeholder="Facultatif" />
-            </div>
-          </div>
-          <div class="form-row" id="ep-cost-price-row">
-            <div class="form-group">
-              <label>🔒 Prix d'Achat (DA)</label
-              ><input
-                type="number"
-                id="ep-cost-price"
-                placeholder="Coût réel (admin)"
-                style="border-color: var(--gray-300); background: #fffbeb" />
-            </div>
             <div
-              class="form-group"
-              style="display: flex; align-items: flex-end">
-              <span
-                id="ep-margin-display"
-                style="
-                  font-size: 0.8rem;
-                  color: var(--green);
-                  font-weight: 600;
-                  padding-bottom: 0.5rem;
-                "></span>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Catégorie(s) *</label>
-              <div
-                id="ep-cat-pills"
-                style="
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 0.4rem;
-                  padding: 0.6rem;
-                  border: 1.5px solid var(--gray-100);
-                  border-radius: 10px;
-                  background: #fff;
-                  max-height: 160px;
-                  overflow-y: auto;
-                ">
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="PC Parts"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Pièces PC<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Cosmétiques PC"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Cosmétiques PC<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Écrans"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Écrans<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Claviers"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Claviers<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Souris"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Souris<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Pâte Thermique"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Pâte Thermique<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Boîtiers"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Boîtiers<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Processeurs"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Processeurs<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Cartes Graphiques"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Cartes Graphiques<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="RAM"
-                  onclick="toggleCatPill(this, 'ep')">
-                  RAM<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Stockage"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Stockage<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Alimentations"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Alimentations<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Refroidissement"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Refroidissement<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Cartes Mères"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Cartes Mères<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Câbles & Accessoires"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Câbles & Acc.<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Audio"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Audio<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Sièges & Bureau"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Sièges & Bureau<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Casques"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Casques<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="LED & Déco"
-                  onclick="toggleCatPill(this, 'ep')">
-                  LED & Déco<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-                <button
-                  type="button"
-                  class="cat-pill"
-                  data-val="Tapis"
-                  onclick="toggleCatPill(this, 'ep')">
-                  Tapis<span
-                    class="pill-remove"
-                    onclick="removeCatPill(event, this.parentNode, 'ep')"
-                    style="
-                      display: none;
-                      margin-left: 4px;
-                      font-size: 0.75rem;
-                      line-height: 1;
-                      vertical-align: middle;
-                    "
-                    >✕</span
-                  >
-                  <span
-                    class="pill-delete"
-                    onclick="
-                      deleteCatPill(event, this.closest('.cat-pill'), 'ep')
-                    "
-                    title="Supprimer cette catégorie"
-                    role="button"
-                    >✕</span
-                  >
-                </button>
-              </div>
-              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem">
-                <input
-                  type="text"
-                  id="ep-new-cat-input"
-                  class="form-input"
-                  placeholder="Nouvelle catégorie..."
-                  style="flex: 1; padding: 0.45rem 0.75rem; font-size: 0.85rem"
-                  onkeydown="
-                    if (event.key === 'Enter') {
-                      event.preventDefault();
-                      addCustomCatPill('ep');
-                    }
-                  " />
-                <button
-                  type="button"
-                  onclick="addCustomCatPill('ep')"
-                  style="
-                    padding: 0.45rem 0.9rem;
-                    background: var(--green);
-                    color: #fff;
-                    border: none;
-                    border-radius: 8px;
-                    font-weight: 700;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    line-height: 1;
-                    transition: background 0.2s;
-                  "
-                  title="Ajouter catégorie">
-                  ＋
-                </button>
-              </div>
-              <input type="hidden" id="ep-cat" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Emoji Icône</label
-            ><input
-              type="text"
-              id="ep-icon"
-              maxlength="4"
-              style="font-size: 1.5rem; width: 80px" />
-          </div>
-          <div class="form-group">
-            <label>Variantes (séparées par des virgules)</label
-            ><input
-              type="text"
-              id="ep-variants"
-              oninput="renderVariantStockFields('ep')" />
-          </div>
-          <div class="form-group">
-            <label>Prix des Variantes (séparés par des virgules)</label
-            ><input type="text" id="ep-variant-prices" />
-          </div>
-          <div class="form-group" id="ep-variant-stock-group">
-            <label>Stock par Variante *</label>
-            <div id="ep-variant-stock-rows">
-              <input
-                type="number"
-                id="ep-stock"
-                placeholder="Stock"
-                style="
-                  width: 100%;
-                  padding: 0.65rem 0.9rem;
-                  border: 1.5px solid var(--gray-100);
-                  border-radius: 10px;
-                  font-family: inherit;
-                  font-size: 0.9rem;
-                " />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Description</label
-            ><textarea rows="3" id="ep-desc"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Image du Produit</label>
-            <div
-              id="ep-image-section"
-              style="display: flex; flex-direction: column; gap: 0.6rem">
-              <!-- Current images gallery -->
-              <div id="ep-current-img-wrap" style="display: none">
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.25rem;
+              "
+              id="shipping-grid-wrapper">
+              <!-- DOMICILE CARD -->
+              <div class="admin-table-card" style="margin: 0">
                 <div
+                  class="table-header"
                   style="
-                    font-size: 0.72rem;
-                    font-weight: 700;
-                    color: var(--gray-500);
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
-                    margin-bottom: 0.4rem;
+                    background: linear-gradient(135deg, #f0fdf6, #d4f7e2);
+                    border-radius: 12px 12px 0 0;
+                    padding: 1rem 1.25rem;
+                    border-bottom: 2px solid var(--green-light);
                   ">
-                  Images actuelles
-                  <span
-                    id="ep-img-count"
-                    style="color: var(--green-dark)"></span>
+                  <div style="display: flex; align-items: center; gap: 0.6rem">
+                    <span style="font-size: 1.3rem">🏠</span>
+                    <div>
+                      <h3
+                        style="
+                          font-size: 0.95rem;
+                          font-weight: 800;
+                          color: var(--green-dark);
+                          margin: 0;
+                        ">
+                        Livraison à Domicile
+                      </h3>
+                      <p
+                        style="
+                          font-size: 0.72rem;
+                          color: var(--green-dark);
+                          opacity: 0.75;
+                          margin: 0;
+                        ">
+                        Prix livré chez le client
+                      </p>
+                    </div>
+                  </div>
                 </div>
                 <div
-                  id="ep-current-imgs-grid"
-                  style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
-              </div>
-              <!-- New image drop zone -->
-              <label
-                for="ep-image"
-                id="ep-drop-zone"
-                style="
-                  cursor: pointer;
-                  border: 2px dashed var(--gray-200, #d1d5db);
-                  border-radius: 10px;
-                  padding: 1rem;
-                  text-align: center;
-                  transition:
-                    border-color 0.2s,
-                    background 0.2s;
-                  background: transparent;
-                ">
-                <div
-                  id="ep-drop-icon"
-                  style="font-size: 1.6rem; margin-bottom: 0.3rem">
-                  🖼️
-                </div>
-                <div
-                  id="ep-drop-label"
-                  style="font-size: 0.82rem; color: var(--gray-500, #888)">
-                  Cliquer ou glisser des images ici (max 15)
-                </div>
-                <div
+                  class="wilaya-list"
+                  id="wilaya-home-list"
                   style="
-                    font-size: 0.73rem;
-                    color: var(--gray-400, #aaa);
-                    margin-top: 0.2rem;
+                    max-height: 600px;
+                    overflow-y: auto;
+                    padding: 0.75rem 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.45rem;
+                  "></div>
+              </div>
+
+              <!-- BUREAU CARD -->
+              <div class="admin-table-card" style="margin: 0">
+                <div
+                  class="table-header"
+                  style="
+                    background: linear-gradient(135deg, #f0f4ff, #e0e8ff);
+                    border-radius: 12px 12px 0 0;
+                    padding: 1rem 1.25rem;
+                    border-bottom: 2px solid #c7d7ff;
                   ">
-                  JPG, PNG, WEBP, AVIF — max 5 Mo chacune (15 max)
+                  <div style="display: flex; align-items: center; gap: 0.6rem">
+                    <span style="font-size: 1.3rem">🏢</span>
+                    <div>
+                      <h3
+                        style="
+                          font-size: 0.95rem;
+                          font-weight: 800;
+                          color: #3456c7;
+                          margin: 0;
+                        ">
+                        Livraison au Bureau
+                      </h3>
+                      <p
+                        style="
+                          font-size: 0.72rem;
+                          color: #3456c7;
+                          opacity: 0.75;
+                          margin: 0;
+                        ">
+                        Prix retrait en bureau
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <input
-                  type="file"
-                  id="ep-image"
-                  accept="image/*"
-                  multiple
-                  style="display: none" />
-              </label>
-              <!-- New images preview (shown after selection) -->
+                <div
+                  class="wilaya-list"
+                  id="wilaya-bureau-list"
+                  style="
+                    max-height: 600px;
+                    overflow-y: auto;
+                    padding: 0.75rem 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.45rem;
+                  "></div>
+              </div>
+            </div>
+
+            <!-- Toggle column on mobile -->
+            <div id="wilaya-manager" style="display: none"></div>
+          </div>
+          <!-- FINANCE TAB -->
+          <div id="admin-finance" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Aperçu Financier</h1>
+              <button class="btn btn-primary" onclick="exportExcel()">
+                Exporter Excel
+              </button>
+            </div>
+            <div
+              class="stats-grid"
+              style="grid-template-columns: repeat(2, 1fr)">
+              <div class="stat-card" style="border-top: 3px solid #1d9e75">
+                <div class="label">
+                  Chiffre d'Affaires
+                  <span style="font-weight: 400; color: var(--gray-400)"
+                    >(sans livraison)</span
+                  >
+                </div>
+                <div class="value" id="fin-revenue">0 DA</div>
+                <div class="change">Commandes livrées</div>
+              </div>
               <div
-                id="ep-new-img-wrap"
-                style="display: none; flex-direction: column; gap: 0.5rem">
+                class="stat-card"
+                id="fin-profit-card"
+                style="border-top: 3px solid #7f77dd">
+                <div class="label">Profit Net</div>
+                <div class="value" id="fin-profit">— DA</div>
+                <div class="change" id="fin-profit-sub">CA - coût d'achat</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #f59e0b">
+                <div class="label">Stock Total</div>
+                <div class="value" id="fin-stock-total">0 DA</div>
+                <div class="change">Valeur totale du stock</div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #06b6d4">
+                <div class="label">Stock Expédiées</div>
+                <div class="value" id="fin-stock-shipped">0 DA</div>
+                <div class="change">Valeur du stock expédié</div>
+              </div>
+            </div>
+            <div class="admin-table-card">
+              <div class="table-header"><h3>Revenus par Période</h3></div>
+              <div style="padding: 1.5rem">
                 <div
                   style="
                     display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    margin-bottom: 0.2rem;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                    margin-bottom: 1.5rem;
                   ">
-                  <span
-                    style="
-                      background: var(--green-dark, #2d6a4f);
-                      color: #fff;
-                      font-size: 0.7rem;
-                      padding: 2px 10px;
-                      border-radius: 99px;
-                    "
-                    id="ep-new-count"
-                    >Nouvelles images</span
-                  >
                   <button
-                    type="button"
-                    onclick="cancelNewImage()"
-                    style="
-                      background: rgba(0, 0, 0, 0.12);
-                      border: none;
-                      color: var(--gray-700);
-                      border-radius: 50%;
-                      width: 22px;
-                      height: 22px;
-                      cursor: pointer;
-                      font-size: 0.85rem;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    ">
-                    ✕
+                    class="btn btn-primary"
+                    id="period-daily"
+                    style="font-size: 0.82rem; padding: 0.4rem 1rem"
+                    onclick="renderFinanceChart('daily')">
+                    Daily
+                  </button>
+                  <button
+                    class="btn btn-ghost"
+                    id="period-weekly"
+                    style="font-size: 0.82rem; padding: 0.4rem 1rem"
+                    onclick="renderFinanceChart('weekly')">
+                    Weekly
+                  </button>
+                  <button
+                    class="btn btn-ghost"
+                    id="period-monthly"
+                    style="font-size: 0.82rem; padding: 0.4rem 1rem"
+                    onclick="renderFinanceChart('monthly')">
+                    Monthly
                   </button>
                 </div>
                 <div
-                  id="ep-new-imgs-grid"
-                  style="display: flex; gap: 0.5rem; flex-wrap: wrap"></div>
+                  id="finance-bars"
+                  style="
+                    display: flex;
+                    gap: 6px;
+                    align-items: flex-end;
+                    height: 160px;
+                    border-bottom: 2px solid var(--gray-100);
+                    padding-bottom: 8px;
+                  "></div>
+                <div
+                  style="display: flex; gap: 6px; margin-top: 6px"
+                  id="finance-labels"></div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-primary"
-            style="width: 100%"
-            onclick="saveEditProduct()">
-            Enregistrer les Modifications
-          </button>
-        </div>
+
+          <!-- ═══════════════════════════════════════════════ -->
+          <!-- PROMOS TAB                                      -->
+          <!-- ═══════════════════════════════════════════════ -->
+          <div id="admin-promos" class="admin-tab" style="display: none">
+            <div class="admin-header">
+              <h1>Promotions</h1>
+              <button class="btn btn-primary" onclick="openPromoModal()">
+                + Nouvelle Promo
+              </button>
+            </div>
+
+            <!-- Dashboard cards promos -->
+            <div
+              class="stats-grid"
+              style="
+                grid-template-columns: repeat(3, 1fr);
+                margin-bottom: 1.5rem;
+              ">
+              <div class="stat-card" style="border-top: 3px solid #7f77dd">
+                <div class="label">Total Promos</div>
+                <div class="value" id="promo-stat-total" style="color: #534ab7">
+                  —
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #639922">
+                <div class="label">Actives</div>
+                <div
+                  class="value"
+                  id="promo-stat-active"
+                  style="color: #3b6d11">
+                  —
+                </div>
+              </div>
+              <div class="stat-card" style="border-top: 3px solid #e24b4a">
+                <div class="label">Expirées</div>
+                <div
+                  class="value"
+                  id="promo-stat-expired"
+                  style="color: #a32d2d">
+                  —
+                </div>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="admin-table-card">
+              <div class="table-header"><h3>Liste des Promotions</h3></div>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nom</th>
+                      <th>Type</th>
+                      <th>Code / Valeur</th>
+                      <th>Remise</th>
+                      <th>Utilisations</th>
+                      <th>Expire</th>
+                      <th>Statut</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="promos-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════ -->
+          <!-- PROMO MODAL                                     -->
+          <!-- ═══════════════════════════════════════════════ -->
+          <div
+            id="promo-modal-overlay"
+            style="
+              display: none;
+              position: fixed;
+              inset: 0;
+              background: rgba(0, 0, 0, 0.45);
+              z-index: 9000;
+              align-items: center;
+              justify-content: center;
+            ">
+            <div
+              style="
+                background: #fff;
+                border-radius: 16px;
+                padding: 2rem;
+                width: min(520px, 95vw);
+                max-height: 90vh;
+                overflow-y: auto;
+                position: relative;
+              ">
+              <button
+                onclick="closePromoModal()"
+                style="
+                  position: absolute;
+                  top: 1rem;
+                  right: 1rem;
+                  background: none;
+                  border: none;
+                  font-size: 1.4rem;
+                  cursor: pointer;
+                  color: var(--gray-500);
+                ">
+                ✕
+              </button>
+              <h2
+                id="promo-modal-title"
+                style="
+                  font-size: 1.1rem;
+                  font-weight: 800;
+                  margin-bottom: 1.5rem;
+                ">
+                Nouvelle Promotion
+              </h2>
+
+              <input type="hidden" id="promo-edit-id" value="" />
+              <input type="hidden" id="promo-current-type" value="code" />
+
+              <div class="form-group">
+                <label class="form-label">Nom / Description *</label>
+                <input
+                  type="text"
+                  id="promo-name"
+                  class="form-input"
+                  placeholder="Ex: Offre Été 2025" />
+              </div>
+
+              <!-- Code promo fields -->
+              <div id="promo-code-fields">
+                <div class="form-group">
+                  <label class="form-label"
+                    >Code Promo *
+                    <span style="font-size: 0.72rem; color: var(--gray-400)"
+                      >(lettres + chiffres, 1–9 caractères)</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    id="promo-code"
+                    class="form-input"
+                    placeholder="EX: SUMMER20"
+                    maxlength="9"
+                    oninput="
+                      this.value = this.value
+                        .replace(/[^A-Za-z0-9]/g, '')
+                        .toUpperCase()
+                    "
+                    style="text-transform: uppercase; letter-spacing: 0.1em" />
+                </div>
+              </div>
+
+              <!-- Voucher fields (hidden when code) -->
+              <div id="promo-voucher-fields" style="display: none">
+                <div class="form-group">
+                  <label class="form-label">Utilisation *</label>
+                  <select
+                    id="promo-uses-type"
+                    class="form-select"
+                    onchange="onUsesTypeChange()">
+                    <option value="1">1ère fois (1 utilisation)</option>
+                    <option value="2">2 utilisations</option>
+                    <option value="3">3 utilisations</option>
+                    <option value="custom">Personnalisé</option>
+                    <option value="infinity">Illimité ♾️</option>
+                  </select>
+                </div>
+                <div
+                  id="promo-uses-custom-wrap"
+                  style="display: none"
+                  class="form-group">
+                  <label class="form-label">Nombre d'utilisations</label>
+                  <input
+                    type="number"
+                    id="promo-uses-custom"
+                    class="form-input"
+                    min="1"
+                    placeholder="Ex: 50" />
+                </div>
+              </div>
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 12px;
+                ">
+                <div class="form-group">
+                  <label class="form-label">Type de remise *</label>
+                  <select
+                    id="promo-value-type"
+                    class="form-select"
+                    onchange="onValueTypeChange()">
+                    <option value="fixed">Montant fixe (DA)</option>
+                    <option value="percent">Pourcentage (%)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" id="promo-value-label"
+                    >Valeur (DA) *</label
+                  >
+                  <input
+                    type="number"
+                    id="promo-value"
+                    class="form-input"
+                    min="0"
+                    placeholder="500" />
+                </div>
+              </div>
+
+              <div
+                id="promo-max-discount-wrap"
+                style="display: none"
+                class="form-group">
+                <label class="form-label">Remise max (DA)</label>
+                <input
+                  type="number"
+                  id="promo-max-discount"
+                  class="form-input"
+                  min="0"
+                  placeholder="Laisser vide = illimité" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Achat minimum (DA)</label>
+                <input
+                  type="number"
+                  id="promo-min-purchase"
+                  class="form-input"
+                  min="0"
+                  placeholder="0 = aucun minimum"
+                  value="0" />
+              </div>
+
+              <!-- Max uses for code type -->
+              <div id="promo-code-uses-wrap" style="display: none">
+                <div class="form-group">
+                  <label class="form-label">Limite d'utilisations</label>
+                  <select
+                    id="promo-code-uses-type"
+                    class="form-select"
+                    onchange="onCodeUsesChange()">
+                    <option value="5">5 utilisations</option>
+                    <option value="10">10 utilisations</option>
+                    <option value="20">20 utilisations</option>
+                    <option value="50">50 utilisations</option>
+                    <option value="custom">Personnalisé</option>
+                    <option value="infinity">Illimité ♾️</option>
+                  </select>
+                </div>
+                <div
+                  id="promo-code-uses-custom-wrap"
+                  style="display: none"
+                  class="form-group">
+                  <label class="form-label">Nombre max d'utilisations</label>
+                  <input
+                    type="number"
+                    id="promo-code-uses-custom"
+                    class="form-input"
+                    min="1"
+                    placeholder="Ex: 100" />
+                </div>
+              </div>
+
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: 1fr auto;
+                  gap: 12px;
+                  align-items: end;
+                  margin-bottom: 1rem;
+                ">
+                <div class="form-group" style="margin-bottom: 0">
+                  <label class="form-label">Date d'expiration</label>
+                  <input
+                    type="datetime-local"
+                    id="promo-expire"
+                    class="form-input" />
+                </div>
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    color: var(--gray-500);
+                    cursor: pointer;
+                    margin-bottom: 0;
+                    padding-bottom: 2px;
+                  ">
+                  <input
+                    type="checkbox"
+                    id="promo-no-expire"
+                    onchange="toggleNoExpire()"
+                    style="width: 16px; height: 16px" />
+                  Sans expiration
+                </label>
+              </div>
+
+              <div style="display: flex; gap: 10px; margin-top: 1.5rem">
+                <button
+                  onclick="savePromo()"
+                  class="btn btn-primary"
+                  style="flex: 1">
+                  Enregistrer
+                </button>
+                <button
+                  onclick="closePromoModal()"
+                  class="btn btn-ghost"
+                  style="flex: 1">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- EDIT MODAL reuses the same overlay, controlled by promo-edit-id -->
+        </main>
       </div>
     </div>
-
-    <!-- VIEW ORDER MODAL -->
-    <div class="modal-overlay" id="view-order-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3>Détails de la Commande</h3>
-          <button class="modal-close" onclick="closeModal('view-order-modal')">
-            ✕
-          </button>
-        </div>
-        <div class="modal-body" id="view-order-body"></div>
-        <div
-          class="modal-footer"
-          style="display: flex; gap: 0.5rem; flex-wrap: wrap">
-          <button
-            class="btn btn-primary"
-            style="flex: 1"
-            onclick="changeOrderStatus('shipped')">
-            Marquer Expédié
-          </button>
-          <button
-            class="btn btn-ghost"
-            style="flex: 1"
-            onclick="changeOrderStatus('delivered')">
-            Marquer Livré
-          </button>
-          <button
-            class="btn"
-            style="flex: 1; background: #fee2e2; color: #dc2626"
-            onclick="changeOrderStatus('cancelled')">
-            Annuler
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TOAST -->
-    <div class="toast" id="toast">
-      <span class="icon"></span><span id="toast-msg"></span>
-    </div>
-    <button
-      class="scroll-top"
-      id="scroll-top"
-      onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">
-      ↑
-    </button>
 
     <script>
       // MODALS
@@ -11094,5 +8796,6 @@
         };
       }
     </script>
+    
   </body>
 </html>
