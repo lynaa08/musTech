@@ -9446,13 +9446,11 @@
 
       // PAGE NAVIGATION
       function showPage(page) {
-        if (page === "admin") {
-          if (!currentUser || currentUser.role !== "admin") {
-            showToast("Accès réservé à l'administrateur");
-            return;
-          }
-          // Admin panel is now a separate page
-          window.location.href = "admin.html";
+        if (
+          page === "admin" &&
+          (!currentUser || currentUser.role !== "admin")
+        ) {
+          showToast("Accès réservé à l'administrateur");
           return;
         }
         document
@@ -9461,7 +9459,13 @@
         document.getElementById(page + "-page").classList.add("active");
         const footer = document.getElementById("main-footer");
         const nav = document.getElementById("main-nav");
-        if (page === "favorites") {
+        if (page === "admin") {
+          footer.style.display = "none";
+          nav.style.display = "none";
+          populateAdminTables();
+          populateWilayas();
+          renderFinanceChart();
+        } else if (page === "favorites") {
           footer.style.display = "";
           nav.style.display = "";
           populateFavoritesPage();
