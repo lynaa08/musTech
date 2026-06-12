@@ -2353,6 +2353,24 @@
                 + Ajouter un Produit
               </button>
             </div>
+
+            <!-- CATEGORIES BAR (Same as in index.html) -->
+            <div class="categories-bar">
+              <div class="categories-inner" id="categories-inner">
+                <div
+                  class="cat-chip active"
+                  data-cat="all"
+                  onclick="filterCat(this, 'all')">
+                  Tous les Produits
+                </div>
+                <!-- chips injected dynamically by buildCategoryChips() -->
+              </div>
+            </div>
+
+            <!-- PRODUCT DISPLAY GRIDS (hidden but used for JavaScript to render categories) -->
+            <div id="featured-grid" style="display: none"></div>
+            <div id="shop-grid" style="display: none"></div>
+
             <div class="admin-table-card">
               <div style="overflow-x: auto">
                 <table>
