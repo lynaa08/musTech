@@ -608,7 +608,7 @@
         box-shadow: 0 4px 12px rgba(62, 207, 110, 0.3);
       }
 
-      /* CATEGORY PILL STYLING (for product forms) */
+      /* CATEGORY PILLS - Same styling as cat-chip */
       .cat-pill {
         padding: 0.5rem 1rem;
         border-radius: 50px;
@@ -634,14 +634,10 @@
         box-shadow: 0 4px 12px rgba(62, 207, 110, 0.3);
       }
       .pill-remove {
-        margin-left: 4px;
         cursor: pointer;
-        font-weight: bold;
       }
       .pill-delete {
         cursor: pointer;
-        font-weight: bold;
-        margin-left: 4px;
       }
 
       /* SEARCH BAR */
@@ -2389,24 +2385,6 @@
                 + Ajouter un Produit
               </button>
             </div>
-
-            <!-- CATEGORIES BAR (Same as in index.html) -->
-            <div class="categories-bar">
-              <div class="categories-inner" id="categories-inner">
-                <div
-                  class="cat-chip active"
-                  data-cat="all"
-                  onclick="filterCat(this, 'all')">
-                  Tous les Produits
-                </div>
-                <!-- chips injected dynamically by buildCategoryChips() -->
-              </div>
-            </div>
-
-            <!-- PRODUCT DISPLAY GRIDS (hidden but used for JavaScript to render categories) -->
-            <div id="featured-grid" style="display: none"></div>
-            <div id="shop-grid" style="display: none"></div>
-
             <div class="admin-table-card">
               <div style="overflow-x: auto">
                 <table>
