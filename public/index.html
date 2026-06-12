@@ -10797,8 +10797,10 @@
           err.style.display = "none";
           closeModal("login-modal");
           loginUser(user);
-          if (user.role === "admin") showToast("Bienvenue, Admin !");
-          else showToast(`Bienvenue, ${user.name} !`);
+          if (user.role === "admin") {
+            window.location.href = "admin.html";
+            return;
+          } else showToast(`Bienvenue, ${user.name} !`);
         } catch (e) {
           err.textContent = "" + e.message;
           err.style.display = "block";
