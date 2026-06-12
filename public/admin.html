@@ -1534,6 +1534,9 @@
         gap: 1.25rem;
         margin-bottom: 2rem;
       }
+      .stats-grid-5 {
+        grid-template-columns: repeat(5, 1fr);
+      }
       .stat-card {
         background: #fff;
         border-radius: var(--radius);
@@ -2166,12 +2169,7 @@
               ">
               Commandes
             </p>
-            <div
-              class="stats-grid"
-              style="
-                grid-template-columns: repeat(5, 1fr);
-                margin-bottom: 1.25rem;
-              ">
+            <div class="stats-grid stats-grid-5" style="margin-bottom: 1.25rem">
               <div class="stat-card" style="border-top: 3px solid #7f77dd">
                 <div class="label">Total Commandes</div>
                 <div class="value" id="stat-orders" style="color: #534ab7">
