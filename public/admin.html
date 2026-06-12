@@ -1299,36 +1299,46 @@
       }
       .admin-mobile-nav {
         display: none;
-        background: var(--gray-900);
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        position: sticky;
+      }
+      .admin-mobile-nav.open {
+        display: block;
+        position: fixed;
         top: 0;
-        z-index: 50;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
       }
-      .admin-mobile-nav a {
+      .admin-mobile-nav-content {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: var(--gray-900);
+        padding: 1.5rem;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+      .admin-mobile-nav.open .admin-mobile-nav-content {
+        transform: translateX(0);
+      }
+      .admin-mobile-nav-header {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 0.2rem;
-        flex: 0 0 auto;
-        min-width: 76px;
-        padding: 0.6rem 0.5rem;
-        color: rgba(255, 255, 255, 0.6);
-        text-decoration: none;
-        font-size: 0.7rem;
-        font-weight: 600;
-        white-space: nowrap;
-        border-bottom: 2px solid transparent;
-        transition: all var(--transition);
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        color: #fff;
       }
-      .admin-mobile-nav a svg {
-        flex-shrink: 0;
-      }
-      .admin-mobile-nav a.active {
-        color: var(--green);
-        border-bottom-color: var(--green);
+      .admin-mobile-nav-close {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
       }
 
       /* Sur mobile, compenser la barre sticky admin */
@@ -1362,6 +1372,44 @@
         .admin-mobile-nav {
           display: flex !important;
         }
+      }
+      .admin-mobile-nav {
+        display: none;
+        overflow-x: auto;
+        overflow-y: visible;
+        gap: 0.4rem;
+        padding: 0.6rem 1rem;
+        background: var(--gray-900);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        top: 60px;
+        z-index: 50;
+        scrollbar-width: none;
+        box-sizing: border-box;
+      }
+      .admin-mobile-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .admin-mobile-nav a {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.4rem 0.65rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s;
+        border: 1.5px solid transparent;
+      }
+      .admin-mobile-nav a:hover,
+      .admin-mobile-nav a.active {
+        background: var(--green);
+        color: #fff;
+        border-color: var(--green);
       }
 
       @media (max-width: 600px) {
