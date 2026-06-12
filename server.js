@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -70,30 +71,22 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    // ── IMPORTANT : autorise l'envoi des cookies cross-origin ──
     credentials: true,
   }),
 );
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
-
-// ── Cookie parser — lit les cookies HttpOnly ──────────────
 app.use(cookieParser());
 
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 app.use("/uploads", express.static(uploadsDir));
 
-const frontendPath = path.join(__dirname, "public");
-if (fs.existsSync(frontendPath)) {
-  app.use(express.static(frontendPath));
-}
-
 // ── INIT DATABASE ─────────────────────────────────────────
 require("./database");
 
-// ── ROUTES ────────────────────────────────────────────────
+// ── ROUTES API ────────────────────────────────────────────
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/orders", require("./routes/orders"));
@@ -111,7 +104,43 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// ── SERVE FRONTEND ────────────────────────────────────────
+// ── ADMIN ROUTE — protégé côté serveur ───────────────────
+// Vérifie le cookie JWT avant de servir admin.html.
+// Même si quelqu'un devine l'URL, sans cookie admin valide
+// il est redirigé vers la page d'accueil.
+app.get("/admin", (req, res) => {
+  const token = req.cookies?.mt_auth;
+  if (!token) return res.redirect("/?auth=required");
+  try {
+    const user = jwt.verify(token, process.env.JWT_SECRET);
+    if (user.role !== "admin") return res.redirect("/");
+    const adminPath = path.join(__dirname, "public", "admin.html");
+    if (!fs.existsSync(adminPath)) {
+      return res.status(404).json({ error: "admin.html introuvable" });
+    }
+    res.sendFile(adminPath);
+  } catch {
+    // Token expiré ou invalide
+    res.redirect("/?auth=required");
+  }
+});
+
+// ── SERVE FRONTEND (fichiers statiques publics) ───────────
+// IMPORTANT : monter APRÈS la route /admin pour éviter que
+// express.static serve admin.html directement via son URL de fichier.
+const frontendPath = path.join(__dirname, "public");
+if (fs.existsSync(frontendPath)) {
+  // Bloquer l'accès direct à admin.html via fichier statique
+  app.use((req, res, next) => {
+    if (req.path.toLowerCase() === "/admin.html") {
+      return res.redirect("/admin");
+    }
+    next();
+  });
+  app.use(express.static(frontendPath));
+}
+
+// ── SPA FALLBACK ──────────────────────────────────────────
 app.get("*", (req, res) => {
   const indexPath = path.join(__dirname, "public", "index.html");
   if (fs.existsSync(indexPath)) {
@@ -140,5 +169,6 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`\n🚀 Mus Tech Backend running on http://localhost:${PORT}`);
   console.log(`📦 API ready at http://localhost:${PORT}/api`);
+  console.log(`🔒 Admin panel at http://localhost:${PORT}/admin`);
   console.log(`🔑 Admin: ${process.env.ADMIN_EMAIL}`);
 });
