@@ -1952,49 +1952,70 @@
               <a
                 href="javascript:void(0)"
                 class="active"
-                onclick="showAdminTab('dashboard', this)"
+                onclick="
+                  showAdminTab('dashboard', this);
+                  return false;
+                "
                 >Tableau de Bord</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
-                onclick="showAdminTab('orders', this)"
+                onclick="
+                  showAdminTab('orders', this);
+                  return false;
+                "
                 >Commandes</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
-                onclick="showAdminTab('products', this)"
+                onclick="
+                  showAdminTab('products', this);
+                  return false;
+                "
                 >Produits</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
-                onclick="showAdminTab('shipping', this)"
+                onclick="
+                  showAdminTab('shipping', this);
+                  return false;
+                "
                 >Livraison</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
-                onclick="showAdminTab('finance', this)"
+                onclick="
+                  showAdminTab('finance', this);
+                  return false;
+                "
                 >Finances</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
-                onclick="showAdminTab('reviews', this)"
+                onclick="
+                  showAdminTab('reviews', this);
+                  return false;
+                "
                 >⭐ Avis Clients</a
               >
             </li>
             <li>
               <a
                 href="javascript:void(0)"
-                onclick="showAdminTab('promos', this)"
+                onclick="
+                  showAdminTab('promos', this);
+                  return false;
+                "
                 >🎟️ Promotions</a
               >
             </li>
@@ -2025,6 +2046,7 @@
               onclick="
                 showAdminTab('dashboard', this);
                 syncMobileNav(this);
+                return false;
               ">
               <svg
                 width="13"
@@ -2047,6 +2069,7 @@
               onclick="
                 showAdminTab('orders', this);
                 syncMobileNav(this);
+                return false;
               ">
               <svg
                 width="13"
@@ -2067,6 +2090,7 @@
               onclick="
                 showAdminTab('products', this);
                 syncMobileNav(this);
+                return false;
               ">
               <svg
                 width="13"
@@ -2088,6 +2112,7 @@
               onclick="
                 showAdminTab('shipping', this);
                 syncMobileNav(this);
+                return false;
               ">
               <svg
                 width="13"
@@ -2110,6 +2135,7 @@
               onclick="
                 showAdminTab('finance', this);
                 syncMobileNav(this);
+                return false;
               ">
               <svg
                 width="13"
