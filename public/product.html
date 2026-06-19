@@ -2060,7 +2060,10 @@
             }).catch(() => {});
           }
           // Send admin email notification
-          // sendAdminOrderEmail({ ...orderData, id: result.id, order_ref: result.order_ref, total: result.total }); // TEMP DISABLED
+          // FIX: cet envoi était désactivé (commenté) — c'est pourquoi
+          // aucun email n'arrivait quand un client commandait depuis
+          // une page produit (ça fonctionnait seulement depuis l'accueil).
+          sendAdminOrderEmail({ ...orderData, id: result.id, order_ref: result.order_ref, total: result.total });
           document.getElementById("checkout-form").style.display = "none";
           const box = document.getElementById("success-box");
           box.innerHTML = `
@@ -2098,7 +2101,9 @@
       // ── EMAILJS CONFIG ────────────────────────────────────────
       const EMAILJS_SERVICE_ID  = 'service_woy31bb';
       const EMAILJS_TEMPLATE_ID = 'template_ged9qwh';
-      const EMAILJS_PUBLIC_KEY  = '8Nv8Jj9No6Lin0tt4';
+      // FIX: clé publique alignée avec celle utilisée sur index.html
+      // (où l'envoi d'email fonctionne déjà)
+      const EMAILJS_PUBLIC_KEY  = 'FETbWlavm4BamgdhM';
 
       async function applyPromoCode() {
         const code = document.getElementById("co-promo-code").value.trim().toUpperCase();
