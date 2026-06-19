@@ -836,6 +836,19 @@
           font-size: 0.75rem;
           padding: 0.55rem 0.4rem;
         }
+        /* FIX: 2 produits par ligne dans les suggestions sur mobile
+           (avant: 1 seule colonne car minmax(200px,1fr) ne tenait pas
+           sur un écran de ~360-390px de large) */
+        .suggestions-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.6rem;
+        }
+        .suggestion-name {
+          font-size: 0.78rem;
+        }
+        .suggestion-price {
+          font-size: 0.82rem;
+        }
       }
       @media (max-width: 400px) {
         .nav-center a {
@@ -2254,8 +2267,14 @@
         if (!suggestionsList || !product) return;
 
         // Filter products: same category, but NOT the current product
-        const suggestions = allProducts.filter(p => 
-          p.cat === product.cat && p.id !== product.id
+        // FIX: comparaison normalisée (espaces + casse) — avant, deux
+        // catégories identiques en apparence ("Audio" vs "audio " ou
+        // avec un espace en trop) étaient considérées différentes et
+        // la liste de suggestions restait vide.
+        const normCat = (p) => (p?.cat || p?.category || "").toString().trim().toLowerCase();
+        const currentCat = normCat(product);
+        const suggestions = allProducts.filter(p =>
+          normCat(p) === currentCat && p.id !== product.id
         ).slice(0, 8); // Limit to 8 suggestions
 
         // Show/hide empty state
