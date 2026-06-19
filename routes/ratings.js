@@ -16,7 +16,7 @@ const ERR = (err, res) =>
 // FIX: rate limit ajouté + validation comment + vérif order_ref
 router.post("/", ratingsRateLimiter, optionalAuth, async (req, res) => {
   try {
-    const { rating, comment, order_ref } = req.body;
+    const { rating, comment, order_ref, product_id, author_name } = req.body;
 
     if (!rating || rating < 1 || rating > 5)
       return res.status(400).json({ error: "Note invalide (1-5)" });
@@ -39,16 +39,42 @@ router.post("/", ratingsRateLimiter, optionalAuth, async (req, res) => {
           .json({ error: "Référence de commande invalide" });
     }
 
+    const safeProductId =
+      product_id && !isNaN(parseInt(product_id)) ? parseInt(product_id) : null;
+    const safeAuthorName =
+      author_name && typeof author_name === "string"
+        ? author_name.trim().substring(0, 80)
+        : null;
+
     await db.query(
-      "INSERT INTO ratings (user_id, order_ref, rating, comment) VALUES ($1,$2,$3,$4)",
+      "INSERT INTO ratings (user_id, order_ref, product_id, author_name, rating, comment) VALUES ($1,$2,$3,$4,$5,$6)",
       [
         req.user ? req.user.id : null,
         order_ref || null,
+        safeProductId,
+        safeAuthorName,
         parseInt(rating),
         comment ? comment.trim().substring(0, 1000) : null,
       ],
     );
     res.status(201).json({ message: "Avis enregistré, merci !" });
+  } catch (err) {
+    ERR(err, res);
+  }
+});
+
+// ── GET /api/ratings/product/:id — avis publics d'un produit ─
+router.get("/product/:id", async (req, res) => {
+  try {
+    const productId = parseInt(req.params.id);
+    if (isNaN(productId))
+      return res.status(400).json({ error: "Identifiant produit invalide" });
+
+    const { rows } = await db.query(
+      "SELECT id, author_name, rating, comment, created_at FROM ratings WHERE product_id = $1 ORDER BY created_at DESC",
+      [productId],
+    );
+    res.json(rows);
   } catch (err) {
     ERR(err, res);
   }

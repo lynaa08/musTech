@@ -4,7 +4,14 @@
 //  accessible en JavaScript (protection XSS totale)
 // ============================================================
 
-const API_URL = "https://mustech-production.up.railway.app/api";
+// L'app est servie par le même serveur Express que l'API (server.js
+// fait app.use(express.static(...)) sur ce même dossier "public").
+// On utilise donc une URL relative "/api" : le frontend et l'API sont
+// alors strictement "same-origin", ce qui évite le blocage du cookie
+// de session par Safari iOS (Prevent Cross-Site Tracking / ITP bloque
+// les cookies SameSite=None envoyés vers un domaine différent — c'est
+// ce qui causait la déconnexion ~2s après la connexion admin sur iPhone).
+const API_URL = "/api";
 
 // ── AUTH STATE (en mémoire uniquement — pas de localStorage) ─
 // On garde juste les infos non-sensibles de l'utilisateur
@@ -160,12 +167,19 @@ const WilayasAPI = {
 
 // ── RATINGS API ───────────────────────────────────────────
 const RatingsAPI = {
-  submit: (rating, comment, order_ref) =>
+  submit: (rating, comment, order_ref, product_id, author_name) =>
     apiFetch("/ratings", {
       method: "POST",
-      body: JSON.stringify({ rating, comment, order_ref }),
+      body: JSON.stringify({
+        rating,
+        comment,
+        order_ref,
+        product_id,
+        author_name,
+      }),
     }),
   getStats: () => apiFetch("/ratings/stats"),
+  getByProduct: (productId) => apiFetch("/ratings/product/" + productId),
 };
 
 // ── STATS API ─────────────────────────────────────────────

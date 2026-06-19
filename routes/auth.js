@@ -10,14 +10,19 @@ const {
 
 // ── Cookie options ─────────────────────────────────────────
 // HttpOnly  : JavaScript ne peut JAMAIS lire ce cookie
-// Secure    : envoyé uniquement en HTTPS
-// SameSite  : "none" requis pour les requêtes cross-origin
-//             (frontend mustech.shop ↔ backend railway.app)
+// Secure    : envoyé uniquement en HTTPS (forcé en production)
+// SameSite  : "lax" suffit maintenant que le frontend est servi
+//             par le MÊME serveur que l'API (origine identique —
+//             voir API_URL = "/api" dans public/api.js).
+//             "none" est réservé aux appels réellement cross-site et
+//             est bloqué par défaut par Safari iOS (ITP / "Prevent
+//             Cross-Site Tracking"), ce qui causait la déconnexion
+//             ~2s après la connexion admin sur iPhone.
 function cookieOptions(maxAgeMs) {
   return {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     maxAge: maxAgeMs,
     path: "/",
   };
@@ -124,8 +129,8 @@ router.post("/logout", (req, res) => {
   // Effacer le cookie côté serveur
   res.clearCookie("mt_auth", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
     path: "/",
   });
   res.json({ message: "Déconnecté avec succès" });

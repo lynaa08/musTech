@@ -71,6 +71,8 @@ async function initDB() {
       id          SERIAL PRIMARY KEY,
       user_id     INTEGER,
       order_ref   TEXT,
+      product_id  INTEGER,
+      author_name TEXT,
       rating      INTEGER NOT NULL,
       comment     TEXT,
       created_at  TIMESTAMP NOT NULL DEFAULT NOW()
@@ -115,6 +117,17 @@ async function initDB() {
   // Initialize sort_order for existing products that don't have it yet
   await pool.query(`
     UPDATE products SET sort_order = id WHERE sort_order IS NULL;
+  `);
+
+  // ── MIGRATION: Add product_id + author_name to ratings (avis par produit) ──
+  await pool.query(`
+    ALTER TABLE ratings ADD COLUMN IF NOT EXISTS product_id INTEGER;
+  `);
+  await pool.query(`
+    ALTER TABLE ratings ADD COLUMN IF NOT EXISTS author_name TEXT;
+  `);
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_ratings_product_id ON ratings(product_id);
   `);
 
   // Sync status for existing products based on current stock

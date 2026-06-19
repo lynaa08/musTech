@@ -1507,6 +1507,7 @@
           buildWilayaSelect(wilayaList);
           renderProduct();
           loadSuggestions();
+          renderReviews();
           updateFavBtn();
           // Enable fav button now that product is loaded
           const favBtn = document.getElementById("fav-btn");
@@ -2227,13 +2228,19 @@
         document.getElementById('rating-overlay').classList.remove('open');
       }
 
-      function submitRating() {
+      async function submitRating() {
         if (!_currentRating) { showToast('Sélectionnez une note ⭐'); return; }
         const name    = document.getElementById('rating-name-input')?.value.trim() || 'Client';
         const comment = document.getElementById('rating-comment-input')?.value.trim() || '';
-        const reviews = JSON.parse(localStorage.getItem('mt_reviews') || '[]');
-        reviews.unshift({ rating: _currentRating, comment, name, date: new Date().toISOString(), hidden: false, product: product?.name || '' });
-        localStorage.setItem('mt_reviews', JSON.stringify(reviews));
+        try {
+          // FIX: l'avis est envoyé au serveur, lié au produit consulté,
+          // pour être visible par TOUS les visiteurs de cette fiche produit.
+          await RatingsAPI.submit(_currentRating, comment, null, product?.id, name);
+        } catch (e) {
+          console.error('Erreur envoi avis', e);
+          showToast("Erreur lors de l'envoi de l'avis");
+          return;
+        }
         closeRatingModal();
         renderReviews();
         showToast('Merci pour votre avis ! ⭐');
@@ -2285,13 +2292,24 @@
         window.location.href = `product.html?id=${productId}`;
       }
 
-      function renderReviews() {
+      async function renderReviews() {
         const list  = document.getElementById('reviews-list');
         const empty = document.getElementById('reviews-empty');
         const avg   = document.getElementById('reviews-avg');
-        if (!list) return;
-        const all = JSON.parse(localStorage.getItem('mt_reviews') || '[]');
-        const visible = all.filter(r => !r.hidden);
+        if (!list || !product) return;
+
+        let visible = [];
+        try {
+          // FIX: avis chargés depuis le serveur pour CE produit —
+          // tous les clients voient tous les avis laissés sur ce
+          // produit (et pas seulement ceux stockés localement dans
+          // leur propre navigateur).
+          const remote = await RatingsAPI.getByProduct(product.id);
+          visible = Array.isArray(remote) ? remote : [];
+        } catch (e) {
+          console.error('Erreur chargement avis', e);
+        }
+
         if (visible.length === 0) {
           list.innerHTML = '';
           if (empty) empty.style.display = 'block';
@@ -2304,11 +2322,11 @@
         list.innerHTML = visible.map(r => `
           <div class="review-card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;">
-              <span style="font-weight:700;font-size:0.9rem;">${r.name}</span>
+              <span style="font-weight:700;font-size:0.9rem;">${(r.author_name || 'Client').replace(/</g,'&lt;')}</span>
               <span style="color:#f59e0b;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
             </div>
-            ${r.comment ? `<p style="font-size:0.85rem;color:var(--gray-600);line-height:1.5;margin-bottom:0.3rem;">"${r.comment}"</p>` : ''}
-            <div style="font-size:0.72rem;color:var(--gray-400);">${new Date(r.date).toLocaleDateString('fr-DZ')}</div>
+            ${r.comment ? `<p style="font-size:0.85rem;color:var(--gray-600);line-height:1.5;margin-bottom:0.3rem;">"${r.comment.replace(/</g,'&lt;')}"</p>` : ''}
+            <div style="font-size:0.72rem;color:var(--gray-400);">${new Date(r.created_at).toLocaleDateString('fr-DZ')}</div>
           </div>`).join('');
       }
 
@@ -2404,7 +2422,6 @@
 
       loadProduct();
       updateCartBadge();
-      renderReviews();
     </script>
   </body>
 </html>
