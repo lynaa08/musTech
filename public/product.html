@@ -2266,16 +2266,38 @@
         
         if (!suggestionsList || !product) return;
 
-        // Filter products: same category, but NOT the current product
-        // FIX: comparaison normalisée (espaces + casse) — avant, deux
-        // catégories identiques en apparence ("Audio" vs "audio " ou
-        // avec un espace en trop) étaient considérées différentes et
-        // la liste de suggestions restait vide.
-        const normCat = (p) => (p?.cat || p?.category || "").toString().trim().toLowerCase();
-        const currentCat = normCat(product);
-        const suggestions = allProducts.filter(p =>
-          normCat(p) === currentCat && p.id !== product.id
-        ).slice(0, 8); // Limit to 8 suggestions
+        // Filter products: share at least one category with the current product
+        // FIX: un produit peut appartenir à PLUSIEURS catégories à la fois,
+        // stockées sous forme de texte séparé par des virgules
+        // (ex: "Refroidissement,Câbles & Accessoires" — voir l'affichage
+        // avec " · " sur la page d'accueil). L'ancienne comparaison ne
+        // gérait pas cette liste, donc un produit avec une seule
+        // catégorie en commun parmi plusieurs n'était jamais trouvé.
+        const normTxt = (s) =>
+          (s || "")
+            .toString()
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, ""); // enlève les accents
+        const catSet = (p) =>
+          new Set(
+            (p?.cat || p?.category || "")
+              .toString()
+              .split(",")
+              .map(normTxt)
+              .map((c) => c.trim())
+              .filter(Boolean),
+          );
+        const currentCats = catSet(product);
+        const suggestions = currentCats.size
+          ? allProducts.filter(p => {
+              if (p.id === product.id) return false;
+              const cats = catSet(p);
+              for (const c of cats) if (currentCats.has(c)) return true;
+              return false;
+            }).slice(0, 8) // Limit to 8 suggestions
+          : [];
 
         // Show/hide empty state
         if (suggestions.length === 0) {
