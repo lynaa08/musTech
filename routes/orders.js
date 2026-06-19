@@ -159,25 +159,10 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
       ],
     );
 
-    // Decrement stock per variant (allow negative to track over-ordered quantity)
-    for (const item of enrichedItems) {
-      const { rows: pRows } = await db.query(
-        "SELECT variant_stocks FROM products WHERE id = $1",
-        [item.id],
-      );
-      const stocks = JSON.parse(pRows[0]?.variant_stocks || "[]");
-      // FIX #7: Log debug supprimé (exposait des données clients dans les logs Railway)
-      // No Math.max(0, ...) — we allow negative to show how much was ordered past 0
-      stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) - item.qty;
-      const totalStock = stocks.reduce((a, b) => a + b, 0);
-
-      // If total stock is now <= 0, mark product as out_of_stock
-      const newStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
-      await db.query(
-        "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
-        [JSON.stringify(stocks), totalStock, newStatus, item.id],
-      );
-    }
+    // FIX: le stock n'est plus décompté à la création de la commande
+    // (status "pending") — il est décompté seulement quand l'admin
+    // passe la commande en "Expédiée" ou "Livrée" (voir PUT /:id/status
+    // plus bas), et restauré automatiquement si la commande est annulée.
 
     const order = inserted[0];
     res.status(201).json({
@@ -187,14 +172,12 @@ router.post("/", orderRateLimiter, optionalAuth, async (req, res) => {
       total_formatted: total.toLocaleString("fr-DZ") + " DA",
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -214,14 +197,12 @@ router.get("/track/:ref", async (req, res) => {
     const o = rows[0];
     res.json({ ...o, items: JSON.parse(o.items) });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -235,14 +216,12 @@ router.get("/my", authMiddleware, async (req, res) => {
     );
     res.json(rows.map((o) => ({ ...o, items: JSON.parse(o.items) })));
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -274,14 +253,12 @@ router.get("/", adminMiddleware, async (req, res) => {
       pages: Math.ceil(total / parseInt(limit)),
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -294,14 +271,12 @@ router.get("/:id", adminMiddleware, async (req, res) => {
       return res.status(404).json({ error: "Commande non trouvée" });
     res.json({ ...rows[0], items: JSON.parse(rows[0].items) });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -313,41 +288,26 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
       return res.status(400).json({ error: "Statut invalide" });
 
     const { rows } = await db.query(
-      "SELECT id, status, items FROM orders WHERE id = $1",
+      "SELECT id, status, items, stock_deducted FROM orders WHERE id = $1",
       [req.params.id],
     );
     if (!rows[0])
       return res.status(404).json({ error: "Commande non trouvée" });
 
     const order = rows[0];
-    const wasCancelled = order.status === "cancelled";
-    const willBeCancelled = status === "cancelled";
+    const items = JSON.parse(order.items);
 
-    // Restaurer le stock si la commande est annulée (et n'était pas déjà annulée)
-    if (willBeCancelled && !wasCancelled) {
-      const items = JSON.parse(order.items);
-      for (const item of items) {
-        const { rows: pRows } = await db.query(
-          "SELECT variant_stocks FROM products WHERE id = $1",
-          [item.id],
-        );
-        if (!pRows[0]) continue;
+    // FIX: le stock est décompté seulement quand la commande passe en
+    // "Expédiée" ou "Livrée", et restauré dès qu'elle en sort (ex:
+    // annulation). "stock_deducted" évite tout double-décompte/restauration
+    // si on jongle entre les statuts (ex: shipped → delivered ne touche
+    // pas le stock car déjà décompté une fois).
+    const deductingStatuses = ["shipped", "delivered"];
+    const wasDeducting = deductingStatuses.includes(order.status);
+    const willBeDeducting = deductingStatuses.includes(status);
 
-        const stocks = JSON.parse(pRows[0].variant_stocks || "[]");
-        stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) + item.qty;
-        const totalStock = stocks.reduce((a, b) => a + b, 0);
-        const newStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
-
-        await db.query(
-          "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
-          [JSON.stringify(stocks), totalStock, newStatus, item.id],
-        );
-      }
-    }
-
-    // Si la commande était annulée et on la réactive → re-décrémenter le stock
-    if (wasCancelled && !willBeCancelled) {
-      const items = JSON.parse(order.items);
+    if (!wasDeducting && willBeDeducting && !order.stock_deducted) {
+      // Entrée en "Expédiée"/"Livrée" → décompter le stock
       for (const item of items) {
         const { rows: pRows } = await db.query(
           "SELECT variant_stocks FROM products WHERE id = $1",
@@ -358,13 +318,38 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
         const stocks = JSON.parse(pRows[0].variant_stocks || "[]");
         stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) - item.qty;
         const totalStock = stocks.reduce((a, b) => a + b, 0);
-        const newStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
+        const newProductStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
 
         await db.query(
           "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
-          [JSON.stringify(stocks), totalStock, newStatus, item.id],
+          [JSON.stringify(stocks), totalStock, newProductStatus, item.id],
         );
       }
+      await db.query("UPDATE orders SET stock_deducted = 1 WHERE id = $1", [
+        req.params.id,
+      ]);
+    } else if (wasDeducting && !willBeDeducting && order.stock_deducted) {
+      // Sortie de "Expédiée"/"Livrée" (ex: annulation, ou retour en attente) → restaurer le stock
+      for (const item of items) {
+        const { rows: pRows } = await db.query(
+          "SELECT variant_stocks FROM products WHERE id = $1",
+          [item.id],
+        );
+        if (!pRows[0]) continue;
+
+        const stocks = JSON.parse(pRows[0].variant_stocks || "[]");
+        stocks[item.variantIndex] = (stocks[item.variantIndex] || 0) + item.qty;
+        const totalStock = stocks.reduce((a, b) => a + b, 0);
+        const newProductStatus = totalStock <= 0 ? "out_of_stock" : "in_stock";
+
+        await db.query(
+          "UPDATE products SET variant_stocks = $1, stock = $2, status = $3 WHERE id = $4",
+          [JSON.stringify(stocks), totalStock, newProductStatus, item.id],
+        );
+      }
+      await db.query("UPDATE orders SET stock_deducted = 0 WHERE id = $1", [
+        req.params.id,
+      ]);
     }
 
     await db.query("UPDATE orders SET status = $1 WHERE id = $2", [
@@ -373,14 +358,12 @@ router.put("/:id/status", adminMiddleware, async (req, res) => {
     ]);
     res.json({ message: "Statut mis à jour", status });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -422,14 +405,12 @@ router.put("/:id/pin", adminMiddleware, async (req, res) => {
       pinned: newPinnedStatus,
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 
@@ -443,14 +424,12 @@ router.delete("/:id", adminMiddleware, async (req, res) => {
     await db.query("DELETE FROM orders WHERE id = $1", [req.params.id]);
     res.json({ message: "Commande supprimée" });
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        error:
-          process.env.NODE_ENV === "production"
-            ? "Erreur serveur interne"
-            : err.message,
-      });
+    res.status(500).json({
+      error:
+        process.env.NODE_ENV === "production"
+          ? "Erreur serveur interne"
+          : err.message,
+    });
   }
 });
 

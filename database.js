@@ -130,6 +130,14 @@ async function initDB() {
     CREATE INDEX IF NOT EXISTS idx_ratings_product_id ON ratings(product_id);
   `);
 
+  // ── MIGRATION: Track whether stock was already deducted for an order ──
+  // Le stock n'est plus décompté à la création de la commande, mais
+  // seulement quand elle passe en "shipped" ou "delivered". Cette
+  // colonne évite de décompter/restaurer le stock plusieurs fois.
+  await pool.query(`
+    ALTER TABLE orders ADD COLUMN IF NOT EXISTS stock_deducted INTEGER NOT NULL DEFAULT 0;
+  `);
+
   // Sync status for existing products based on current stock
   await pool.query(`
     UPDATE products SET status = CASE WHEN stock <= 0 THEN 'out_of_stock' ELSE 'in_stock' END;
