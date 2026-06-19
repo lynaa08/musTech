@@ -11745,7 +11745,12 @@
       // ── ADMIN EMAIL NOTIFICATION ──────────────────────────────
       // Called after each successful order — sends email to admin via EmailJS
       function sendAdminOrderEmail(order) {
-        if (typeof emailjs === "undefined") return;
+        if (typeof emailjs === "undefined") {
+          console.error(
+            '❌ EmailJS: librairie non chargée (vérifier le <script src="...email.min.js">, un bloqueur de pub, ou le CSP).',
+          );
+          return;
+        }
         // Configure your EmailJS service/template IDs here:
         const SERVICE_ID = "service_woy31bb"; // ← remplacez par votre Service ID EmailJS
         const TEMPLATE_ID = "template_ged9qwh"; // ← remplacez par votre Template ID EmailJS
@@ -11775,7 +11780,12 @@
             date: new Date().toLocaleString("fr-DZ"),
           })
           .then(() => console.log("📧 Email admin envoyé"))
-          .catch((err) => console.warn("EmailJS error:", err));
+          .catch((err) =>
+            console.error(
+              "❌ EmailJS échec:",
+              err?.text || err?.message || err,
+            ),
+          );
       }
 
       // ── SECURITY: Rate limiting (client-side guard) ───────────
