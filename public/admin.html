@@ -5526,7 +5526,13 @@
               .map((v) => parseInt(v.trim()))
               .filter((n) => !isNaN(n))
           : [];
-        const variantPrices = variants.map((_, i) => vpRaw[i] || price);
+        // If there's only one variant, the main "Prix" field is the source
+        // of truth — use it directly instead of the variant-prices text
+        // field, which can hold a stale value when the user only edits "Prix".
+        const variantPrices =
+          variants.length <= 1
+            ? [price]
+            : variants.map((_, i) => vpRaw[i] || price);
 
         // Read per-variant stock
         let variantStocks, stock;
