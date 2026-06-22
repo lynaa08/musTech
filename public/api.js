@@ -44,6 +44,7 @@ async function apiFetch(endpoint, options = {}) {
     ...options,
     headers,
     credentials: "include", // ← envoie le cookie HttpOnly automatiquement
+    cache: "no-store", // ← toujours récupérer les données fraîches (prix, stock…)
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "Erreur serveur");
