@@ -8167,7 +8167,13 @@
               .map((v) => parseInt(v.trim()))
               .filter((n) => !isNaN(n))
           : [];
-        const variantPrices = variants.map((_, i) => vpRaw[i] || price);
+        // Always use the main price input for index 0 when there is only one
+        // "Standard" variant, so changing ep-price is reflected in variant_prices.
+        // For multi-variant products the admin edits ep-variant-prices explicitly.
+        const variantPrices =
+          variants.length === 1
+            ? [price]
+            : variants.map((_, i) => vpRaw[i] || price);
 
         // Read per-variant stock
         let variantStocks, stock;
