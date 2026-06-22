@@ -2115,12 +2115,12 @@
         if (variantQtys && variantQtys.some(q => q > 0)) {
           variantQtys.forEach((qty, i) => {
             if (qty > 0) {
-              const price = (product?.variantPrices?.[i] || 0) + (product?.price || 0);
+              const price = product?.variantPrices?.[i] ?? product?.variantPrices?.[0] ?? 0;
               subtotal += price * qty;
             }
           });
         } else {
-          const price = (product?.variantPrices?.[currentVariant] || 0) + (product?.price || 0);
+          const price = product?.variantPrices?.[currentVariant] ?? product?.variantPrices?.[0] ?? 0;
           subtotal = price * Math.max(1, currentQty);
         }
 

@@ -8199,7 +8199,7 @@
         const fd = new FormData();
         if (name) fd.append("name", name);
         if (cat) fd.append("cat", cat);
-        if (price) fd.append("price", price);
+        if (price !== undefined && !isNaN(price)) fd.append("price", price);
         if (oldPrice) fd.append("old_price", oldPrice);
         if (icon) fd.append("icon", icon);
         if (stock >= 0) fd.append("stock", stock);
