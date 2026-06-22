@@ -93,6 +93,14 @@ if (fs.existsSync(frontendPath)) {
 // ── INIT DATABASE ─────────────────────────────────────────
 require("./database");
 
+// ── NO-CACHE FOR ALL API ROUTES ───────────────────────────
+// Prevents browsers and CDNs from caching API responses so
+// price/stock changes made in admin are always reflected immediately.
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 // ── ROUTES ────────────────────────────────────────────────
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/products", require("./routes/products"));

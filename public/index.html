@@ -8236,6 +8236,11 @@
         try {
           const result = await ProductsAPI.update(id, fd);
           PRODUCT_DESCS[id] = desc; // Mock update locally
+          // Immediately patch PRODUCTS array with the returned data
+          // so the shop grid updates at once (before the full re-fetch below)
+          const idx = PRODUCTS.findIndex((x) => x.id === id);
+          if (idx !== -1) PRODUCTS[idx] = result;
+          populateProducts();
           if (imgInput) imgInput.value = "";
           closeModal("edit-product-modal");
           await populateAdminTables();
