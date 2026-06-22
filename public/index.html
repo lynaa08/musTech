@@ -8236,6 +8236,11 @@
         try {
           const result = await ProductsAPI.update(id, fd);
           PRODUCT_DESCS[id] = desc; // Mock update locally
+          // ✅ FIX: update the in-memory PRODUCTS array so index.html reflects
+          // the new price (and any other changed fields) immediately without
+          // needing a full page reload.
+          const idx = PRODUCTS.findIndex((p) => p.id === id);
+          if (idx !== -1) PRODUCTS[idx] = result;
           if (imgInput) imgInput.value = "";
           closeModal("edit-product-modal");
           await populateAdminTables();
